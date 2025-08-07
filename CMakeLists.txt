@@ -5,6 +5,11 @@ add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(BUILD_SHARED_LIBS OFF)
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+
 
 # ========================
 # Dependencies
@@ -20,6 +25,9 @@ FetchContent_MakeAvailable(argparse)
 
 # GDAL
 find_package(GDAL CONFIG REQUIRED)
+
+# boost
+find_package(Boost REQUIRED COMPONENTS date_time)
 
 # GoogleTest
 add_subdirectory(third_party/googletest)
@@ -46,6 +54,7 @@ target_include_directories(dsas_lib PUBLIC
 target_link_libraries(dsas_lib PUBLIC
     argparse
     GDAL::GDAL
+    Boost::date_time
 )
 
 # ========================
