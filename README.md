@@ -32,3 +32,4 @@ dsas --baseline your_baseline.shp --shoreline your_shoreline.shp
 ## TODO (PR welcome)
 1. add parallel computation
 2. add gui
+3. Cross-plaform on MSVC
