@@ -70,7 +70,6 @@ double linearRegressRate(std::vector<IntersectPoint> &intersections) {
   }
   double change_rate_in_day = least_square(x, y);
   double change_rate_yr = change_rate_in_day * 365.25;
-  std::cout << change_rate_yr << std::endl;
   return change_rate_yr;
 }
 

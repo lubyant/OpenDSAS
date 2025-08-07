@@ -61,11 +61,13 @@ target_link_libraries(dsas_lib PUBLIC
 # Main Executable
 # ========================
 
-add_executable(dsas src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp)
 
-target_link_libraries(dsas PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
     dsas_lib
 )
+
+install(TARGETS ${PROJECT_NAME})
 
 # ========================
 # Tests
