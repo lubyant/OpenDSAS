@@ -42,9 +42,10 @@ double linearRegressRate(std::vector<IntersectPoint> &intersections) {
   }
 
   //  sort the vector
-  std::sort(
-      intersections.begin(), intersections.end(),
-      [](const IntersectPoint &a, const IntersectPoint &b) { return a.date_ < b.date_; });
+  std::sort(intersections.begin(), intersections.end(),
+            [](const IntersectPoint &a, const IntersectPoint &b) {
+              return a.date_ < b.date_;
+            });
 
   // if two intersections
   if (intersections.size() == 2) {

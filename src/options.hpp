@@ -7,8 +7,8 @@ namespace dsas {
 struct Options {
   std::string baseline_path;
   std::string shoreline_path;
-  std::string intersect_path {"intersects.shp"};
-  std::string transect_path {"transects.shp"};
+  std::string intersect_path{"intersects.shp"};
+  std::string transect_path{"transects.shp"};
 
   enum class IntersectionMode { Closest, Farthest };
   enum class TransectOrientation { Left, Right, Mix };

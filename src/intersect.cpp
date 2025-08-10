@@ -1,11 +1,12 @@
-#include <ogrsf_frmts.h>
 #include "intersect.hpp"
+
+#include <ogrsf_frmts.h>
+
 #include "utility.hpp"
 
 namespace dsas {
 
-void save_points(const std::vector<IntersectPoint> &shapes,
-                 const char *pszProj,
+void save_points(const std::vector<IntersectPoint> &shapes, const char *pszProj,
                  const std::filesystem::path &output_path) {
   // Initialize GDAL
   OGRSpatialReference oSRS;

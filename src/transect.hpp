@@ -18,7 +18,7 @@ struct TransectLine : public LineSegment,
   Point transect_ref_point_;   // point to calculate the erosion
   int transect_id_;
   int baseline_id_;
-  double change_rate{};     // change rate for all the intersections
+  double change_rate{};  // change rate for all the intersections
   IntersectionMode mode_;
   TransectOrientation orient_;
   std::vector<IntersectPoint>
