@@ -1,5 +1,6 @@
-#include <ogrsf_frmts.h>
 #include "baseline.hpp"
+
+#include <ogrsf_frmts.h>
 
 namespace dsas {
 
@@ -77,10 +78,9 @@ Baseline::Baseline(const std::vector<BaselinesVertex> &points, int baseline_id)
   }
 }
 
-
 std::vector<Baseline> load_baselines_shp(
     const std::filesystem::path &baseline_shp_path,
-     const std::string &baseline_id_field) {
+    const std::string &baseline_id_field) {
   // Initialize GDAL
   GDALAllRegister();
 

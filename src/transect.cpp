@@ -152,7 +152,7 @@ void save_points(const std::vector<TransectLine> &shapes, const char *pszProj,
   GDALClose(dataset);
 }
 
-std::vector<TransectLine> create_transects_from_baseline(Baseline& baseline){
+std::vector<TransectLine> create_transects_from_baseline(Baseline &baseline) {
   std::vector<TransectLine> transect_lines;
   // smoothing the transects
   auto smooth_factor = options.smooth_factor;
@@ -180,9 +180,10 @@ std::vector<TransectLine> create_transects_from_baseline(Baseline& baseline){
       smoothed_normal_vector.first = baseline.normal_vectors_.at(i).first;
       smoothed_normal_vector.second = baseline.normal_vectors_.at(i).second;
     }
-    transect_lines.emplace_back(baseline.transects_base_points_.at(i), transect_length,
-                                smoothed_normal_vector, transect_id++,
-                                baseline.baseline_id_, mode, orient);
+    transect_lines.emplace_back(baseline.transects_base_points_.at(i),
+                                transect_length, smoothed_normal_vector,
+                                transect_id++, baseline.baseline_id_, mode,
+                                orient);
     baseline.baseline_vertices_.push_back(
         transect_lines.at(transect_lines.size() - 1).transect_ref_point_);
   }

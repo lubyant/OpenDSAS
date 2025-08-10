@@ -45,7 +45,7 @@ struct GDALShpSaver {
 struct Point {
   double x, y;
 
-  Point() : x(0), y(0) {};
+  Point() : x(0), y(0){};
   Point(double x, double y) : x(x), y(y) {}
 
   friend std::ostream &operator<<(std::ostream &os, const Point &point);
@@ -58,7 +58,6 @@ struct Point {
 
   Point create_point(std::pair<double, double> orient, double dest);
 };
-
 
 struct LineSegment {
   Point leftEdge_, rightEdge_;
@@ -87,11 +86,8 @@ struct LineSegment {
                                   const Point &point2) const;
 
   [[nodiscard]] Point find_intersection(const Point &point1,
-                                          const Point &point2) const;
+                                        const Point &point2) const;
 };
-
-
-
 
 }  // namespace dsas
 

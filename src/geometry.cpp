@@ -1,4 +1,5 @@
 #include "geometry.hpp"
+
 #include "utility.hpp"
 
 namespace dsas {
