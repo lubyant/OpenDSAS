@@ -33,3 +33,4 @@ dsas --baseline your_baseline.shp --shoreline your_shoreline.shp
 1. add parallel computation
 2. add gui
 3. Cross-plaform on MSVC
+4. geojson input support
