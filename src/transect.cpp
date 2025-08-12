@@ -47,22 +47,17 @@ std::optional<IntersectPoint> TransectLine::intersection(
   // find out all the available intersection
   for (size_t i = 0; i < shoreline.size() - 1; i++) {
     if (is_intersect(shoreline[i], shoreline[i + 1])) {
-      try {
-        auto point = find_intersection(shoreline[i], shoreline[i + 1]);
-        auto distance = distance2ref(point);
-        IntersectPoint intersect_point{
-            point,        transect_id_,    shoreline.shoreline_id_,
-            baseline_id_, shoreline.date_, distance};
-        intersections.push_back(intersect_point);
-      } catch (std::runtime_error &e) {
-        auto point = Point((shoreline[i].x + shoreline[i + 1].x) / 2,
-                           (shoreline[i].y + shoreline[i + 1].y) / 2);
-        auto distance = distance2ref(point);
-        IntersectPoint intersect_point{
-            point,        transect_id_,    shoreline.shoreline_id_,
-            baseline_id_, shoreline.date_, distance};
-        intersections.push_back(intersect_point);
+      auto ret = find_intersection(shoreline[i], shoreline[i + 1]);
+      auto point = Point((shoreline[i].x + shoreline[i + 1].x) / 2,
+                         (shoreline[i].y + shoreline[i + 1].y) / 2);
+      if (ret) {
+        point = ret.value();
       }
+      auto distance = distance2ref(point);
+      IntersectPoint intersect_point{
+          point,        transect_id_,    shoreline.shoreline_id_,
+          baseline_id_, shoreline.date_, distance};
+      intersections.push_back(intersect_point);
     }
   }
 
