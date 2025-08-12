@@ -74,9 +74,13 @@ bool LineSegment::is_intersect(const Point &point1, const Point &point2) const {
   return isTwoSegmentIntersected(leftEdge_, rightEdge_, point1, point2);
 }
 
-Point LineSegment::find_intersection(const Point &point1,
-                                     const Point &point2) const {
-  return computeIntersectPoint(leftEdge_, rightEdge_, point1, point2);
+std::optional<Point> LineSegment::find_intersection(const Point &point1,
+                                                    const Point &point2) const {
+  Point point;
+  if (computeIntersectPoint(leftEdge_, rightEdge_, point1, point2, point)) {
+    return point;
+  }
+  return std::nullopt;
 }
 
 }  // namespace dsas

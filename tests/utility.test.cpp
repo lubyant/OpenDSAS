@@ -8,10 +8,7 @@
 #define TOL 1e-4
 using namespace dsas;
 TEST(UtilityTest, TestCrossProduct) {
-  std::vector<double> vec1{0.0, 1.0};
-  std::vector<double> vec2{1.0, 0.0};
-
-  auto ans = crossProduct(vec1, vec2);
+  auto ans = crossProduct(0.0, 1.0, 1.0, 0.0);
 
   EXPECT_EQ(ans, -1);
 }
