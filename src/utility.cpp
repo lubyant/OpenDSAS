@@ -11,22 +11,6 @@
 #define MIN_DOUBLE (-999999.9)
 namespace dsas {
 
-double crossProduct(std::vector<double> &vec1, std::vector<double> &vec2) {
-  return vec1[0] * vec2[1] - vec1[1] * vec2[0];
-}
-
-double calCrossOfTwoVectors(const dsas::Point &p1, const dsas::Point &p2,
-                            const dsas::Point &p3, const dsas::Point &p4) {
-  double x1 = p2.x - p1.x;
-  double x2 = p4.x - p3.x;
-  double y1 = p2.y - p1.y;
-  double y2 = p4.y - p3.y;
-  std::vector v1 = {x1, y1};
-  std::vector v2 = {x2, y2};
-
-  return crossProduct(v1, v2);
-}
-
 bool testRectangularOfIntersection(const dsas::Point &p1, const dsas::Point &p2,
                                    const dsas::Point &p3,
                                    const dsas::Point &p4) {

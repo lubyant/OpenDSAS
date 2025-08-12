@@ -23,10 +23,19 @@
 
 namespace dsas {
 
-double crossProduct(std::vector<double> &vec1, std::vector<double> &vec2);
+inline double crossProduct(double ax, double ay, double bx, double by) {
+  return ax * by - ay * bx;
+}
 
-double calCrossOfTwoVectors(const dsas::Point &p1, const dsas::Point &p2,
-                            const dsas::Point &p3, const dsas::Point &p4);
+inline double calCrossOfTwoVectors(const dsas::Point &p1, const dsas::Point &p2,
+                                   const dsas::Point &p3,
+                                   const dsas::Point &p4) {
+  double x1 = p2.x - p1.x;
+  double x2 = p4.x - p3.x;
+  double y1 = p2.y - p1.y;
+  double y2 = p4.y - p3.y;
+  return crossProduct(x1, y1, x2, y2);
+}
 
 bool testRectangularOfIntersection(const dsas::Point &p1, const dsas::Point &p2,
                                    const dsas::Point &p3,
