@@ -27,7 +27,7 @@ FetchContent_MakeAvailable(argparse)
 find_package(GDAL CONFIG REQUIRED)
 
 # boost
-find_package(Boost REQUIRED COMPONENTS date_time)
+find_package(Boost REQUIRED)
 
 # GoogleTest
 add_subdirectory(third_party/googletest)
@@ -54,7 +54,7 @@ target_include_directories(dsas_lib PUBLIC
 target_link_libraries(dsas_lib PUBLIC
     argparse
     GDAL::GDAL
-    Boost::date_time
+    Boost::headers
 )
 
 # ========================
