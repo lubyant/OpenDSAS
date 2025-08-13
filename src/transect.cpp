@@ -197,4 +197,18 @@ void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
                  [](const auto &up) { return up.get(); });
   dsas::save_lines(tmp_save, prj.c_str(), dsas::options.intersect_path);
 }
+
+void build_transect_index(
+    const Grids &grids, std::vector<std::unique_ptr<TransectLine>> &transects) {
+  for (auto &transect : transects) {
+    const double min_x{std::min(transect->leftEdge_.x, transect->rightEdge_.x)};
+    const double max_x{std::max(transect->leftEdge_.x, transect->rightEdge_.x)};
+    const double min_y{std::min(transect->leftEdge_.y, transect->rightEdge_.y)};
+    const double max_y{std::max(transect->leftEdge_.y, transect->rightEdge_.y)};
+    size_t nx_min{(min_x - Grid::grids_bound_left_bottom_x) / grid_size};
+    size_t nx_max{(max_x - Grid::grids_bound_left_bottom_x) / grid_size};
+    size_t ny_min{(min_y - Grid::grids_bound_left_bottom_y) / grid_size};
+    size_t ny_max{(max_y - Grid::grids_bound_left_bottom_y) / grid_size};
+    }
+}
 }  // namespace dsas

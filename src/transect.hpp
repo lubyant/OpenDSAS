@@ -4,6 +4,7 @@
 
 #include "baseline.hpp"
 #include "geometry.hpp"
+#include "grid.hpp"
 #include "intersect.hpp"
 
 namespace dsas {
@@ -21,8 +22,9 @@ struct TransectLine : public LineSegment,
   double change_rate{};  // change rate for all the intersections
   IntersectionMode mode_;
   TransectOrientation orient_;
-  std::vector<IntersectPoint*>
+  std::vector<IntersectPoint *>
       intersects;  // pointers to intersects in this transects
+  std::vector<std::pair<int, int>> grid_index;
 
   TransectLine(Point &transect_base, double transect_length,
                std::pair<double, double> baseline_normal_vector,
@@ -83,9 +85,14 @@ struct TransectLine : public LineSegment,
   }
 };
 
-std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(Baseline &);
+std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
+    Baseline &);
 
-void save_transect(const std::vector<std::unique_ptr<TransectLine>> &, const std::string&);
+void save_transect(const std::vector<std::unique_ptr<TransectLine>> &,
+                   const std::string &);
+
+void build_transect_index(
+    const Grids &grids, std::vector<std::unique_ptr<TransectLine>> &transects);
 }  // namespace dsas
 
 #endif
