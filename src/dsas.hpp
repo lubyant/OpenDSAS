@@ -9,12 +9,14 @@
 
 namespace dsas {
 
-std::vector<TransectLine> generate_transects(std::vector<Baseline> &);
+std::vector<std::unique_ptr<TransectLine>> generate_transects(
+    std::vector<Baseline> &);
 
-std::vector<IntersectPoint> generate_intersects(std::vector<TransectLine> &,
-                                                const std::vector<Shoreline> &);
+std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
+    std::vector<std::unique_ptr<TransectLine>> &,
+    const std::vector<Shoreline> &);
 
-double linearRegressRate(std::vector<IntersectPoint> &intersections);
+double linearRegressRate(std::vector<IntersectPoint *> &intersections);
 }  // namespace dsas
 
 #endif

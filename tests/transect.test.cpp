@@ -39,8 +39,8 @@ TEST_F(TransectTest, test_baseline_transect_lines) {
   double y[]{0, 0.5, 1, 0.5, 0.5, 0.5, 0};
 
   for (size_t i = 0; i < transects_lines.size(); i++) {
-    ASSERT_NEAR(x[i], transects_lines[i].transect_ref_point_.x, TOL);
-    ASSERT_NEAR(y[i], transects_lines[i].transect_ref_point_.y, TOL);
+    ASSERT_NEAR(x[i], transects_lines[i]->transect_ref_point_.x, TOL);
+    ASSERT_NEAR(y[i], transects_lines[i]->transect_ref_point_.y, TOL);
   }
 }
 
@@ -64,10 +64,10 @@ TEST_F(TransectTest, test_baseline_transect_lines_right) {
   double x_left[]{0, 0, 0, 0.5, 1, 1, 1};
   double y_left[]{0, 0.5, 1, 1, 1, 0.5, 0};
   for (size_t i = 0; i < transects_lines.size(); i++) {
-    ASSERT_NEAR(x_right[i], transects_lines[i].rightEdge_.x, TOL);
-    ASSERT_NEAR(y_right[i], transects_lines[i].rightEdge_.y, TOL);
-    ASSERT_NEAR(x_left[i], transects_lines[i].leftEdge_.x, TOL);
-    ASSERT_NEAR(y_left[i], transects_lines[i].leftEdge_.y, TOL);
+    ASSERT_NEAR(x_right[i], transects_lines[i]->rightEdge_.x, TOL);
+    ASSERT_NEAR(y_right[i], transects_lines[i]->rightEdge_.y, TOL);
+    ASSERT_NEAR(x_left[i], transects_lines[i]->leftEdge_.x, TOL);
+    ASSERT_NEAR(y_left[i], transects_lines[i]->leftEdge_.y, TOL);
   }
 }
 
@@ -92,10 +92,10 @@ TEST_F(TransectTest, test_baseline_transect_lines_mix) {
   double x_left[]{-0.5, -0.5, -0.5, 0.5, 1, 1.5, 1.5};
   double y_left[]{0, 0.5, 1, 1.5, 1.5, 0.5, 0};
   for (size_t i = 0; i < transects_lines.size(); i++) {
-    ASSERT_NEAR(x_right[i], transects_lines[i].rightEdge_.x, TOL);
-    ASSERT_NEAR(y_right[i], transects_lines[i].rightEdge_.y, TOL);
-    ASSERT_NEAR(x_left[i], transects_lines[i].leftEdge_.x, TOL);
-    ASSERT_NEAR(y_left[i], transects_lines[i].leftEdge_.y, TOL);
+    ASSERT_NEAR(x_right[i], transects_lines[i]->rightEdge_.x, TOL);
+    ASSERT_NEAR(y_right[i], transects_lines[i]->rightEdge_.y, TOL);
+    ASSERT_NEAR(x_left[i], transects_lines[i]->leftEdge_.x, TOL);
+    ASSERT_NEAR(y_left[i], transects_lines[i]->leftEdge_.y, TOL);
   }
 }
 
@@ -118,10 +118,10 @@ TEST_F(TransectTest, test_baseline_transect_lines_left) {
   double y_right[]{0, 0.5, 1, 1, 1, 0.5, 0};
 
   for (size_t i = 0; i < transects_lines.size(); i++) {
-    ASSERT_NEAR(x_right[i], transects_lines[i].rightEdge_.x, TOL);
-    ASSERT_NEAR(y_right[i], transects_lines[i].rightEdge_.y, TOL);
-    ASSERT_NEAR(x_left[i], transects_lines[i].leftEdge_.x, TOL);
-    ASSERT_NEAR(y_left[i], transects_lines[i].leftEdge_.y, TOL);
+    ASSERT_NEAR(x_right[i], transects_lines[i]->rightEdge_.x, TOL);
+    ASSERT_NEAR(y_right[i], transects_lines[i]->rightEdge_.y, TOL);
+    ASSERT_NEAR(x_left[i], transects_lines[i]->leftEdge_.x, TOL);
+    ASSERT_NEAR(y_left[i], transects_lines[i]->leftEdge_.y, TOL);
   }
 }
 
@@ -135,7 +135,7 @@ TEST_F(TransectTest, test_baseline_transect_length1) {
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
   for (const auto &transect : transects_lines) {
-    ASSERT_NEAR(transect.leftEdge_.distance_to_point(transect.rightEdge_), 1,
+    ASSERT_NEAR(transect->leftEdge_.distance_to_point(transect->rightEdge_), 1,
                 TOL);
   }
 }
@@ -150,7 +150,7 @@ TEST_F(TransectTest, test_baseline_transect_length2) {
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
   for (const auto &transect : transects_lines) {
-    ASSERT_NEAR(transect.leftEdge_.distance_to_point(transect.rightEdge_), 1,
+    ASSERT_NEAR(transect->leftEdge_.distance_to_point(transect->rightEdge_), 1,
                 TOL);
   }
 }
@@ -168,8 +168,8 @@ TEST_F(TransectTest, test_baseline_smooth) {
     baseline = std::make_unique<Baseline>(points, 0);
     auto transects_lines = create_transects_from_baseline(*baseline);
     ASSERT_EQ(baseline->origin_vertices_.size(), 4);
-    double slope{transects_lines[0].normal_vector_.first /
-                 transects_lines[0].normal_vector_.second};
+    double slope{transects_lines[0]->normal_vector_.first /
+                 transects_lines[0]->normal_vector_.second};
     ASSERT_NEAR(slope, 1, TOL);
   }
   {

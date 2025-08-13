@@ -2,6 +2,8 @@
 
 #include <ogrsf_frmts.h>
 
+#include <memory>
+
 #include "utility.hpp"
 
 namespace dsas {
@@ -147,8 +149,9 @@ void save_points(const std::vector<TransectLine> &shapes, const char *pszProj,
   GDALClose(dataset);
 }
 
-std::vector<TransectLine> create_transects_from_baseline(Baseline &baseline) {
-  std::vector<TransectLine> transect_lines;
+std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
+    Baseline &baseline) {
+  std::vector<std::unique_ptr<TransectLine>> transect_lines;
   // smoothing the transects
   auto smooth_factor = options.smooth_factor;
   if (options.smooth_factor < 0) {
@@ -175,13 +178,23 @@ std::vector<TransectLine> create_transects_from_baseline(Baseline &baseline) {
       smoothed_normal_vector.first = baseline.normal_vectors_.at(i).first;
       smoothed_normal_vector.second = baseline.normal_vectors_.at(i).second;
     }
-    transect_lines.emplace_back(baseline.transects_base_points_.at(i),
-                                transect_length, smoothed_normal_vector,
-                                transect_id++, baseline.baseline_id_, mode,
-                                orient);
+    transect_lines.emplace_back(std::make_unique<TransectLine>(
+        baseline.transects_base_points_.at(i), transect_length,
+        smoothed_normal_vector, transect_id++, baseline.baseline_id_, mode,
+        orient));
     baseline.baseline_vertices_.push_back(
-        transect_lines.at(transect_lines.size() - 1).transect_ref_point_);
+        transect_lines.at(transect_lines.size() - 1)->transect_ref_point_);
   }
   return transect_lines;
+}
+
+void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
+                   const std::string &prj) {
+  std::vector<TransectLine *> tmp_save;
+  tmp_save.reserve(transects.size());
+  std::transform(transects.begin(), transects.end(),
+                 std::back_inserter(tmp_save),
+                 [](const auto &up) { return up.get(); });
+  dsas::save_lines(tmp_save, prj.c_str(), dsas::options.intersect_path);
 }
 }  // namespace dsas
