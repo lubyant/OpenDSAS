@@ -125,9 +125,9 @@ static void run() {
 
   // compute regression rate
   for (auto &transect : transects) {
-    if (!transect.intersects.empty()) {
-      auto reg_rate = dsas::linearRegressRate(transect.intersects);
-      transect.change_rate = reg_rate;
+    if (!(transect->intersects.empty())) {
+      auto reg_rate = dsas::linearRegressRate(transect->intersects);
+      transect->change_rate = reg_rate;
     }
   }
 
@@ -135,8 +135,8 @@ static void run() {
   auto prj = dsas::get_shp_proj(dsas::options.shoreline_path.c_str());
 
   // save the output
-  dsas::save_points(intersects, prj.c_str(), dsas::options.intersect_path);
-  dsas::save_lines(transects, prj.c_str(), dsas::options.transect_path);
+  dsas::save_transect(transects, prj);
+  dsas::save_intersects(intersects, prj);
 }
 
 int main(int argc, char *argv[]) {

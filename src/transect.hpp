@@ -21,7 +21,7 @@ struct TransectLine : public LineSegment,
   double change_rate{};  // change rate for all the intersections
   IntersectionMode mode_;
   TransectOrientation orient_;
-  std::vector<IntersectPoint>
+  std::vector<IntersectPoint*>
       intersects;  // pointers to intersects in this transects
 
   TransectLine(Point &transect_base, double transect_length,
@@ -83,8 +83,9 @@ struct TransectLine : public LineSegment,
   }
 };
 
-std::vector<TransectLine> create_transects_from_baseline(Baseline &);
+std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(Baseline &);
 
+void save_transect(const std::vector<std::unique_ptr<TransectLine>> &, const std::string&);
 }  // namespace dsas
 
 #endif
