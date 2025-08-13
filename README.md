@@ -7,7 +7,7 @@ This is a reimplementation of Digital Shoreline Analysis System in linux/CPP.
 
 - CMake ≥ 3.14
 - C++20 compatible compiler
-- GDAL ≥ 3.8.5
+- GDAL ≥ 3.8.5 (you better build from source, do not use apt install)
 - Boost
 
 ### Building the Project
