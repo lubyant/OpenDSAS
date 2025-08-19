@@ -210,15 +210,11 @@ TEST_F(TransectTest, test_build_transect_index) {
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
-  for (auto &transects_line : transects_lines) {
-    std::cout << transects_line->leftEdge_ << ", " << transects_line->rightEdge_
-              << "\n";
-  }
   Grid::grid_size = 1;
   Grid::grids_bound_left_bottom_x = 0;
   Grid::grids_bound_left_bottom_y = 0;
-  Grid::grids_bound_right_top_x = 2;
-  Grid::grids_bound_right_top_y = 2;
+  Grid::grids_bound_right_top_x = 3;
+  Grid::grids_bound_right_top_y = 3;
   build_transect_index(transects_lines);
 
   {
@@ -238,7 +234,7 @@ TEST_F(TransectTest, test_build_transect_index) {
   {
     auto &transect = transects_lines[2];
     ASSERT_EQ(transect->grid_index.size(), 1);
-    ASSERT_EQ(transect->grid_index[0].first, 1);
+    ASSERT_EQ(transect->grid_index[0].first, 0);
     ASSERT_EQ(transect->grid_index[0].second, 0);
   }
 
@@ -252,7 +248,7 @@ TEST_F(TransectTest, test_build_transect_index) {
   {
     auto &transect = transects_lines[4];
     ASSERT_EQ(transect->grid_index.size(), 1);
-    ASSERT_EQ(transect->grid_index[0].first, 2);
+    ASSERT_EQ(transect->grid_index[0].first, 1);
     ASSERT_EQ(transect->grid_index[0].second, 0);
   }
 
@@ -265,6 +261,29 @@ TEST_F(TransectTest, test_build_transect_index) {
 
   {
     auto &transect = transects_lines[6];
+    ASSERT_EQ(transect->grid_index.size(), 1);
+    ASSERT_EQ(transect->grid_index[0].first, 2);
+    ASSERT_EQ(transect->grid_index[0].second, 0);
+  }
+}
+
+TEST_F(TransectTest, test_build_transect_out_of_bound) {
+  std::vector<Point> points{{0, 0}, {1, 0}, {2, 0}, {3, 0}};
+  options.transect_length = 1;
+  options.transect_spacing = 0.5;
+  options.transect_offset = 0;
+  options.smooth_factor = 0;
+  options.intersection_mode = dsas::Options::IntersectionMode::Closest;
+  baseline = std::make_unique<Baseline>(points, 0);
+  auto transects_lines = create_transects_from_baseline(*baseline);
+  Grid::grid_size = 1;
+  Grid::grids_bound_left_bottom_x = 5;
+  Grid::grids_bound_left_bottom_y = 0;
+  Grid::grids_bound_right_top_x = 6;
+  Grid::grids_bound_right_top_y = 3;
+  build_transect_index(transects_lines);
+
+  for (auto &transect : transects_lines) {
     ASSERT_EQ(transect->grid_index.size(), 0);
   }
 }

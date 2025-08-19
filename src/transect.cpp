@@ -201,35 +201,85 @@ void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
 
 void build_transect_index(
     std::vector<std::unique_ptr<TransectLine>> &transects) {
-  double grid_size{Grid::grid_size};
+  // Basic sanity
+  assert(Grid::grid_size > 0.0);
+  assert(Grid::grids_bound_right_top_x > Grid::grids_bound_left_bottom_x);
+  assert(Grid::grids_bound_right_top_y > Grid::grids_bound_left_bottom_y);
+
+  const double left_bottom_x = Grid::grids_bound_left_bottom_x;
+  const double left_bottom_y = Grid::grids_bound_left_bottom_y;
+  const double right_top_x = Grid::grids_bound_right_top_x;
+  const double right_top_y = Grid::grids_bound_right_top_y;
+  const double grid_size = Grid::grid_size;
+
+  // compute grid dims once (avoid recomputing in every loop)
+  int nx = static_cast<int>((right_top_x - left_bottom_x) / grid_size);
+  int ny = static_cast<int>((right_top_y - left_bottom_y) / grid_size);
+  assert(nx > 0 && ny > 0);
+
+  auto compute_index_x = [&](const double x) {
+    int x_index =
+        static_cast<int>(std::ceil(x - left_bottom_x) / grid_size) - 1;
+    if (x_index < 0) {
+      x_index = 0;
+    }
+    if (x_index >= nx) {
+      x_index = nx - 1;
+    }
+    return x_index;
+  };
+
+  auto compute_index_y = [&](const double y) {
+    int y_index =
+        static_cast<int>(std::ceil(y - left_bottom_y) / grid_size) - 1;
+    if (y_index < 0) {
+      y_index = 0;
+    }
+    if (y_index >= ny) {
+      y_index = ny - 1;
+    }
+    return y_index;
+  };
   for (auto &transect : transects) {
-    const double min_x{std::min(transect->leftEdge_.x, transect->rightEdge_.x)};
-    const double max_x{std::max(transect->leftEdge_.x, transect->rightEdge_.x)};
-    const double min_y{std::min(transect->leftEdge_.y, transect->rightEdge_.y)};
-    const double max_y{std::max(transect->leftEdge_.y, transect->rightEdge_.y)};
-    size_t nx_min{static_cast<size_t>(
-        (min_x - Grid::grids_bound_left_bottom_x) / grid_size)};
-    size_t nx_max{static_cast<size_t>(
-        (max_x - Grid::grids_bound_left_bottom_x) / grid_size)};
-    if (max_x > Grid::grids_bound_right_top_x) {
-      nx_max = static_cast<size_t>(
-          (Grid::grids_bound_right_top_x - Grid::grids_bound_left_bottom_x) /
-          grid_size);
+    const double min_x =
+        std::min(transect->leftEdge_.x, transect->rightEdge_.x);
+    const double max_x =
+        std::max(transect->leftEdge_.x, transect->rightEdge_.x);
+    const double min_y =
+        std::min(transect->leftEdge_.y, transect->rightEdge_.y);
+    const double max_y =
+        std::max(transect->leftEdge_.y, transect->rightEdge_.y);
+
+    // Early skip if bbox is entirely outside the grid bounds (cheap)
+    if (max_x < left_bottom_x || min_x > right_top_x || max_y < left_bottom_y ||
+        min_y > right_top_y) {
+      continue;
     }
-    size_t ny_min{static_cast<size_t>(
-        (min_y - Grid::grids_bound_left_bottom_y) / grid_size)};
-    size_t ny_max{static_cast<size_t>(
-        (max_y - Grid::grids_bound_left_bottom_y) / grid_size)};
-    if (max_y > Grid::grids_bound_right_top_y) {
-      ny_max = static_cast<size_t>(
-          (Grid::grids_bound_right_top_y - Grid::grids_bound_left_bottom_y) /
-          grid_size);
+
+    // Convert to cell indices (inclusive range)
+    int ix0 = compute_index_x(min_x);
+    int ix1 = compute_index_x(max_x);
+    int iy0 = compute_index_y(min_y);
+    int iy1 = compute_index_y(max_y);
+
+    // Handle possible inversion (segment entirely outside after clamping)
+    if (ix0 > ix1 || iy0 > iy1) {
+      continue;
     }
-    for (size_t i = nx_min; i <= nx_max; i++) {
-      for (size_t j = ny_min; j <= ny_max; j++) {
-        transect->grid_index.emplace_back(i, j);
+
+    // Reserve to avoid repeated reallocs if you store many cells
+    const int cells_x = ix1 - ix0 + 1;
+    const int cells_y = iy1 - iy0 + 1;
+    transect->grid_index.reserve(transect->grid_index.size() +
+                                 cells_x * cells_y);
+
+    for (int ix = ix0; ix <= ix1; ++ix) {
+      for (int iy = iy0; iy <= iy1; ++iy) {
+        transect->grid_index.emplace_back(static_cast<size_t>(ix),
+                                          static_cast<size_t>(iy));
       }
     }
   }
 }
+
 }  // namespace dsas
