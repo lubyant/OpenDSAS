@@ -6,8 +6,11 @@
 
 namespace dsas {
 struct Grid {
-  static double grids_bound_left_bottom_x;
+  static double grids_bound_left_bottom_x; // left_bottom of all grids
   static double grids_bound_left_bottom_y;
+  static double grids_bound_right_top_x; // right_top of all grids
+  static double grids_bound_right_top_y;
+  static double grid_size;
 
   double min_x, min_y;
   size_t i, j;  // index in Grids
@@ -24,7 +27,6 @@ struct MapBound {
   double grid_size = 0;
 };
 extern MapBound map_bound;
-extern double grid_size;
 
 using Grids = std::vector<std::vector<Grid>>;
 Grids create_grids(const MapBound &map_bound);

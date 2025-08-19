@@ -121,12 +121,13 @@ std::vector<Shoreline> load_shorelines_shp(
   // Cleanup
   GDALClose(poDS);
 
-  mean_shore_segment = total_length / count;
-  grid_size = mean_shore_segment;
+  mean_shore_segment = total_length / static_cast<double>(count);
+  Grid::grid_size = mean_shore_segment;
   return shorelines;
 }
 void build_shoreline_index(const std::vector<Shoreline> &shorelines,
                            Grids &grids) {
+  double grid_size{Grid::grid_size};
   for (size_t i = 0; i < shorelines.size(); i++) {
     for (size_t j = 0; j < shorelines[i].shoreline_vertices_.size() - 1; j++) {
       const double min_x{std::min(shorelines[i].shoreline_vertices_[j].x,
@@ -137,13 +138,17 @@ void build_shoreline_index(const std::vector<Shoreline> &shorelines,
                                   shorelines[i].shoreline_vertices_[j + 1].y)};
       const double max_y{std::max(shorelines[i].shoreline_vertices_[j].y,
                                   shorelines[i].shoreline_vertices_[j + 1].y)};
-      size_t nx_min{(min_x - Grid::grids_bound_left_bottom_x) / grid_size};
-      size_t nx_max{(max_x - Grid::grids_bound_left_bottom_x) / grid_size};
-      size_t ny_min{(min_y - Grid::grids_bound_left_bottom_y) / grid_size};
-      size_t ny_max{(max_y - Grid::grids_bound_left_bottom_y) / grid_size};
+      size_t nx_min{static_cast<size_t>(
+          (min_x - Grid::grids_bound_left_bottom_x) / grid_size)};
+      size_t nx_max{static_cast<size_t>(
+          (max_x - Grid::grids_bound_left_bottom_x) / grid_size)};
+      size_t ny_min{static_cast<size_t>(
+          (min_y - Grid::grids_bound_left_bottom_y) / grid_size)};
+      size_t ny_max{static_cast<size_t>(
+          (max_y - Grid::grids_bound_left_bottom_y) / grid_size)};
       for (size_t nx = nx_min; nx <= nx_max; nx++) {
         for (size_t ny = ny_min; ny <= ny_max; ny++) {
-          grids[nx][ny].shoreline_segs_indices.push_back({i, j});
+          grids[nx][ny].shoreline_segs_indices.emplace_back(i, j);
         }
       }
     }

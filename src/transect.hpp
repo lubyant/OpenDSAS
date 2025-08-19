@@ -91,8 +91,7 @@ std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &,
                    const std::string &);
 
-void build_transect_index(
-    const Grids &grids, std::vector<std::unique_ptr<TransectLine>> &transects);
+void build_transect_index(std::vector<std::unique_ptr<TransectLine>> &transects);
 }  // namespace dsas
 
 #endif

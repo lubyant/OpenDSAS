@@ -3,10 +3,16 @@
 namespace dsas {
 
 MapBound map_bound;
-double grid_size = 0;
 
-Grids create_grids(MapBound &map_bound) {
+double Grid::grids_bound_left_bottom_x = 0.0;
+double Grid::grids_bound_left_bottom_y = 0.0;
+double Grid::grids_bound_right_top_x = 0;
+double Grid::grids_bound_right_top_y = 0;
+double Grid::grid_size = 0.0;
+
+Grids create_grids(const MapBound &map_bound) {
   Grids grids;
+  double grid_size{Grid::grid_size};
   const double x_range{map_bound.max_x - map_bound.min_x};
   const double y_range{map_bound.max_y - map_bound.max_x};
 
