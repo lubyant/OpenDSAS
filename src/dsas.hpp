@@ -6,6 +6,7 @@
 #include "intersect.hpp"
 #include "shoreline.hpp"
 #include "transect.hpp"
+#include "grid.hpp"
 
 namespace dsas {
 
@@ -15,6 +16,10 @@ std::vector<std::unique_ptr<TransectLine>> generate_transects(
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     std::vector<std::unique_ptr<TransectLine>> &,
     const std::vector<std::unique_ptr<Shoreline>> &);
+
+std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
+    std::vector<std::unique_ptr<TransectLine>> &,
+    const Grids &);
 
 double linearRegressRate(std::vector<IntersectPoint *> &intersections);
 }  // namespace dsas

@@ -34,8 +34,9 @@ TEST(GridTest, test_create_grid) {
 TEST(GridTest, test_compute_grid_bound){
   std::vector<Point> shore_vertices{{0,0},{1,1},{2,2},{3,3}};
   boost::gregorian::date t_date(2000,1,1);
-  Shoreline shoreline{shore_vertices, 0, t_date};
-  std::vector<Shoreline> shorelines{shoreline};
+  auto shoreline = std::make_unique<Shoreline>(shore_vertices, 0, t_date);
+  std::vector<std::unique_ptr<Shoreline>> shorelines;
+  shorelines.push_back(std::move(shoreline));
 
   compute_grid_bound(shorelines);
   ASSERT_NEAR(Grid::grid_size, 1.4142, TOL);
@@ -143,8 +144,9 @@ TEST(GridTest, test_build_shoreline_index){
   std::vector<Point> shore_vertices{{0,0},{1,1},{2,2},{3,3}};
 
   boost::gregorian::date t_date(2000,1,1);
-  Shoreline shoreline{shore_vertices, 0, t_date};
-  std::vector<Shoreline> shorelines{shoreline};
+  auto shoreline = std::make_unique<Shoreline>(shore_vertices, 0, t_date);
+  std::vector<std::unique_ptr<Shoreline>> shorelines;
+  shorelines.push_back(std::move(shoreline));
   
   build_shoreline_index(shorelines, grids);
 

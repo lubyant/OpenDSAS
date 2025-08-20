@@ -3,7 +3,7 @@
 
 namespace dsas {
 
-void compute_grid_bound(const std::vector<Shoreline> &shorelines,
+void compute_grid_bound(const std::vector<std::unique_ptr<Shoreline>> &shorelines,
 bool padding){
   // two pq to find the median length of shorelines 
   std::priority_queue<double> max_pq;
@@ -14,13 +14,13 @@ bool padding){
   double max_y = std::numeric_limits<double>::lowest();
   
   for(const auto&shoreline: shorelines){
-    for(size_t i=0; i < shoreline.shoreline_vertices_.size(); i++){
-      min_x = std::min(min_x, shoreline[i].x);
-      max_x = std::max(max_x, shoreline[i].x);
-      min_y = std::min(min_y, shoreline[i].y);
-      max_y = std::max(max_y, shoreline[i].y);
-      if(i < shoreline.size()-1){
-        double seg_len = shoreline[i].distance_to_point(shoreline[i+1]);
+    for(size_t i=0; i < shoreline->size(); i++){
+      min_x = std::min(min_x, (*shoreline)[i].x);
+      max_x = std::max(max_x, (*shoreline)[i].x);
+      min_y = std::min(min_y, (*shoreline)[i].y);
+      max_y = std::max(max_y, (*shoreline)[i].y);
+      if(i < shoreline->size()-1){
+        double seg_len = (*shoreline)[i].distance_to_point((*shoreline)[i+1]);
         max_pq.push(seg_len);
         min_pq.push(max_pq.top());
         max_pq.pop();
@@ -74,7 +74,7 @@ Grids create_grids() {
   return grids;
 }
 
-void build_shoreline_index(const std::vector<Shoreline> &shorelines,
+void build_shoreline_index(const std::vector<std::unique_ptr<Shoreline>> &shorelines,
                            Grids &grids) {
   // basic sanity
   assert(Grid::grid_size > 0.0);
@@ -117,7 +117,7 @@ void build_shoreline_index(const std::vector<Shoreline> &shorelines,
   };
 
   for (size_t si = 0; si < shorelines.size(); ++si) {
-    const auto &pts = shorelines[si].shoreline_vertices_;
+    const auto &pts = shorelines[si]->shoreline_vertices_;
     if (pts.size() < 2) continue;
 
     for (size_t j = 0; j + 1 < pts.size(); ++j) {
@@ -144,7 +144,7 @@ void build_shoreline_index(const std::vector<Shoreline> &shorelines,
       for (int ix = ix0; ix <= ix1; ++ix) {
         for (int iy = iy0; iy <= iy1; ++iy) {
           grids[static_cast<size_t>(ix)][static_cast<size_t>(iy)]
-              .shoreline_segs.emplace_back(a, b, shorelines[si].shoreline_id_);
+              .shoreline_segs.emplace_back(a, b, shorelines[si].get());
         }
       }
     }

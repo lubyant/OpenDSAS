@@ -23,13 +23,13 @@ struct Grid {
       : min_x{min_x}, min_y{min_y}, i{i}, j{j} {}
 };
 
-void compute_grid_bound(const std::vector<Shoreline> &shorelines,
+void compute_grid_bound(const std::vector<std::unique_ptr<Shoreline>> &shorelines,
 bool padding=true);
 
 using Grids = std::vector<std::vector<Grid>>;
 Grids create_grids();
 
-void build_shoreline_index(const std::vector<Shoreline> &shorelines,
+void build_shoreline_index(const std::vector<std::unique_ptr<Shoreline>> &shorelines,
                            Grids &grids);
 
 void build_transect_index(std::vector<std::unique_ptr<TransectLine>> &transects);

@@ -33,6 +33,15 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
   return intersects;
 }
 
+std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
+    std::vector<std::unique_ptr<TransectLine>> &transects,
+    const Grids &grids){
+  std::vector<std::unique_ptr<IntersectPoint>> intersects;
+  for (size_t i = 0; i < transects.size(); i++) {
+  }
+  return intersects;
+}
+
 double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   // if no intersection
   if (intersections.empty()) {

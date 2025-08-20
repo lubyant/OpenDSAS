@@ -4,11 +4,6 @@
 #include <memory>
 
 namespace dsas {
-struct ShoreSeg{
-  Point start;
-  Point end;
-  int shoreline_id;
-};
 
 extern double mean_shore_segment;  // mean length of shoreline segment
 struct Shoreline : public MultiLine<Point> {
@@ -30,6 +25,12 @@ struct Shoreline : public MultiLine<Point> {
   [[nodiscard]] const Point &operator[](size_t i) const override {
     return shoreline_vertices_[i];
   }
+};
+
+struct ShoreSeg{
+  Point start;
+  Point end;
+  Shoreline *shoreline; // shoreline object that this seg belong to
 };
 
 std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(

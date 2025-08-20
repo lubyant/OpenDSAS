@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "utility.hpp"
+#include "grid.hpp"
 
 namespace dsas {
 
@@ -61,6 +62,53 @@ std::optional<IntersectPoint> TransectLine::intersection(
           point,        transect_id_,    shoreline.shoreline_id_,
           baseline_id_, shoreline.date_, distance};
       intersections.push_back(intersect_point);
+    }
+  }
+
+  // if no intersection
+  if (intersections.empty()) {
+    return std::nullopt;
+  }
+
+  // if only one intersection
+  if (intersections.size() == 1) {
+    return intersections[0];
+  }
+
+  // if more than two intersections, pick one base on the intersection mode
+  std::sort(intersections.begin(), intersections.end(),
+            [](const IntersectPoint &a, const IntersectPoint &b) {
+              return a.distance_to_ref_ < b.distance_to_ref_;
+            });
+
+  if (mode_ == IntersectionMode::Farthest) {
+    // farthest mode return farthest distance
+    return intersections[intersections.size() - 1];
+  } else {
+    // close mode return smallest dis
+    return intersections[0];
+  }
+}
+
+std::optional<IntersectPoint> TransectLine::intersection(
+    const Grids &grids) const {
+  if(grid_index.empty()) return std::nullopt;
+
+  std::vector<IntersectPoint> intersections;
+
+  // find out all the available intersection
+  for (auto [grid_i, grid_j]: grid_index) {
+    auto &grid = grids[grid_i][grid_j];
+    for(auto &shore_seg: grid.shoreline_segs){
+      if (is_intersect(shore_seg.start, shore_seg.end)) {
+        auto ret = find_intersection(shore_seg.start, shore_seg.end);
+        auto point = ret.value();
+        auto distance = distance2ref(point);
+        IntersectPoint intersect_point{
+            point,        transect_id_,    shore_seg.shoreline->shoreline_id_,
+            baseline_id_, shore_seg.shoreline->date_, distance};
+        intersections.push_back(intersect_point);
+      }
     }
   }
 

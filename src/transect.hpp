@@ -7,6 +7,7 @@
 #include "intersect.hpp"
 
 namespace dsas {
+struct Grid; // forward declaration
 
 #define transect_t int, int, double
 struct TransectLine : public LineSegment,
@@ -14,6 +15,7 @@ struct TransectLine : public LineSegment,
                       GDALShpSaver<transect_t> {
   using IntersectionMode = dsas::Options::IntersectionMode;
   using TransectOrientation = dsas::Options::TransectOrientation;
+  using Grids = std::vector<std::vector<Grid>>;
   Point transect_base_point_;  // point to generate the shapefile
   Point transect_ref_point_;   // point to calculate the erosion
   int transect_id_;
@@ -52,6 +54,9 @@ struct TransectLine : public LineSegment,
 
   [[nodiscard]] std::optional<IntersectPoint> intersection(
       const Shoreline &shoreline) const;
+
+  [[nodiscard]] std::optional<IntersectPoint> intersection(
+      const Grids &grids) const;
 
   double distance2ref(Point &point) const {
     return transect_ref_point_.distance_to_point(point);
