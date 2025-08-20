@@ -28,10 +28,10 @@ boost::gregorian::date generate_date_from_str(const char *date_str) {
   return g_date;
 }
 
-std::vector<Shoreline> load_shorelines_shp(
+std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
     const std::filesystem::path &shoreline_shp_path,
     const char *date_field_name) {
-  std::vector<Shoreline> shorelines;
+  std::vector<std::unique_ptr<Shoreline>> shorelines;
   int shoreline_id{0};
 
   // Initialize GDAL
@@ -60,33 +60,33 @@ std::vector<Shoreline> load_shorelines_shp(
     auto date = generate_date_from_str(date_field);
     if (poGeometry != nullptr) {
       auto gtype = wkbFlatten(poGeometry->getGeometryType());
-      Shoreline shoreline;
+      auto shoreline = std::make_unique<Shoreline>();
       if (gtype == wkbLineString) {
         OGRLineString *poLine = dynamic_cast<OGRLineString *>(poGeometry);
         for (int i = 0; i < poLine->getNumPoints(); i++) {
           OGRPoint point;
           poLine->getPoint(i, &point);
-          shoreline.shoreline_vertices_.emplace_back(point.getX(),
+          shoreline->shoreline_vertices_.emplace_back(point.getX(),
                                                      point.getY());
         }
-        shoreline.shoreline_id_ = shoreline_id++;
-        shoreline.date_ = date;
+        shoreline->shoreline_id_ = shoreline_id++;
+        shoreline->date_ = date;
         shorelines.push_back(std::move(shoreline));
       } else if (gtype == wkbMultiLineString) {
         OGRMultiLineString *poMulti =
             dynamic_cast<OGRMultiLineString *>(poGeometry);
         for (int j = 0; j < poMulti->getNumGeometries(); j++) {
-          Shoreline shoreline;
+          auto shoreline = std::make_unique<Shoreline>();
           OGRGeometry *subGeom = poMulti->getGeometryRef(j);
           OGRLineString *poLine = dynamic_cast<OGRLineString *>(subGeom);
           for (int i = 0; i < poLine->getNumPoints(); i++) {
             OGRPoint point;
             poLine->getPoint(i, &point);
-            shoreline.shoreline_vertices_.emplace_back(point.getX(),
+            shoreline->shoreline_vertices_.emplace_back(point.getX(),
                                                        point.getY());
           }
-          shoreline.shoreline_id_ = shoreline_id;
-          shoreline.date_ = date;
+          shoreline->shoreline_id_ = shoreline_id;
+          shoreline->date_ = date;
           shorelines.push_back(std::move(shoreline));
         }
         shoreline_id++;
