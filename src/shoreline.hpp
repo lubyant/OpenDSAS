@@ -1,6 +1,7 @@
 #ifndef SRC_SHORELINE_HPP_
 #define SRC_SHORELINE_HPP_
 #include "geometry.hpp"
+#include <memory>
 
 namespace dsas {
 struct Shoreline : public MultiLine<Point> {
@@ -24,7 +25,7 @@ struct Shoreline : public MultiLine<Point> {
   }
 };
 
-std::vector<Shoreline> load_shorelines_shp(
+std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
     const std::filesystem::path &shoreline_shp_path,
     const char *date_field_name);
 }  // namespace dsas
