@@ -5,9 +5,10 @@
 #include "baseline.hpp"
 #include "geometry.hpp"
 #include "intersect.hpp"
+#include "shoreline.hpp"
 
 namespace dsas {
-struct Grid; // forward declaration
+struct Grid;  // forward declaration
 
 #define transect_t int, int, double
 struct TransectLine : public LineSegment,
@@ -55,7 +56,7 @@ struct TransectLine : public LineSegment,
   [[nodiscard]] std::optional<IntersectPoint> intersection(
       const Shoreline &shoreline) const;
 
-  [[nodiscard]] std::optional<IntersectPoint> intersection(
+  [[nodiscard]] std::vector<std::unique_ptr<IntersectPoint>> intersection(
       const Grids &grids) const;
 
   double distance2ref(Point &point) const {

@@ -1,46 +1,49 @@
 #include "grid.hpp"
+
 #include <queue>
 
 namespace dsas {
 
-void compute_grid_bound(const std::vector<std::unique_ptr<Shoreline>> &shorelines,
-bool padding){
-  // two pq to find the median length of shorelines 
+void compute_grid_bound(
+    const std::vector<std::unique_ptr<Shoreline>> &shorelines, bool padding) {
+  // two pq to find the median length of shorelines
   std::priority_queue<double> max_pq;
   std::priority_queue<double, std::vector<double>, std::greater<double>> min_pq;
   double min_x = std::numeric_limits<double>::max();
   double min_y = std::numeric_limits<double>::max();
   double max_x = std::numeric_limits<double>::lowest();
   double max_y = std::numeric_limits<double>::lowest();
-  
-  for(const auto&shoreline: shorelines){
-    for(size_t i=0; i < shoreline->size(); i++){
+
+  for (const auto &shoreline : shorelines) {
+    for (size_t i = 0; i < shoreline->size(); i++) {
       min_x = std::min(min_x, (*shoreline)[i].x);
       max_x = std::max(max_x, (*shoreline)[i].x);
       min_y = std::min(min_y, (*shoreline)[i].y);
       max_y = std::max(max_y, (*shoreline)[i].y);
-      if(i < shoreline->size()-1){
-        double seg_len = (*shoreline)[i].distance_to_point((*shoreline)[i+1]);
+      if (i < shoreline->size() - 1) {
+        double seg_len = (*shoreline)[i].distance_to_point((*shoreline)[i + 1]);
         max_pq.push(seg_len);
         min_pq.push(max_pq.top());
         max_pq.pop();
-        
-        if(max_pq.size() < min_pq.size()){
+
+        if (max_pq.size() < min_pq.size()) {
           max_pq.push(min_pq.top());
           min_pq.pop();
         }
       }
     }
   }
-  double median_seg_len = max_pq.size() > min_pq.size()? max_pq.top(): (min_pq.top()+max_pq.top())/2;
+  double median_seg_len = max_pq.size() > min_pq.size()
+                              ? max_pq.top()
+                              : (min_pq.top() + max_pq.top()) / 2;
 
   Grid::grid_size = median_seg_len;
 
-  double padding_space {0};
-  if(padding){
-    padding_space = Grid::grid_size/2;
+  double padding_space{0};
+  if (padding) {
+    padding_space = Grid::grid_size / 2;
   }
-  Grid::grids_bound_left_bottom_x = min_x - padding_space; 
+  Grid::grids_bound_left_bottom_x = min_x - padding_space;
   Grid::grids_bound_left_bottom_y = min_y - padding_space;
   Grid::grids_bound_right_top_x = max_x + padding_space;
   Grid::grids_bound_right_top_y = max_y + padding_space;
@@ -55,8 +58,10 @@ double Grid::grid_size = 0.0;
 Grids create_grids() {
   Grids grids;
   double grid_size{Grid::grid_size};
-  const double x_range{Grid::grids_bound_right_top_x -Grid::grids_bound_left_bottom_x};
-  const double y_range{Grid::grids_bound_right_top_y-Grid::grids_bound_left_bottom_y};
+  const double x_range{Grid::grids_bound_right_top_x -
+                       Grid::grids_bound_left_bottom_x};
+  const double y_range{Grid::grids_bound_right_top_y -
+                       Grid::grids_bound_left_bottom_y};
 
   const size_t nx{static_cast<size_t>(std::ceil(x_range / grid_size))};
   const size_t ny{static_cast<size_t>(std::ceil(x_range / grid_size))};
@@ -74,8 +79,8 @@ Grids create_grids() {
   return grids;
 }
 
-void build_shoreline_index(const std::vector<std::unique_ptr<Shoreline>> &shorelines,
-                           Grids &grids) {
+void build_shoreline_index(
+    const std::vector<std::unique_ptr<Shoreline>> &shorelines, Grids &grids) {
   // basic sanity
   assert(Grid::grid_size > 0.0);
   assert(Grid::grids_bound_right_top_x > Grid::grids_bound_left_bottom_x);

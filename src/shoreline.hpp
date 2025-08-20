@@ -1,7 +1,8 @@
 #ifndef SRC_SHORELINE_HPP_
 #define SRC_SHORELINE_HPP_
-#include "geometry.hpp"
 #include <memory>
+
+#include "geometry.hpp"
 
 namespace dsas {
 
@@ -27,10 +28,10 @@ struct Shoreline : public MultiLine<Point> {
   }
 };
 
-struct ShoreSeg{
+struct ShoreSeg {
   Point start;
   Point end;
-  Shoreline *shoreline; // shoreline object that this seg belong to
+  Shoreline *shoreline = nullptr;  // shoreline object that this seg belong to
 };
 
 std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(

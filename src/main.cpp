@@ -1,9 +1,9 @@
 #include <argparse/argparse.hpp>
 
 #include "dsas.hpp"
+#include "grid.hpp"
 #include "options.hpp"
 #include "utility.hpp"
-#include "grid.hpp"
 
 static void parse_args(int argc, char *argv[]) {
   argparse::ArgumentParser program(PROJECT_NAME_STR);
@@ -116,7 +116,8 @@ static void print_messages() {
   std::cout << "Start to run\n";
 }
 
-static dsas::Grids build_spatial_index(const std::vector<std::unique_ptr<dsas::Shoreline>> &shorelines){
+static dsas::Grids build_spatial_index(
+    const std::vector<std::unique_ptr<dsas::Shoreline>> &shorelines) {
   dsas::compute_grid_bound(shorelines);
   auto grids = dsas::create_grids();
   return grids;
@@ -130,7 +131,7 @@ static void run() {
   auto transects = dsas::generate_transects(baselines);
 
   bool build_index = true;
-  if(build_index){
+  if (build_index) {
     auto grids = build_spatial_index(shorelines);
   }
   auto intersects = dsas::generate_intersects(transects, shorelines);

@@ -25,15 +25,15 @@ TEST(GridTest, test_create_grid) {
       auto &grid = grids[i][j];
       ASSERT_EQ(grid.i, i);
       ASSERT_EQ(grid.j, j);
-      ASSERT_NEAR(grid.min_x, i*Grid::grid_size, TOL);
-      ASSERT_NEAR(grid.min_y, j*Grid::grid_size, TOL);
+      ASSERT_NEAR(grid.min_x, i * Grid::grid_size, TOL);
+      ASSERT_NEAR(grid.min_y, j * Grid::grid_size, TOL);
     }
   }
 }
 
-TEST(GridTest, test_compute_grid_bound){
-  std::vector<Point> shore_vertices{{0,0},{1,1},{2,2},{3,3}};
-  boost::gregorian::date t_date(2000,1,1);
+TEST(GridTest, test_compute_grid_bound) {
+  std::vector<Point> shore_vertices{{0, 0}, {1, 1}, {2, 2}, {3, 3}};
+  boost::gregorian::date t_date(2000, 1, 1);
   auto shoreline = std::make_unique<Shoreline>(shore_vertices, 0, t_date);
   std::vector<std::unique_ptr<Shoreline>> shorelines;
   shorelines.push_back(std::move(shoreline));
@@ -133,7 +133,7 @@ TEST(GridTest, test_build_transect_out_of_bound) {
   }
 }
 
-TEST(GridTest, test_build_shoreline_index){
+TEST(GridTest, test_build_shoreline_index) {
   Grid::grids_bound_left_bottom_x = 0;
   Grid::grids_bound_left_bottom_y = 0;
   Grid::grids_bound_right_top_x = 10;
@@ -141,36 +141,36 @@ TEST(GridTest, test_build_shoreline_index){
   Grid::grid_size = 3;
   auto grids = create_grids();
 
-  std::vector<Point> shore_vertices{{0,0},{1,1},{2,2},{3,3}};
+  std::vector<Point> shore_vertices{{0, 0}, {1, 1}, {2, 2}, {3, 3}};
 
-  boost::gregorian::date t_date(2000,1,1);
+  boost::gregorian::date t_date(2000, 1, 1);
   auto shoreline = std::make_unique<Shoreline>(shore_vertices, 0, t_date);
   std::vector<std::unique_ptr<Shoreline>> shorelines;
   shorelines.push_back(std::move(shoreline));
-  
+
   build_shoreline_index(shorelines, grids);
 
-  for(size_t i = 0; i < grids.size(); i++){
-    for(size_t j = 0; j < grids[0].size(); j++){
-        if(i == 0 && j == 0){
-            ASSERT_EQ(grids[i][j].shoreline_segs.size(), 3);
-            ASSERT_EQ(grids[i][j].shoreline_segs[0].start.x, 0);
-            ASSERT_EQ(grids[i][j].shoreline_segs[0].start.y, 0);
-            ASSERT_EQ(grids[i][j].shoreline_segs[0].end.x, 1);
-            ASSERT_EQ(grids[i][j].shoreline_segs[0].end.y, 1);
+  for (size_t i = 0; i < grids.size(); i++) {
+    for (size_t j = 0; j < grids[0].size(); j++) {
+      if (i == 0 && j == 0) {
+        ASSERT_EQ(grids[i][j].shoreline_segs.size(), 3);
+        ASSERT_EQ(grids[i][j].shoreline_segs[0].start.x, 0);
+        ASSERT_EQ(grids[i][j].shoreline_segs[0].start.y, 0);
+        ASSERT_EQ(grids[i][j].shoreline_segs[0].end.x, 1);
+        ASSERT_EQ(grids[i][j].shoreline_segs[0].end.y, 1);
 
-            ASSERT_EQ(grids[i][j].shoreline_segs[1].start.x, 1);
-            ASSERT_EQ(grids[i][j].shoreline_segs[1].start.y, 1);
-            ASSERT_EQ(grids[i][j].shoreline_segs[1].end.x, 2);
-            ASSERT_EQ(grids[i][j].shoreline_segs[1].end.y, 2);
+        ASSERT_EQ(grids[i][j].shoreline_segs[1].start.x, 1);
+        ASSERT_EQ(grids[i][j].shoreline_segs[1].start.y, 1);
+        ASSERT_EQ(grids[i][j].shoreline_segs[1].end.x, 2);
+        ASSERT_EQ(grids[i][j].shoreline_segs[1].end.y, 2);
 
-            ASSERT_EQ(grids[i][j].shoreline_segs[2].start.x, 2);
-            ASSERT_EQ(grids[i][j].shoreline_segs[2].start.y, 2);
-            ASSERT_EQ(grids[i][j].shoreline_segs[2].end.x, 3);
-            ASSERT_EQ(grids[i][j].shoreline_segs[2].end.y, 3);
-        }else{
-            ASSERT_EQ(grids[i][j].shoreline_segs.size(), 0);
-        }
+        ASSERT_EQ(grids[i][j].shoreline_segs[2].start.x, 2);
+        ASSERT_EQ(grids[i][j].shoreline_segs[2].start.y, 2);
+        ASSERT_EQ(grids[i][j].shoreline_segs[2].end.x, 3);
+        ASSERT_EQ(grids[i][j].shoreline_segs[2].end.y, 3);
+      } else {
+        ASSERT_EQ(grids[i][j].shoreline_segs.size(), 0);
+      }
     }
   }
 }

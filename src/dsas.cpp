@@ -34,10 +34,16 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
 }
 
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
-    std::vector<std::unique_ptr<TransectLine>> &transects,
-    const Grids &grids){
+    std::vector<std::unique_ptr<TransectLine>> &transects, const Grids &grids) {
   std::vector<std::unique_ptr<IntersectPoint>> intersects;
-  for (size_t i = 0; i < transects.size(); i++) {
+  for (auto &transect : transects) {
+    auto tmp_intersects = transect->intersection(grids);
+    if (!tmp_intersects.empty()) {
+      for (auto &intersect : tmp_intersects) {
+        transect->intersects.push_back(intersect.get());
+        intersects.push_back(std::move(intersect));
+      }
+    }
   }
   return intersects;
 }

@@ -2,9 +2,10 @@
 
 #include <ogrsf_frmts.h>
 
+#include <queue>
+
 #include "baseline.hpp"
 #include "grid.hpp"
-#include <queue>
 
 namespace dsas {
 
@@ -67,7 +68,7 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
           OGRPoint point;
           poLine->getPoint(i, &point);
           shoreline->shoreline_vertices_.emplace_back(point.getX(),
-                                                     point.getY());
+                                                      point.getY());
         }
         shoreline->shoreline_id_ = shoreline_id++;
         shoreline->date_ = date;
@@ -83,7 +84,7 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
             OGRPoint point;
             poLine->getPoint(i, &point);
             shoreline->shoreline_vertices_.emplace_back(point.getX(),
-                                                       point.getY());
+                                                        point.getY());
           }
           shoreline->shoreline_id_ = shoreline_id;
           shoreline->date_ = date;
@@ -104,6 +105,5 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
 
   return shorelines;
 }
-
 
 }  // namespace dsas

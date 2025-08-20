@@ -2,11 +2,10 @@
 #define SRC_DSAS_HPP_
 
 #include "baseline.hpp"
-#include "geometry.hpp"
+#include "grid.hpp"
 #include "intersect.hpp"
 #include "shoreline.hpp"
 #include "transect.hpp"
-#include "grid.hpp"
 
 namespace dsas {
 
@@ -18,8 +17,7 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     const std::vector<std::unique_ptr<Shoreline>> &);
 
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
-    std::vector<std::unique_ptr<TransectLine>> &,
-    const Grids &);
+    std::vector<std::unique_ptr<TransectLine>> &, const Grids &);
 
 double linearRegressRate(std::vector<IntersectPoint *> &intersections);
 }  // namespace dsas

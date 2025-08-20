@@ -11,8 +11,6 @@
 #define MIN_DOUBLE (-999999.9)
 namespace dsas {
 
-
-
 double least_square(const std::vector<long long> &x,
                     const std::vector<double> &y) {
   if (x.size() != y.size()) {
