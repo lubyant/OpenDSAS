@@ -14,7 +14,7 @@ std::vector<std::unique_ptr<TransectLine>> generate_transects(
 
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     std::vector<std::unique_ptr<TransectLine>> &,
-    const std::vector<Shoreline> &);
+    const std::vector<std::unique_ptr<Shoreline>> &);
 
 double linearRegressRate(std::vector<IntersectPoint *> &intersections);
 }  // namespace dsas

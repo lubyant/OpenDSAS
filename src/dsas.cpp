@@ -18,11 +18,11 @@ std::vector<std::unique_ptr<TransectLine>> generate_transects(
 
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     std::vector<std::unique_ptr<TransectLine>> &transects,
-    const std::vector<Shoreline> &shorelines) {
+    const std::vector<std::unique_ptr<Shoreline>> &shorelines) {
   std::vector<std::unique_ptr<IntersectPoint>> intersects;
   for (size_t i = 0; i < transects.size(); i++) {
     for (size_t j = 0; j < shorelines.size(); j++) {
-      auto ret = transects[i]->intersection(shorelines[j]);
+      auto ret = transects[i]->intersection(*shorelines[j]);
       if (ret.has_value()) {
         intersects.push_back(std::make_unique<IntersectPoint>(ret.value()));
         transects[i]->intersects.push_back(
