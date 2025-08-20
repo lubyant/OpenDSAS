@@ -1,5 +1,9 @@
 #ifndef SRC_GRID_HPP_
 #define SRC_GRID_HPP_
+
+#include "shoreline.hpp"
+#include "transect.hpp"
+
 #include <limits>
 #include <utility>
 #include <vector>
@@ -19,16 +23,16 @@ struct Grid {
       : min_x{min_x}, min_y{min_y}, i{i}, j{j} {}
 };
 
-struct MapBound {
-  double min_x = std::numeric_limits<double>::max();
-  double min_y = std::numeric_limits<double>::max();
-  double max_x = std::numeric_limits<double>::lowest();
-  double max_y = std::numeric_limits<double>::lowest();
-  double grid_size = 0;
-};
-extern MapBound map_bound;
+void compute_grid_bound(const std::vector<Shoreline> &shorelines,
+bool padding=true);
 
 using Grids = std::vector<std::vector<Grid>>;
-Grids create_grids(const MapBound &map_bound);
+Grids create_grids();
+
+void build_shoreline_index(const std::vector<Shoreline> &shorelines,
+                           Grids &grids);
+
+void build_transect_index(std::vector<std::unique_ptr<TransectLine>> &transects);
+
 }  // namespace dsas
 #endif

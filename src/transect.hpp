@@ -4,7 +4,6 @@
 
 #include "baseline.hpp"
 #include "geometry.hpp"
-#include "grid.hpp"
 #include "intersect.hpp"
 
 namespace dsas {
@@ -91,7 +90,6 @@ std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &,
                    const std::string &);
 
-void build_transect_index(std::vector<std::unique_ptr<TransectLine>> &transects);
 }  // namespace dsas
 
 #endif

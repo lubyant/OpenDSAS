@@ -1,7 +1,6 @@
 #ifndef SRC_SHORELINE_HPP_
 #define SRC_SHORELINE_HPP_
 #include "geometry.hpp"
-#include "grid.hpp"
 
 namespace dsas {
 extern double mean_shore_segment;  // mean length of shoreline segment
@@ -30,7 +29,5 @@ std::vector<Shoreline> load_shorelines_shp(
     const std::filesystem::path &shoreline_shp_path,
     const char *date_field_name);
 
-void build_shoreline_index(const std::vector<Shoreline> &shorelines,
-                           Grids &grids);
 }  // namespace dsas
 #endif
