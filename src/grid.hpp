@@ -18,7 +18,7 @@ struct Grid {
 
   double min_x, min_y;
   size_t i, j;  // index in Grids
-  std::vector<std::pair<size_t, size_t>> shoreline_segs_indices;
+  std::vector<ShoreSeg> shoreline_segs;
   Grid(double min_x, double min_y, size_t i, size_t j)
       : min_x{min_x}, min_y{min_y}, i{i}, j{j} {}
 };

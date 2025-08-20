@@ -144,7 +144,7 @@ void build_shoreline_index(const std::vector<Shoreline> &shorelines,
       for (int ix = ix0; ix <= ix1; ++ix) {
         for (int iy = iy0; iy <= iy1; ++iy) {
           grids[static_cast<size_t>(ix)][static_cast<size_t>(iy)]
-              .shoreline_segs_indices.emplace_back(si, j);
+              .shoreline_segs.emplace_back(a, b, shorelines[si].shoreline_id_);
         }
       }
     }

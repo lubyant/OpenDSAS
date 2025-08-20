@@ -151,9 +151,23 @@ TEST(GridTest, test_build_shoreline_index){
   for(size_t i = 0; i < grids.size(); i++){
     for(size_t j = 0; j < grids[0].size(); j++){
         if(i == 0 && j == 0){
-            ASSERT_EQ(grids[i][j].shoreline_segs_indices.size(), 3);
+            ASSERT_EQ(grids[i][j].shoreline_segs.size(), 3);
+            ASSERT_EQ(grids[i][j].shoreline_segs[0].start.x, 0);
+            ASSERT_EQ(grids[i][j].shoreline_segs[0].start.y, 0);
+            ASSERT_EQ(grids[i][j].shoreline_segs[0].end.x, 1);
+            ASSERT_EQ(grids[i][j].shoreline_segs[0].end.y, 1);
+
+            ASSERT_EQ(grids[i][j].shoreline_segs[1].start.x, 1);
+            ASSERT_EQ(grids[i][j].shoreline_segs[1].start.y, 1);
+            ASSERT_EQ(grids[i][j].shoreline_segs[1].end.x, 2);
+            ASSERT_EQ(grids[i][j].shoreline_segs[1].end.y, 2);
+
+            ASSERT_EQ(grids[i][j].shoreline_segs[2].start.x, 2);
+            ASSERT_EQ(grids[i][j].shoreline_segs[2].start.y, 2);
+            ASSERT_EQ(grids[i][j].shoreline_segs[2].end.x, 3);
+            ASSERT_EQ(grids[i][j].shoreline_segs[2].end.y, 3);
         }else{
-            ASSERT_EQ(grids[i][j].shoreline_segs_indices.size(), 0);
+            ASSERT_EQ(grids[i][j].shoreline_segs.size(), 0);
         }
     }
   }
