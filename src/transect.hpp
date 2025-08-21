@@ -16,7 +16,7 @@ struct TransectLine : public LineSegment,
                       GDALShpSaver<transect_t> {
   using IntersectionMode = dsas::Options::IntersectionMode;
   using TransectOrientation = dsas::Options::TransectOrientation;
-  using Grids = std::vector<std::vector<Grid>>;
+  using Grids = std::unordered_map<size_t, std::unique_ptr<Grid>>;
   Point transect_base_point_;  // point to generate the shapefile
   Point transect_ref_point_;   // point to calculate the erosion
   int transect_id_;

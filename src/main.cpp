@@ -1,7 +1,10 @@
 #include <argparse/argparse.hpp>
+#include <memory>
+#include <vector>
 
 #include "dsas.hpp"
 #include "grid.hpp"
+#include "intersect.hpp"
 #include "options.hpp"
 #include "utility.hpp"
 
@@ -116,12 +119,6 @@ static void print_messages() {
   std::cout << "Start to run\n";
 }
 
-static dsas::Grids build_spatial_index(
-    const std::vector<std::unique_ptr<dsas::Shoreline>> &shorelines) {
-  dsas::compute_grid_bound(shorelines);
-  auto grids = dsas::create_grids();
-  return grids;
-}
 
 static void run() {
   print_messages();
@@ -130,11 +127,16 @@ static void run() {
       dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date_");
   auto transects = dsas::generate_transects(baselines);
 
+  std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
   bool build_index = true;
   if (build_index) {
-    auto grids = build_spatial_index(shorelines);
+    dsas::compute_grid_bound(shorelines);
+    std::cout << __LINE__ << std::endl;
+    auto grids = dsas::build_shoreline_index(shorelines);
+    intersects = dsas::generate_intersects(transects, grids);
+  }else{
+    intersects = dsas::generate_intersects(transects, shorelines);
   }
-  auto intersects = dsas::generate_intersects(transects, shorelines);
 
   // compute regression rate
   for (auto &transect : transects) {

@@ -1,8 +1,18 @@
 #include "grid.hpp"
 
+#include <cstddef>
+#include <memory>
 #include <queue>
 
 namespace dsas {
+
+double Grid::grids_bound_left_bottom_x = 0.0;
+double Grid::grids_bound_left_bottom_y = 0.0;
+double Grid::grids_bound_right_top_x = 0;
+double Grid::grids_bound_right_top_y = 0;
+double Grid::grid_size = 0.0;
+size_t Grid::grid_nx = 0;
+size_t Grid::grid_ny = 0;
 
 void compute_grid_bound(
     const std::vector<std::unique_ptr<Shoreline>> &shorelines, bool padding) {
@@ -47,40 +57,16 @@ void compute_grid_bound(
   Grid::grids_bound_left_bottom_y = min_y - padding_space;
   Grid::grids_bound_right_top_x = max_x + padding_space;
   Grid::grids_bound_right_top_y = max_y + padding_space;
+  Grid::grid_nx = static_cast<size_t>(
+      (Grid::grids_bound_right_top_x - Grid::grids_bound_left_bottom_x) /
+      Grid::grid_size);
+  Grid::grid_ny = static_cast<size_t>(
+      (Grid::grids_bound_right_top_x - Grid::grids_bound_left_bottom_x) /
+      Grid::grid_size);
 }
 
-double Grid::grids_bound_left_bottom_x = 0.0;
-double Grid::grids_bound_left_bottom_y = 0.0;
-double Grid::grids_bound_right_top_x = 0;
-double Grid::grids_bound_right_top_y = 0;
-double Grid::grid_size = 0.0;
-
-Grids create_grids() {
-  Grids grids;
-  double grid_size{Grid::grid_size};
-  const double x_range{Grid::grids_bound_right_top_x -
-                       Grid::grids_bound_left_bottom_x};
-  const double y_range{Grid::grids_bound_right_top_y -
-                       Grid::grids_bound_left_bottom_y};
-
-  const size_t nx{static_cast<size_t>(std::ceil(x_range / grid_size))};
-  const size_t ny{static_cast<size_t>(std::ceil(x_range / grid_size))};
-
-  for (size_t i = 0; i < nx; i++) {
-    std::vector<Grid> tmp;
-    for (size_t j = 0; j < ny; j++) {
-      double min_x{Grid::grids_bound_left_bottom_x + i * grid_size};
-      double min_y{Grid::grids_bound_left_bottom_y + j * grid_size};
-      Grid grid{min_x, min_y, i, j};
-      tmp.push_back(std::move(grid));
-    }
-    grids.push_back(std::move(tmp));
-  }
-  return grids;
-}
-
-void build_shoreline_index(
-    const std::vector<std::unique_ptr<Shoreline>> &shorelines, Grids &grids) {
+Grids build_shoreline_index(
+    const std::vector<std::unique_ptr<Shoreline>> &shorelines) {
   // basic sanity
   assert(Grid::grid_size > 0.0);
   assert(Grid::grids_bound_right_top_x > Grid::grids_bound_left_bottom_x);
@@ -121,6 +107,7 @@ void build_shoreline_index(
     return y_index;
   };
 
+  Grids grids;
   for (size_t si = 0; si < shorelines.size(); ++si) {
     const auto &pts = shorelines[si]->shoreline_vertices_;
     if (pts.size() < 2) continue;
@@ -148,12 +135,18 @@ void build_shoreline_index(
       // overlapped cells
       for (int ix = ix0; ix <= ix1; ++ix) {
         for (int iy = iy0; iy <= iy1; ++iy) {
-          grids[static_cast<size_t>(ix)][static_cast<size_t>(iy)]
-              .shoreline_segs.emplace_back(a, b, shorelines[si].get());
+          size_t grids_id = ix * nx + iy;
+          if (grids.find(grids_id) == grids.end()) {
+            grids[grids_id] = std::make_unique<Grid>(
+                xmin + ix * grids_id, ymin + iy * grid_size, ix, iy);
+          }
+          grids[grids_id]->shoreline_segs.emplace_back(a, b,
+                                                       shorelines[si].get());
         }
       }
     }
   }
+  return grids;
 }
 
 void build_transect_index(

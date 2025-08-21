@@ -98,8 +98,12 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
 
   // find out all the available intersection
   for (auto [grid_i, grid_j] : grid_index) {
-    auto &grid = grids[grid_i][grid_j];
-    for (auto &shore_seg : grid.shoreline_segs) {
+    const size_t grid_index = grid_i * Grid::grid_nx + grid_j;
+    if(grids.find(grid_index) == grids.end()){
+      continue;
+    }
+    const auto &grid = grids.at(grid_index);
+    for (const auto &shore_seg : grid->shoreline_segs) {
       if (is_intersect(shore_seg.start, shore_seg.end)) {
         auto ret = find_intersection(shore_seg.start, shore_seg.end);
         auto point = ret.value();

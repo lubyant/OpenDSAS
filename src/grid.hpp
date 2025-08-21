@@ -1,6 +1,9 @@
 #ifndef SRC_GRID_HPP_
 #define SRC_GRID_HPP_
 
+#include <cstddef>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "shoreline.hpp"
@@ -13,6 +16,8 @@ struct Grid {
   static double grids_bound_right_top_x;  // right_top of all grids
   static double grids_bound_right_top_y;
   static double grid_size;
+  static size_t grid_nx;
+  static size_t grid_ny;
 
   double min_x, min_y;
   size_t i, j;  // index in Grids
@@ -25,11 +30,10 @@ void compute_grid_bound(
     const std::vector<std::unique_ptr<Shoreline>> &shorelines,
     bool padding = true);
 
-using Grids = std::vector<std::vector<Grid>>;
-Grids create_grids();
+using Grids = std::unordered_map<size_t, std::unique_ptr<Grid>>;
 
-void build_shoreline_index(
-    const std::vector<std::unique_ptr<Shoreline>> &shorelines, Grids &grids);
+Grids build_shoreline_index(
+    const std::vector<std::unique_ptr<Shoreline>> &shorelines);
 
 void build_transect_index(
     std::vector<std::unique_ptr<TransectLine>> &transects);
