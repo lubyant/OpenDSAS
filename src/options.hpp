@@ -19,6 +19,8 @@ struct Options {
   double transect_offset{0};
   IntersectionMode intersection_mode{IntersectionMode::Closest};
   TransectOrientation transect_orient{TransectOrientation::Mix};
+
+  bool build_index = false;
 };
 
 extern Options options;

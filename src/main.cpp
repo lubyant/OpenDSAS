@@ -59,6 +59,11 @@ static void parse_args(int argc, char *argv[]) {
       .default_value(std::string("mix"))
       .help("Transect orientation: left, right, or mix");
 
+  program.add_argument("-bi", "--build_index")
+      .default_value(false)
+      .implicit_value(true)
+      .help("Build spatial index to speed up search");
+
   try {
     program.parse_args(argc, argv);
   } catch (const std::runtime_error &err) {
@@ -93,6 +98,8 @@ static void parse_args(int argc, char *argv[]) {
     dsas::options.transect_orient = dsas::Options::TransectOrientation::Right;
   if (s == "mix")
     dsas::options.transect_orient = dsas::Options::TransectOrientation::Mix;
+
+  dsas::options.build_index = program.get<bool>("--build_index");
 }
 
 static void cal_erosion_rate(std::vector<dsas::TransectLine> &transects) {
@@ -125,8 +132,7 @@ static void run() {
   auto transects = dsas::generate_transects(baselines);
 
   std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
-  bool build_index = true;
-  if (build_index) {
+  if (dsas::options.build_index) {
     auto grids = dsas::build_spatial_grids(shorelines, transects);
     intersects = dsas::generate_intersects(transects, grids);
   } else {
