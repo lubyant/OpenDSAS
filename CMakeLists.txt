@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(dsas)
-add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}")
+project(dsas VERSION 1.2)
+add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}" APP_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

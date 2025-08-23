@@ -7,7 +7,7 @@
 #include "utility.hpp"
 
 static void parse_args(int argc, char *argv[]) {
-  argparse::ArgumentParser program(PROJECT_NAME_STR);
+  argparse::ArgumentParser program(PROJECT_NAME_STR, APP_VERSION);
 
   program.add_argument("--baseline")
       .required()
