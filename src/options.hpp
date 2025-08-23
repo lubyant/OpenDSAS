@@ -1,6 +1,6 @@
 #ifndef SRC_OPTIONS_HPP_
 #define SRC_OPTIONS_HPP_
-#include <filesystem>
+#include <string>
 
 namespace dsas {
 
@@ -19,6 +19,8 @@ struct Options {
   double transect_offset{0};
   IntersectionMode intersection_mode{IntersectionMode::Closest};
   TransectOrientation transect_orient{TransectOrientation::Mix};
+
+  bool build_index = false;
 };
 
 extern Options options;

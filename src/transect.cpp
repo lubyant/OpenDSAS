@@ -2,8 +2,10 @@
 
 #include <ogrsf_frmts.h>
 
+#include <cstddef>
 #include <memory>
 
+#include "grid.hpp"
 #include "utility.hpp"
 
 namespace dsas {
@@ -86,6 +88,54 @@ std::optional<IntersectPoint> TransectLine::intersection(
     // close mode return smallest dis
     return intersections[0];
   }
+}
+
+std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
+    const Grids &grids) const {
+  if (grid_index.empty()) return {};
+
+  std::vector<std::unique_ptr<IntersectPoint>> intersections;
+
+  // find out all the available intersection
+  for (auto [grid_i, grid_j] : grid_index) {
+    const size_t grid_index = grid_i * Grid::grid_nx + grid_j;
+    if (grids.find(grid_index) == grids.end()) {
+      continue;
+    }
+    const auto &grid = grids.at(grid_index);
+    for (const auto &shore_seg : grid->shoreline_segs) {
+      if (is_intersect(shore_seg.start, shore_seg.end)) {
+        auto ret = find_intersection(shore_seg.start, shore_seg.end);
+        auto point = ret.value();
+        auto distance = distance2ref(point);
+        auto intersect_point = std::make_unique<IntersectPoint>(
+            point, transect_id_, shore_seg.shoreline->shoreline_id_,
+            baseline_id_, shore_seg.shoreline->date_, distance);
+        intersections.push_back(std::move(intersect_point));
+      }
+    }
+  }
+
+  // if more than two intersections, pick one base on the intersection mode
+  std::sort(intersections.begin(), intersections.end(),
+            [&](const auto &a, const auto &b) {
+              if (a->shoreline_id_ == b->shoreline_id_) {
+                return mode_ == IntersectionMode::Farthest
+                           ? a->distance_to_ref_ > b->distance_to_ref_
+                           : a->distance_to_ref_ < b->distance_to_ref_;
+              }
+              return a->shoreline_id_ < b->shoreline_id_;
+            });
+
+  intersections.erase(
+      std::unique(
+          intersections.begin(), intersections.end(),
+          [](auto &a, auto &b) {
+            return a->shoreline_id_ ==
+                   b->shoreline_id_;  // consider "same" if first is equal
+          }),
+      intersections.end());
+  return intersections;
 }
 
 void save_points(const std::vector<TransectLine> &shapes, const char *pszProj,
@@ -195,6 +245,7 @@ void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
   std::transform(transects.begin(), transects.end(),
                  std::back_inserter(tmp_save),
                  [](const auto &up) { return up.get(); });
-  dsas::save_lines(tmp_save, prj.c_str(), dsas::options.intersect_path);
+  dsas::save_lines(tmp_save, prj.c_str(), dsas::options.transect_path);
 }
+
 }  // namespace dsas

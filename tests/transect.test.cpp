@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include "grid.hpp"
 #include "options.hpp"
 using namespace dsas;
 constexpr double TOL = 1e-4;

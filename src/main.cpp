@@ -1,6 +1,8 @@
 #include <argparse/argparse.hpp>
 
 #include "dsas.hpp"
+#include "grid.hpp"
+#include "intersect.hpp"
 #include "options.hpp"
 #include "utility.hpp"
 
@@ -57,6 +59,11 @@ static void parse_args(int argc, char *argv[]) {
       .default_value(std::string("mix"))
       .help("Transect orientation: left, right, or mix");
 
+  program.add_argument("-bi", "--build_index")
+      .default_value(false)
+      .implicit_value(true)
+      .help("Build spatial index to speed up search");
+
   try {
     program.parse_args(argc, argv);
   } catch (const std::runtime_error &err) {
@@ -91,6 +98,8 @@ static void parse_args(int argc, char *argv[]) {
     dsas::options.transect_orient = dsas::Options::TransectOrientation::Right;
   if (s == "mix")
     dsas::options.transect_orient = dsas::Options::TransectOrientation::Mix;
+
+  dsas::options.build_index = program.get<bool>("--build_index");
 }
 
 static void cal_erosion_rate(std::vector<dsas::TransectLine> &transects) {
@@ -121,7 +130,14 @@ static void run() {
   auto shorelines =
       dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date_");
   auto transects = dsas::generate_transects(baselines);
-  auto intersects = dsas::generate_intersects(transects, shorelines);
+
+  std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
+  if (dsas::options.build_index) {
+    auto grids = dsas::build_spatial_grids(shorelines, transects);
+    intersects = dsas::generate_intersects(transects, grids);
+  } else {
+    intersects = dsas::generate_intersects(transects, shorelines);
+  }
 
   // compute regression rate
   for (auto &transect : transects) {

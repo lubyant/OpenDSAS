@@ -45,7 +45,7 @@ struct GDALShpSaver {
 struct Point {
   double x, y;
 
-  Point() : x(0), y(0) {};
+  Point() : x(0), y(0){};
   Point(double x, double y) : x(x), y(y) {}
 
   friend std::ostream &operator<<(std::ostream &os, const Point &point);

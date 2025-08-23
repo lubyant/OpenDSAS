@@ -8,6 +8,7 @@
 #include <gdal_priv.h>
 #include <ogrsf_frmts.h>
 
+#include <cassert>
 #include <cstdint>
 #include <filesystem>
 #include <functional>
@@ -110,6 +111,7 @@ typename std::enable_if<I != sizeof...(Args), void>::type set_ogr_feature(
 template <typename T>
 void save_lines(const std::vector<T *> &lines, const char *pszProj,
                 const std::filesystem::path &output_path) {
+  assert(lines.size() > 0);
   GDALAllRegister();
   // Step 1: Initialize GDAL
   OGRSpatialReference oSRS;

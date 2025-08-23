@@ -2,7 +2,6 @@
 #define SRC_INTERSECT_HPP_
 
 #include "geometry.hpp"
-#include "shoreline.hpp"
 
 namespace dsas {
 #define IntersectPoint_t int, int, int, const char *, double, double, double
@@ -45,12 +44,12 @@ struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
   }
 };
 
-//TODO this func belong to utility as template
+// TODO this func belong to utility as template
 void save_points(const std::vector<IntersectPoint *> &shapes,
                  const char *pszProj, const std::filesystem::path &output_path);
 
 void save_intersects(const std::vector<std::unique_ptr<IntersectPoint>> &,
-                    const std::string &);
+                     const std::string &);
 }  // namespace dsas
 
 #endif
