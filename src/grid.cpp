@@ -61,7 +61,7 @@ void compute_grid_bound(
       (Grid::grids_bound_right_top_x - Grid::grids_bound_left_bottom_x) /
       Grid::grid_size);
   Grid::grid_ny = static_cast<size_t>(
-      (Grid::grids_bound_right_top_x - Grid::grids_bound_left_bottom_x) /
+      (Grid::grids_bound_right_top_y - Grid::grids_bound_left_bottom_y) /
       Grid::grid_size);
 }
 

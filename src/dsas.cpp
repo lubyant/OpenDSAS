@@ -1,5 +1,6 @@
 #include "dsas.hpp"
 
+#include "grid.hpp"
 #include "options.hpp"
 #include "utility.hpp"
 namespace dsas {
@@ -48,6 +49,14 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
   return intersects;
 }
 
+Grids build_spatial_grids(
+    const std::vector<std::unique_ptr<Shoreline>> &shorelines,
+    std::vector<std::unique_ptr<TransectLine>> &transects) {
+  compute_grid_bound(shorelines);
+  auto grids = build_shoreline_index(shorelines);
+  build_transect_index(transects);
+  return grids;
+}
 double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   // if no intersection
   if (intersections.empty()) {

@@ -2,6 +2,8 @@
 
 #include <ogrsf_frmts.h>
 
+#include <cassert>
+
 #include "utility.hpp"
 
 namespace dsas {
@@ -10,6 +12,7 @@ namespace dsas {
 void save_points(const std::vector<IntersectPoint *> &shapes,
                  const char *pszProj,
                  const std::filesystem::path &output_path) {
+  assert(shapes.size() > 0);
   // Initialize GDAL
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {

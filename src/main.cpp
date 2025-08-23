@@ -1,6 +1,4 @@
 #include <argparse/argparse.hpp>
-#include <memory>
-#include <vector>
 
 #include "dsas.hpp"
 #include "grid.hpp"
@@ -119,7 +117,6 @@ static void print_messages() {
   std::cout << "Start to run\n";
 }
 
-
 static void run() {
   print_messages();
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
@@ -130,11 +127,9 @@ static void run() {
   std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
   bool build_index = true;
   if (build_index) {
-    dsas::compute_grid_bound(shorelines);
-    std::cout << __LINE__ << std::endl;
-    auto grids = dsas::build_shoreline_index(shorelines);
+    auto grids = dsas::build_spatial_grids(shorelines, transects);
     intersects = dsas::generate_intersects(transects, grids);
-  }else{
+  } else {
     intersects = dsas::generate_intersects(transects, shorelines);
   }
 

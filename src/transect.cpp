@@ -99,7 +99,7 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
   // find out all the available intersection
   for (auto [grid_i, grid_j] : grid_index) {
     const size_t grid_index = grid_i * Grid::grid_nx + grid_j;
-    if(grids.find(grid_index) == grids.end()){
+    if (grids.find(grid_index) == grids.end()) {
       continue;
     }
     const auto &grid = grids.at(grid_index);
@@ -245,7 +245,7 @@ void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
   std::transform(transects.begin(), transects.end(),
                  std::back_inserter(tmp_save),
                  [](const auto &up) { return up.get(); });
-  dsas::save_lines(tmp_save, prj.c_str(), dsas::options.intersect_path);
+  dsas::save_lines(tmp_save, prj.c_str(), dsas::options.transect_path);
 }
 
 }  // namespace dsas
