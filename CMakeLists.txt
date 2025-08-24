@@ -33,6 +33,9 @@ find_package(Boost REQUIRED)
 add_subdirectory(third_party/googletest)
 enable_testing()
 
+# OpenMp
+find_package(OpenMP REQUIRED)
+
 # ========================
 # Source Files
 # ========================
@@ -55,6 +58,7 @@ target_link_libraries(dsas_lib PUBLIC
     argparse
     GDAL::GDAL
     Boost::headers
+    OpenMP::OpenMP_CXX
 )
 
 # ========================

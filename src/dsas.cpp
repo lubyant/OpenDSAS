@@ -1,9 +1,16 @@
 #include "dsas.hpp"
 
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <vector>
+
 #include "grid.hpp"
+#include "intersect.hpp"
 #include "options.hpp"
 #include "utility.hpp"
 namespace dsas {
+using Pending = std::pair<size_t, std::unique_ptr<IntersectPoint>>;
 
 std::vector<std::unique_ptr<TransectLine>> generate_transects(
     std::vector<Baseline> &baselines) {
@@ -21,15 +28,36 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     std::vector<std::unique_ptr<TransectLine>> &transects,
     const std::vector<std::unique_ptr<Shoreline>> &shorelines) {
   std::vector<std::unique_ptr<IntersectPoint>> intersects;
-  for (size_t i = 0; i < transects.size(); i++) {
-    for (size_t j = 0; j < shorelines.size(); j++) {
-      auto ret = transects[i]->intersection(*shorelines[j]);
-      if (ret.has_value()) {
-        intersects.push_back(std::make_unique<IntersectPoint>(ret.value()));
-        transects[i]->intersects.push_back(
-            intersects[intersects.size() - 1].get());
+  std::vector<Pending> all_pending;
+#pragma omp parallel
+  {
+    std::vector<Pending> local;
+
+#pragma omp for collapse(2) schedule(dynamic)
+    for (std::int64_t i = 0; i < transects.size(); i++) {
+      for (std::int64_t j = 0; j < shorelines.size(); j++) {
+        auto ret = transects[i]->intersection(*shorelines[j]);
+        if (ret.has_value()) {
+          auto up = std::make_unique<IntersectPoint>(*ret);
+          local.emplace_back(static_cast<size_t>(i), std::move(up));
+        }
       }
     }
+#pragma omp critical
+    {
+      // move-append local -> all_pending
+      all_pending.insert(all_pending.end(),
+                         std::make_move_iterator(local.begin()),
+                         std::make_move_iterator(local.end()));
+    }
+  }
+
+  intersects.reserve(all_pending.size());  // optional; avoids a few reallocs
+  for (auto &p : all_pending) {
+    intersects.push_back(std::move(p.second));  // move unique_ptr in
+    TransectLine *t = transects[p.first].get();
+    t->intersects.push_back(
+        intersects.back().get());  // raw pointer to heap object (stable)
   }
   return intersects;
 }
@@ -37,15 +65,29 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     std::vector<std::unique_ptr<TransectLine>> &transects, const Grids &grids) {
   std::vector<std::unique_ptr<IntersectPoint>> intersects;
-  for (auto &transect : transects) {
-    auto tmp_intersects = transect->intersection(grids);
-    if (!tmp_intersects.empty()) {
-      for (auto &intersect : tmp_intersects) {
-        transect->intersects.push_back(intersect.get());
-        intersects.push_back(std::move(intersect));
+#pragma omp parallel
+  {
+    std::vector<std::unique_ptr<IntersectPoint>> local;
+
+#pragma omp for schedule(static)
+    for (std::int64_t i = 0; i < transects.size(); i++) {
+      auto tmp_intersects = transects[i]->intersection(grids);
+      if (!tmp_intersects.empty()) {
+        for (auto &intersect : tmp_intersects) {
+          transects[i] -> intersects.push_back(intersect.get());
+          local.push_back(std::move(intersect));
+        }
       }
     }
+#pragma omp critical
+    {
+      // move-append local -> all_pending
+      intersects.insert(intersects.end(),
+                        std::make_move_iterator(local.begin()),
+                        std::make_move_iterator(local.end()));
+    }
   }
+
   return intersects;
 }
 
