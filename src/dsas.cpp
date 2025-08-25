@@ -94,9 +94,22 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
 Grids build_spatial_grids(
     const std::vector<std::unique_ptr<Shoreline>> &shorelines,
     std::vector<std::unique_ptr<TransectLine>> &transects) {
+  auto t1 = std::chrono::steady_clock::now();
   compute_grid_bound(shorelines);
+  auto t2 = std::chrono::steady_clock::now();
+  std::cout
+      << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
+      << std::endl;
   auto grids = build_shoreline_index(shorelines);
+  auto t3 = std::chrono::steady_clock::now();
+  std::cout
+      << std::chrono::duration_cast<std::chrono::milliseconds>(t3 - t2).count()
+      << std::endl;
   build_transect_index(transects);
+  auto t4 = std::chrono::steady_clock::now();
+  std::cout
+      << std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count()
+      << std::endl;
   return grids;
 }
 double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
