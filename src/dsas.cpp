@@ -10,7 +10,6 @@
 #include "options.hpp"
 #include "utility.hpp"
 namespace dsas {
-using Pending = std::pair<size_t, std::unique_ptr<IntersectPoint>>;
 
 std::vector<std::unique_ptr<TransectLine>> generate_transects(
     std::vector<Baseline> &baselines) {
@@ -27,6 +26,7 @@ std::vector<std::unique_ptr<TransectLine>> generate_transects(
 std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
     std::vector<std::unique_ptr<TransectLine>> &transects,
     const std::vector<std::unique_ptr<Shoreline>> &shorelines) {
+  using Pending = std::pair<size_t, std::unique_ptr<IntersectPoint>>;
   std::vector<std::unique_ptr<IntersectPoint>> intersects;
   std::vector<Pending> all_pending;
 #pragma omp parallel
@@ -74,7 +74,7 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
       auto tmp_intersects = transects[i]->intersection(grids);
       if (!tmp_intersects.empty()) {
         for (auto &intersect : tmp_intersects) {
-          transects[i] -> intersects.push_back(intersect.get());
+          transects[i]->intersects.push_back(intersect.get());
           local.push_back(std::move(intersect));
         }
       }
