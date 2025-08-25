@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/USERNAME/REPO/branch/main/graph/badge.svg)](https://codecov.io/gh/lubyant/DSAS)
+
 # DSAS (Digital Shoreline Analysis System)
 This is a reimplementation of Digital Shoreline Analysis System in linux/CPP.
 
@@ -34,3 +36,4 @@ dsas --baseline your_baseline.shp --shoreline your_shoreline.shp
 2. add gui
 3. Cross-plaform on MSVC
 4. geojson input support
+

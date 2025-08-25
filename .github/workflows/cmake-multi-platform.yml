@@ -96,3 +96,47 @@ jobs:
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest --build-config ${{ matrix.build_type }}
+
+  coverage:
+    name: Coverage (Ubuntu + Debug)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin libomp-dev
+          sudo apt-get install -y gcovr
+
+      - name: Configure with coverage flags
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_C_COMPILER=gcc \
+            -DCMAKE_CXX_COMPILER=g++ \
+            -DCMAKE_CXX_FLAGS="--coverage" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage"
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: Generate Cobertura XML
+        run: |
+          # root = repo root for proper path trimming
+          gcovr -r . --xml-pretty -o coverage.xml \
+            --exclude '.*third_party/.*' \
+            --exclude '.*tests?/.*' || true
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          # If your repo is private, set CODECOV_TOKEN in repo secrets
+          token: ${{ secrets.CODECOV_TOKEN }}
