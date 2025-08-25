@@ -34,3 +34,5 @@ dsas --baseline your_baseline.shp --shoreline your_shoreline.shp
 2. add gui
 3. Cross-plaform on MSVC
 4. geojson input support
+
+[![codecov](https://codecov.io/gh/USERNAME/REPO/branch/main/graph/badge.svg)](https://codecov.io/gh/lubyant/DSAS)
