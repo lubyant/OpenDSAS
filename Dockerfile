@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     ninja-build \
     libboost-all-dev \
+    libomp-dev \
     && apt-get clean
 
 # Set workdir

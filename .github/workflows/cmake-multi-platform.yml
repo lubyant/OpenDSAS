@@ -62,6 +62,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin
+        sudo apt-get install -y libomp-dev
 
     - name: Install dependencies (Windows)
       if: matrix.os == 'windows-latest'
