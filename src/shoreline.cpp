@@ -2,6 +2,7 @@
 
 #include <ogrsf_frmts.h>
 
+#include <cstddef>
 #include <queue>
 
 #include "baseline.hpp"
@@ -39,7 +40,7 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
   GDALAllRegister();
 
   // Open the Shapefile
-  GDALDataset *poDS;
+  GDALDataset *poDS = nullptr;
   poDS = static_cast<GDALDataset *>(GDALOpenEx(
       shoreline_shp_path.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
   if (poDS == nullptr) {
@@ -48,22 +49,26 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
   }
 
   // Get the Layer Containing the Line Features
-  OGRLayer *poLayer;
+  OGRLayer *poLayer = nullptr;
   poLayer = poDS->GetLayer(0);
 
   // Iterate Through the Features in the Layer and Access Points
-  OGRFeature *poFeature;
+  OGRFeature *poFeature = nullptr;
   poLayer->ResetReading();
   while ((poFeature = poLayer->GetNextFeature()) != nullptr) {
-    OGRGeometry *poGeometry;
+    OGRGeometry *poGeometry = nullptr;
     poGeometry = poFeature->GetGeometryRef();
     const char *date_field = poFeature->GetFieldAsString(date_field_name);
+    if(date_field == nullptr){
+      std::cerr << "date field is not existed!\n";
+      exit(1);
+    }
     auto date = generate_date_from_str(date_field);
     if (poGeometry != nullptr) {
       auto gtype = wkbFlatten(poGeometry->getGeometryType());
       auto shoreline = std::make_unique<Shoreline>();
       if (gtype == wkbLineString) {
-        OGRLineString *poLine = dynamic_cast<OGRLineString *>(poGeometry);
+        auto *poLine = dynamic_cast<OGRLineString *>(poGeometry);
         for (int i = 0; i < poLine->getNumPoints(); i++) {
           OGRPoint point;
           poLine->getPoint(i, &point);
@@ -74,12 +79,11 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
         shoreline->date_ = date;
         shorelines.push_back(std::move(shoreline));
       } else if (gtype == wkbMultiLineString) {
-        OGRMultiLineString *poMulti =
-            dynamic_cast<OGRMultiLineString *>(poGeometry);
+        auto *poMulti = dynamic_cast<OGRMultiLineString *>(poGeometry);
         for (int j = 0; j < poMulti->getNumGeometries(); j++) {
           auto shoreline = std::make_unique<Shoreline>();
           OGRGeometry *subGeom = poMulti->getGeometryRef(j);
-          OGRLineString *poLine = dynamic_cast<OGRLineString *>(subGeom);
+          auto *poLine = dynamic_cast<OGRLineString *>(subGeom);
           for (int i = 0; i < poLine->getNumPoints(); i++) {
             OGRPoint point;
             poLine->getPoint(i, &point);
