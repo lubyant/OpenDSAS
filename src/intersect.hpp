@@ -10,6 +10,7 @@ struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
   int shoreline_id_;
   int baseline_id_;
   boost::gregorian::date date_;
+  std::string date_string_;
   double distance_to_ref_{-1};
   IntersectPoint(Point point, int transect_id, int shoreline_id,
                  int baseline_id, boost::gregorian::date date,
@@ -19,7 +20,13 @@ struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
         shoreline_id_(shoreline_id),
         baseline_id_(baseline_id),
         date_(date),
-        distance_to_ref_(distance_to_ref) {}
+        distance_to_ref_(distance_to_ref) {
+    std::ostringstream oss;
+    oss << date_.year() << "/" << std::setw(2) << std::setfill('0')
+        << date_.month().as_number() << "/" << std::setw(2) << std::setfill('0')
+        << date_.day();
+    date_string_ = oss.str();
+  }
 
   [[nodiscard]] std::vector<std::string> get_names() const override {
     return {"BaselineId", "TransectId", "ShoreID", "Date",
@@ -37,7 +44,7 @@ struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
     return {baseline_id_,
             transect_id_,
             shoreline_id_,
-            boost::gregorian::to_simple_string(date_).c_str(),
+            date_string_.c_str(),
             distance_to_ref_,
             x,
             y};

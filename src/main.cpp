@@ -128,7 +128,7 @@ static void run() {
   print_messages();
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
   auto shorelines =
-      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date_");
+      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
   auto transects = dsas::generate_transects(baselines);
 
   std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
