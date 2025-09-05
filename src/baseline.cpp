@@ -85,7 +85,7 @@ std::vector<Baseline> load_baselines_shp(
   GDALAllRegister();
 
   // Open the Shapefile
-  GDALDataset *poDS;
+  GDALDataset *poDS = nullptr;
   poDS = static_cast<GDALDataset *>(GDALOpenEx(
       baseline_shp_path.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
   if (poDS == nullptr) {
@@ -94,11 +94,11 @@ std::vector<Baseline> load_baselines_shp(
   }
 
   // Get the Layer Containing the Line Features
-  OGRLayer *poLayer;
+  OGRLayer *poLayer = nullptr;
   poLayer = poDS->GetLayer(0);
 
   // Iterate Through the Features in the Layer and Access Points
-  OGRFeature *poFeature;
+  OGRFeature *poFeature = nullptr;
   poLayer->ResetReading();
   std::vector<Baseline> baselines;
   int baseline_id = 0;
@@ -117,7 +117,7 @@ std::vector<Baseline> load_baselines_shp(
   }
 
   while ((poFeature = poLayer->GetNextFeature()) != nullptr) {
-    OGRGeometry *poGeometry;
+    OGRGeometry *poGeometry = nullptr;
     poGeometry = poFeature->GetGeometryRef();
     if (baseline_id_field.empty()) {
       baseline_id++;
@@ -129,7 +129,7 @@ std::vector<Baseline> load_baselines_shp(
       auto gtype = wkbFlatten(poGeometry->getGeometryType());
       if (gtype == wkbLineString) {
         std::vector<Point> baseline_vertices;
-        OGRLineString *poLine = dynamic_cast<OGRLineString *>(poGeometry);
+        auto *poLine = dynamic_cast<OGRLineString *>(poGeometry);
         for (int i = 0; i < poLine->getNumPoints(); i++) {
           OGRPoint point;
           poLine->getPoint(i, &point);
@@ -137,12 +137,11 @@ std::vector<Baseline> load_baselines_shp(
         }
         baselines.emplace_back(baseline_vertices, baseline_id);
       } else if (gtype == wkbMultiLineString) {
-        OGRMultiLineString *poMulti =
-            dynamic_cast<OGRMultiLineString *>(poGeometry);
+        auto *poMulti = dynamic_cast<OGRMultiLineString *>(poGeometry);
         for (int j = 0; j < poMulti->getNumGeometries(); j++) {
           std::vector<Point> baseline_vertices;
           OGRGeometry *subGeom = poMulti->getGeometryRef(j);
-          OGRLineString *poLine = dynamic_cast<OGRLineString *>(subGeom);
+          auto *poLine = dynamic_cast<OGRLineString *>(subGeom);
           for (int i = 0; i < poLine->getNumPoints(); i++) {
             OGRPoint point;
             poLine->getPoint(i, &point);
