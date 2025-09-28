@@ -1,26 +1,36 @@
-[![codecov](https://codecov.io/gh/USERNAME/REPO/branch/main/graph/badge.svg)](https://codecov.io/gh/lubyant/DSAS)
+[![codecov](https://codecov.io/gh/lubyant/DSAS/branch/main/graph/badge.svg)](https://codecov.io/gh/lubyant/DSAS)
 
 # OpenDSAS (Digital Shoreline Analysis System)
-Open Digital Shoreline Analysis System is a reimplementation of USGS
-[DSAS](https://www.usgs.gov/centers/whcmsc/science/digital-shoreline-analysis-system-dsas)
-in high-speed code developed in linux. This project targets to provide a
-alternative approach of USGS DSAS that allow user to run calculation in linux
-platform.
 
-### When should you use our DSAS instead of USGS DSAS?
-If your shoreline calculation is time and memory consuming and also you are good at cmd, you could try our program. Our DSAS was developed with high-performance code with parallisms which have 800x speed up than USGS DSAS with 5% memory usage.
+**OpenDSAS** is a high-performance, Linux-native reimplementation of the USGS  
+[Digital Shoreline Analysis System (DSAS)](https://www.usgs.gov/centers/whcmsc/science/digital-shoreline-analysis-system-dsas).  
+It is designed to provide a fast, memory-efficient alternative for shoreline change analysis.
+
+Compared to the official USGS DSAS:
+- 🚀 **Up to 800× faster** performance
+- 💾 **~5% of the memory usage**
+- 🖥️ Fully optimized for **command-line workflows on Linux**
+
+---
+
+## Why OpenDSAS?
+
+Use OpenDSAS if:
+- Your shoreline analysis is **large-scale, time-consuming, or memory-intensive**.
+- You prefer working with the **command line** and Linux-based HPC environments.
+- You need a **parallelized** solution for large datasets.
+
+---
 
 ## Build Instructions
 
 ### Prerequisites
+- [CMake](https://cmake.org/) ≥ 3.14  
+- C++20 compatible compiler  
+- [GDAL](https://gdal.org/) ≥ 3.8.5 (⚠️ recommended: build from source, not `apt install`)  
+- [Boost](https://www.boost.org/)
 
-- CMake ≥ 3.14
-- C++20 compatible compiler
-- GDAL ≥ 3.8.5 (you better build from source, do not use apt install)
-- Boost
-
-### Building the Project
-
+### Build from Source
 ```bash
 git clone --recurse-submodules https://github.com/lubyant/dsas.git
 cd dsas
@@ -28,56 +38,83 @@ mkdir build
 
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
-cmake --install build --prefix /usr/local/
+sudo cmake --install build --prefix /usr/local/
 ```
 
-### Running DSAS
+---
 
-Basic usage
+## Usage
+
+### Basic Example
 ```bash
-dsas --baseline your_baseline.shp --shoreline your_shoreline.shp
+dsas --baseline baseline.shp --shoreline shoreline.shp
 ```
-## How to use DSAS
-1. prepare your shoreline shapefile
 
-Your shoreline shapefile should have following attribute tables
-
-| Date | 
-|------|
-| date of shoreline1|
-| date of shoreline1|
-
-Date field should be a formated string as "YYYY/MM/DD" (e.g. 2000/01/01)
-
-2. prepare your baseline shapefile
-
-Your baseline shapefile should have following attribute tables
-
-| Id | 
-|------|
-| Id of baseline 1|
-| Id of baseline 1|
-
-3. command-line options
-
+### Command-Line Options
 | Option                   | Description                                                                 | Default            |
 |---------------------------|-----------------------------------------------------------------------------|--------------------|
 | `-h, --help`              | Show help message and exit                                                  | —                  |
 | `-v, --version`           | Print version information and exit                                          | —                  |
 | `--baseline`              | Path to the baseline file (**required**)                                    | —                  |
 | `--shoreline`             | Path to the shoreline file (**required**)                                   | —                  |
-| `--output-intersect` | Path to save the intersection output. If given without a value, uses default. | `intersects.shp`   |
-| `--output-transect`  | Path to save the generated transects. If given without a value, uses default. | `transects.shp`    |
-| `--smooth-factor`     | Smoothing factor for filtering. If no value is provided, uses default.      | `1`                |
-| `--edge-distance`     | Minimum distance from edge. If no value is provided, uses default.          | `100`              |
-| `--transect-length`   | Length of transects. If no value is provided, uses default.                 | `500`              |
-| `--transect-spacing`  | Spacing between transects. If no value is provided, uses default.           | `30`               |
-| `--transect-offset`   | Offset distance for transects. If no value is provided, uses default.       | `0`                |
-| `--intersection-mode` | Intersection mode: `closest` or `farthest`. If no value is provided, uses default. | `closest`          |
-| `--transect-orientation` | Transect orientation: `left`, `right`, or `mix`. If no value is provided, uses default. | `mix`              |
+| `--output-intersect [FILE]` | Path to save the intersection output. If omitted, uses default.            | `intersects.shp`   |
+| `--output-transect [FILE]`  | Path to save generated transects. If omitted, uses default.                 | `transects.shp`    |
+| `--smooth-factor [N]`     | Smoothing factor for filtering (omit for default)                           | `1`                |
+| `--edge-distance [N]`     | Minimum distance from edge (omit for default)                               | `100`              |
+| `--transect-length [N]`   | Length of transects (omit for default)                                      | `500`              |
+| `--transect-spacing [N]`  | Spacing between transects (omit for default)                                | `30`               |
+| `--transect-offset [N]`   | Offset distance for transects (omit for default)                            | `0`                |
+| `--intersection-mode [MODE]` | Intersection mode: `closest` or `farthest` (omit for default)            | `closest`          |
+| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix` (omit for default)    | `mix`              |
 | `-bi, --build_index`      | Build spatial index to speed up search                                      | —                  |
 
+---
 
-## TODO (PR welcome)
-1. add gui
-2. Cross-plaform on MSVC
+## Preparing Input Data
+
+### Shoreline Shapefile
+Your shoreline shapefile must contain the following attribute table:
+
+| Date       |
+|------------|
+| YYYY/MM/DD |
+| YYYY/MM/DD |
+
+- Dates must be formatted as `YYYY/MM/DD` (e.g., `2000/01/01`).  
+- A shoreline ID field will be generated automatically (custom IDs are not yet supported, PRs welcome).
+
+### Baseline Shapefile
+Your baseline shapefile must contain the following attribute table:
+
+| Id |
+|----|
+|  1 |
+|  2 |
+
+---
+
+## Output
+
+OpenDSAS generates two shapefiles:
+
+### 1. Intersects (`intersects.shp`)
+| BaselineId | TransectId | ShoreID | Date       | ref_dist | X    | Y    |
+|------------|------------|---------|------------|----------|------|------|
+| baseline id | transect id | shoreline id | intersection date | distance to reference point (from `--intersection-mode`) | x | y |
+
+### 2. Transects (`transects.shp`)
+| TransectId | BaselineId | ChangeRate |
+|------------|------------|------------|
+| transect id | baseline id | shoreline change rate |
+
+---
+
+## Roadmap / TODO (PRs Welcome)
+- [ ] Add GUI  
+- [ ] Cross-platform support (MSVC / Windows)  
+- [ ] Distribute on linux distro  
+
+---
+
+## License
+[MIT License](LICENSE)
