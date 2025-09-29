@@ -1,4 +1,4 @@
-name: build-and-test-deb
+name: build-and-test-deb (noble only)
 
 on:
   push:
@@ -8,16 +8,8 @@ on:
 
 jobs:
   build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - image: ubuntu:22.04
-            codename: jammy
-          - image: ubuntu:24.04
-            codename: noble
     runs-on: ubuntu-latest
-    container: ${{ matrix.image }}
+    container: ubuntu:24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -27,14 +19,23 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           apt-get update
           apt-get install -y --no-install-recommends \
-            ca-certificates git curl \
-            build-essential cmake pkg-config libgdal-dev gdal-bin file dpkg-dev
+            ca-certificates git curl pkg-config \
+            build-essential cmake \
+            libgdal-dev \
+            file dpkg-dev
           update-ca-certificates
-          # Belt-and-suspenders: tell git where the CA bundle lives
           git config --system http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
+          # sanity checks
+          gdal-config --version
+          pkg-config --modversion gdal
 
-      - name: Configure (disable tests in CI)
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+      - name: Configure (C++20; disable tests in CI)
+        run: |
+          set -eux
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=OFF \
+            -DGDAL_USE_STATIC_LIBS=OFF
 
       - name: Build
         run: cmake --build build -j"$(nproc)"
@@ -44,50 +45,32 @@ jobs:
           cpack -B build/dist -G DEB --config build/CPackConfig.cmake
           ls -l build/dist
 
-      - name: Rename with codename
-        run: |
-          set -eux
-          DEB=$(ls build/dist/*.deb | head -n1)
-          NEW="build/dist/$(basename "$DEB" .deb)-${{ matrix.codename }}.deb"
-          mv "$DEB" "$NEW"
-          echo "RENAMED_DEB=$NEW" >> $GITHUB_ENV
-
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: opendsas-${{ matrix.codename }}
-          path: ${{ env.RENAMED_DEB }}
+          name: opendsas-noble
+          path: build/dist/*.deb
 
   test-install:
     needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - image: ubuntu:22.04
-            codename: jammy
-          - image: ubuntu:24.04
-            codename: noble
     runs-on: ubuntu-latest
     steps:
-      - name: Download matching .deb
+      - name: Download .deb
         uses: actions/download-artifact@v4
         with:
-          name: opendsas-${{ matrix.codename }}
+          name: opendsas-noble
           path: dist
 
       - name: Show downloaded files
         run: ls -lah dist
 
-      - name: Test install inside clean ${{ matrix.image }}
+      - name: Test install inside clean noble
         run: |
-          docker run --rm -v "$PWD/dist:/pkg:ro" "${{ matrix.image }}" bash -lc '
+          docker run --rm -v "$PWD/dist:/pkg:ro" ubuntu:24.04 bash -lc '
             set -euo pipefail
             export DEBIAN_FRONTEND=noninteractive
             apt-get update
-            # Install the package; apt will fetch runtime deps from this distro
             apt-get install -y /pkg/*.deb
-            # Smoke checks
             command -v dsas
             dsas --version
             dsas --help >/dev/null
@@ -99,10 +82,6 @@ jobs:
     needs: [build, test-install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: opendsas-jammy
-          path: dist
       - uses: actions/download-artifact@v4
         with:
           name: opendsas-noble
