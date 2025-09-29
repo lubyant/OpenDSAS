@@ -28,9 +28,8 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends \
             ca-certificates git curl \
-            build-essential cmake pkg-config libgdal-dev gdal-bin
+            build-essential cmake pkg-config libgdal-dev gdal-bin file dpkg-dev
           update-ca-certificates
-          file dpkg-dev
           # Belt-and-suspenders: tell git where the CA bundle lives
           git config --system http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
 
