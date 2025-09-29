@@ -29,8 +29,7 @@ jobs:
           # Base toolchain + GDAL headers for this distro
           apt-get install -y --no-install-recommends \
             build-essential cmake git pkg-config \
-          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin
-          sudo apt-get install -y libomp-dev
+            libgdal-dev
 
       - name: Configure (disable tests in CI)
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
