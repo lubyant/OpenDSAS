@@ -3,49 +3,76 @@ name: build-and-test-deb
 on:
   push:
     branches: [ main ]
-    tags:    [ 'v*' ]
+    tags: [ 'v*' ]
   pull_request:
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ubuntu:22.04
+            codename: jammy
+          - image: ubuntu:24.04
+            codename: noble
     runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Install build deps
         run: |
-          sudo apt-get update
+          set -eux
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          # Base toolchain + GDAL headers for this distro
+          apt-get install -y --no-install-recommends \
+            build-essential cmake git pkg-config \
           sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin
           sudo apt-get install -y libomp-dev
 
-      - name: Configure & Build
-        run: |
-          cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
-          cmake --build build -j"$(nproc)"
+      - name: Configure (disable tests in CI)
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+
+      - name: Build
+        run: cmake --build build -j"$(nproc)"
 
       - name: Package (.deb via CPack)
         run: |
           cpack -B build/dist -G DEB --config build/CPackConfig.cmake
           ls -l build/dist
 
+      - name: Rename with codename
+        run: |
+          set -eux
+          DEB=$(ls build/dist/*.deb | head -n1)
+          NEW="build/dist/$(basename "$DEB" .deb)-${{ matrix.codename }}.deb"
+          mv "$DEB" "$NEW"
+          echo "RENAMED_DEB=$NEW" >> $GITHUB_ENV
+
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: opendsas-deb
-          path: build/dist/*.deb
+          name: opendsas-${{ matrix.codename }}
+          path: ${{ env.RENAMED_DEB }}
 
   test-install:
     needs: build
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        image: [ "ubuntu:22.04", "ubuntu:24.04" ]
+        include:
+          - image: ubuntu:22.04
+            codename: jammy
+          - image: ubuntu:24.04
+            codename: noble
+    runs-on: ubuntu-latest
     steps:
-      - name: Download .deb
+      - name: Download matching .deb
         uses: actions/download-artifact@v4
         with:
-          name: opendsas-deb
+          name: opendsas-${{ matrix.codename }}
           path: dist
 
       - name: Show downloaded files
@@ -57,9 +84,9 @@ jobs:
             set -euo pipefail
             export DEBIAN_FRONTEND=noninteractive
             apt-get update
-            # Install the .deb; apt will pull runtime deps from the distro repos
+            # Install the package; apt will fetch runtime deps from this distro
             apt-get install -y /pkg/*.deb
-            # Quick smoke tests
+            # Smoke checks
             command -v dsas
             dsas --version
             dsas --help >/dev/null
@@ -73,7 +100,11 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: opendsas-deb
+          name: opendsas-jammy
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: opendsas-noble
           path: dist
       - uses: softprops/action-gh-release@v2
         with:
