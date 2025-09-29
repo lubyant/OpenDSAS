@@ -23,9 +23,15 @@ jobs:
 
       - name: Install build deps
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin
-          sudo apt-get install -y libomp-dev
+          set -eux
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates git curl \
+            build-essential cmake pkg-config libgdal-dev
+          update-ca-certificates
+          # Belt-and-suspenders: tell git where the CA bundle lives
+          git config --system http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
 
       - name: Configure (disable tests in CI)
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
