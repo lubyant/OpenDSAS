@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 # -------------------------
 # Project & global settings
 # -------------------------
-project(opendsas VERSION 1.2 LANGUAGES CXX)
+project(opendsas VERSION 1.3 LANGUAGES CXX)
 add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}" APP_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 20)
