@@ -23,13 +23,9 @@ jobs:
 
       - name: Install build deps
         run: |
-          set -eux
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get update
-          # Base toolchain + GDAL headers for this distro
-          apt-get install -y --no-install-recommends \
-            build-essential cmake git pkg-config \
-            libgdal-dev
+          sudo apt-get update
+          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin
+          sudo apt-get install -y libomp-dev
 
       - name: Configure (disable tests in CI)
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
