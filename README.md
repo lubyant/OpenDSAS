@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/lubyant/DSAS/branch/main/graph/badge.svg)](https://codecov.io/gh/lubyant/DSAS)
+[![codecov](https://codecov.io/gh/lubyant/OpenDSAS/branch/main/graph/badge.svg)](https://app.codecov.io/gh/lubyant/OpenDSAS)
 
 # OpenDSAS (Digital Shoreline Analysis System)
 
