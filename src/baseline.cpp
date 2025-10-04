@@ -12,10 +12,9 @@ double BaselineSeg::cumulative_transects_distance = 0;
 // cumulative distance  of baselineSeg
 double BaselineSeg::cumulative_segment_distance = 0;
 
-BaselineSeg::BaselineSeg(double spacing, double offset, const Point &leftEdge,
+BaselineSeg::BaselineSeg(double spacing, const Point &leftEdge,
                          const Point &rightEdge)
-    : LineSegment(leftEdge, rightEdge), spacing_(spacing), offset_(offset) {
-  move_line(offset_);
+    : LineSegment(leftEdge, rightEdge), spacing_(spacing) {
   double length = leftEdge.distance_to_point(rightEdge);
 
   // if current baselineSeg is too short, don't create any transects
@@ -62,8 +61,8 @@ Baseline::Baseline(const std::vector<BaselinesVertex> &points, int baseline_id)
     : baseline_id_(baseline_id) {
   // create the baselineSeq
   for (size_t i = 0; i < points.size() - 1; i++) {
-    BaselineSeg baselineSeg{options.transect_spacing, options.transect_offset,
-                            points.at(i), points.at(i + 1)};
+    BaselineSeg baselineSeg{options.transect_spacing, points.at(i),
+                            points.at(i + 1)};
     // starting point
     if (i == 0) {
       transects_base_points_.push_back(baselineSeg.leftEdge_);

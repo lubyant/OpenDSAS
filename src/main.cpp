@@ -1,7 +1,4 @@
-#include <argparse/argparse.hpp>
-#include <filesystem>
-#include <iostream>
-
+#include "cli.hpp"
 #include "dsas.hpp"
 #include "grid.hpp"
 #include "intersect.hpp"
@@ -24,6 +21,15 @@ static dsas::Options::TransectOrientation parse_transect_orient(const std::strin
 }
 
 // --------------------------- runners ----------------------------------
+
+
+static void cal_erosion_rate(std::vector<dsas::TransectLine> &transects) {
+  for (auto &transect : transects) {
+    auto intersects = transect.intersects;
+    auto reg_rate = dsas::linearRegressRate(intersects);
+    transect.change_rate = reg_rate;
+  }
+}
 
 static void print_messages() {
   std::cout << "Welcome to digital shoreline analysis system\n";
@@ -78,6 +84,16 @@ static void run_cal() {
   auto baselines  = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
   auto shorelines = dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
   auto transects  = dsas::generate_transects(baselines);
+
+  std::cout << "Start to run\n";
+}
+
+static void run() {
+  print_messages();
+  auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
+  auto shorelines =
+      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
+  auto transects = dsas::generate_transects(baselines);
 
   std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
   if (dsas::options.build_index) {
@@ -242,6 +258,11 @@ int main(int argc, char* argv[]) {
       dsas::options.transect_offset  = cast_cmd.get<double>("--transect-offset");
       run_cast();
       return 0;
+  // compute regression rate
+  for (auto &transect : transects) {
+    if (!(transect->intersects.empty())) {
+      auto reg_rate = dsas::linearRegressRate(transect->intersects);
+      transect->change_rate = reg_rate;
     }
 
     // Case 2: cal subcommand
@@ -295,4 +316,17 @@ int main(int argc, char* argv[]) {
     }
     return 1;
   }
+
+  // read prj
+  auto prj = dsas::get_shp_proj(dsas::options.shoreline_path.c_str());
+
+  // save the output
+  dsas::save_transect(transects, prj);
+  dsas::save_intersects(intersects, prj);
+}
+
+int main(int argc, char *argv[]) {
+  dsas::parse_args(argc, argv);
+  run();
+  return 0;
 }

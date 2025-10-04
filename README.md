@@ -70,10 +70,8 @@ dsas --baseline baseline.shp --shoreline shoreline.shp
 | `--output-intersect [FILE]`  | Save intersections shapefile                                                                                           | `intersects.shp` |
 | `--output-transect [FILE]`   | Save transects shapefile                                                                                                | `transects.shp`  |
 | `--smooth-factor [N]`        | Smoothing factor                                                                                                       | `1`              |
-| `--edge-distance [N]`        | Minimum distance from edge                                                                                             | `100`            |
 | `--transect-length [N]`      | Transect length                                                                                                        | `500`            |
 | `--transect-spacing [N]`     | Spacing between transects                                                                                              | `30`             |
-| `--transect-offset [N]`      | Offset distance                                                                                                        | `0`              |
 | `--intersection-mode [MODE]` | Intersection rule: `closest` or `farthest`. Controls how intersections are chosen when transects hit multiple shorelines. | `closest`        |
 | `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix` (half left, half right).                                              | `mix`            |
 | `-bi, --build_index`         | Build spatial index to speed up intersections (trade-off: faster queries vs slower initial build).                     | —                |
