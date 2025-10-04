@@ -12,10 +12,9 @@ double BaselineSeg::cumulative_transects_distance = 0;
 // cumulative distance  of baselineSeg
 double BaselineSeg::cumulative_segment_distance = 0;
 
-BaselineSeg::BaselineSeg(double spacing, double offset, const Point &leftEdge,
+BaselineSeg::BaselineSeg(double spacing, const Point &leftEdge,
                          const Point &rightEdge)
-    : LineSegment(leftEdge, rightEdge), spacing_(spacing), offset_(offset) {
-  move_line(offset_);
+    : LineSegment(leftEdge, rightEdge), spacing_(spacing) {
   double length = leftEdge.distance_to_point(rightEdge);
 
   // if current baselineSeg is too short, don't create any transects

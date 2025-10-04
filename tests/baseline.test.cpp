@@ -7,22 +7,11 @@
 using namespace dsas;
 constexpr double TOL = 1e-4;
 
-TEST(BaselineSegTest, test_offset) {
-  Point left{0, 0};
-  Point right{0, 1};
-  BaselineSeg baselineSeg{1, 1, left, right};
-
-  ASSERT_NEAR(baselineSeg.leftEdge_.x, -1, TOL);
-  ASSERT_NEAR(baselineSeg.leftEdge_.y, 0, TOL);
-  ASSERT_NEAR(baselineSeg.rightEdge_.x, -1, TOL);
-  ASSERT_NEAR(baselineSeg.rightEdge_.y, 1, TOL);
-}
-
 TEST(BaselineSegTest, test_transects) {
   {
     Point left{0, 0};
     Point right{10, 0};
-    BaselineSeg baselineSeg{1, 0, left, right};
+    BaselineSeg baselineSeg{1, left, right};
 
     auto transects_base_points = baselineSeg.transects_base_points_;
 
@@ -31,7 +20,7 @@ TEST(BaselineSegTest, test_transects) {
   {
     Point left{0, 0};
     Point right{10, 10};
-    BaselineSeg baselineSeq{1, 1, left, right};
+    BaselineSeg baselineSeq{1, left, right};
 
     auto transects_base_points = baselineSeq.transects_base_points_;
 
