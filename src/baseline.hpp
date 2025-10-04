@@ -6,13 +6,13 @@
 namespace dsas {
 struct BaselineSeg : public LineSegment {
   using TransectBasePoint = Point;
-  double spacing_, offset_;
+  double spacing_;
   static double cumulative_transects_distance,
       cumulative_segment_distance;  // cumulative distance
   std::vector<TransectBasePoint> transects_base_points_;
 
   // constructor
-  BaselineSeg(double spacing, double offset, const Point &leftEdge,
+  BaselineSeg(double spacing, const Point &leftEdge,
               const Point &rightEdge);
 
   // element accessing

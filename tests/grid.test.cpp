@@ -28,7 +28,6 @@ TEST(GridTest, test_build_transect_index) {
   std::vector<Point> points{{0, 0}, {1, 0}, {2, 0}, {3, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   auto baseline = std::make_unique<Baseline>(points, 0);
@@ -94,7 +93,6 @@ TEST(GridTest, test_build_transect_out_of_bound) {
   std::vector<Point> points{{0, 0}, {1, 0}, {2, 0}, {3, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   auto baseline = std::make_unique<Baseline>(points, 0);
