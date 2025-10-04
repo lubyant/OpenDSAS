@@ -13,7 +13,6 @@ class DsasTest : public ::testing::Test {
     options = Options();
     options.transect_length = 10;
     options.transect_spacing = 1;
-    options.transect_offset = 0;
     options.smooth_factor = 1;
     options.intersection_mode = dsas::Options::IntersectionMode::Closest;
 

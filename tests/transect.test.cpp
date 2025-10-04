@@ -28,7 +28,6 @@ TEST_F(TransectTest, test_baseline_transect_lines) {
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   baseline = std::make_unique<Baseline>(points, 0);
@@ -49,7 +48,6 @@ TEST_F(TransectTest, test_baseline_transect_lines_right) {
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   options.transect_orient = dsas::Options::TransectOrientation::Right;
@@ -76,7 +74,6 @@ TEST_F(TransectTest, test_baseline_transect_lines_mix) {
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   options.transect_orient = dsas::Options::TransectOrientation::Mix;
@@ -104,7 +101,6 @@ TEST_F(TransectTest, test_baseline_transect_lines_left) {
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   options.transect_orient = dsas::Options::TransectOrientation::Left;
@@ -130,7 +126,6 @@ TEST_F(TransectTest, test_baseline_transect_length1) {
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 1;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   baseline = std::make_unique<Baseline>(points, 0);
@@ -145,7 +140,6 @@ TEST_F(TransectTest, test_baseline_transect_length2) {
   std::vector<Point> points{{0, 0}, {1, 1}, {2, 0}, {3, 1}};
   options.transect_length = 1;
   options.transect_spacing = 0.5;
-  options.transect_offset = 1;
   options.smooth_factor = 0;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   baseline = std::make_unique<Baseline>(points, 0);
@@ -163,7 +157,6 @@ TEST_F(TransectTest, test_baseline_smooth) {
     std::vector<Point> points{{0, 0}, {1, 1}, {2, 0}, {3, 1}};
     options.transect_length = 1;
     options.transect_spacing = 0.5;
-    options.transect_offset = 1;
     options.smooth_factor = 1;
     options.intersection_mode = dsas::Options::IntersectionMode::Closest;
     baseline = std::make_unique<Baseline>(points, 0);
@@ -179,7 +172,6 @@ TEST_F(TransectTest, test_baseline_smooth) {
                               {3, 0}, {4, 1}, {4, 0}};
     options.transect_length = 1;
     options.transect_spacing = 0.5;
-    options.transect_offset = 1;
     options.smooth_factor = 2;
     options.intersection_mode = dsas::Options::IntersectionMode::Closest;
     baseline = std::make_unique<Baseline>(points, 0);
@@ -192,7 +184,6 @@ TEST_F(TransectTest, test_baseline_smooth) {
                               {3, 0}, {4, 1}, {4, 0}};
     options.transect_length = 1;
     options.transect_spacing = 0.5;
-    options.transect_offset = 1;
     options.smooth_factor = 8;
     options.intersection_mode = dsas::Options::IntersectionMode::Closest;
     baseline = std::make_unique<Baseline>(points, 0);

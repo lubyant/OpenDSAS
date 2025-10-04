@@ -29,11 +29,6 @@ void parse_args(int argc, char *argv[]) {
       .default_value(dsas::options.smooth_factor)
       .help("Smoothing factor for filtering");
 
-  program.add_argument("--edge-distance")
-      .scan<'i', int>()
-      .default_value(dsas::options.edge_distance)
-      .help("Minimum distance from edge");
-
   program.add_argument("--transect-length")
       .scan<'g', double>()
       .default_value(dsas::options.transect_length)
@@ -43,11 +38,6 @@ void parse_args(int argc, char *argv[]) {
       .scan<'g', double>()
       .default_value(dsas::options.transect_spacing)
       .help("Spacing between transects");
-
-  program.add_argument("--transect-offset")
-      .scan<'g', double>()
-      .default_value(dsas::options.transect_offset)
-      .help("Offset distance for transects");
 
   program.add_argument("--intersection-mode")
       .default_value(std::string("closest"))
@@ -78,10 +68,8 @@ void parse_args(int argc, char *argv[]) {
 
   // some optional args
   dsas::options.smooth_factor = program.get<int>("--smooth-factor");
-  dsas::options.edge_distance = program.get<int>("--edge-distance");
   dsas::options.transect_length = program.get<double>("--transect-length");
   dsas::options.transect_spacing = program.get<double>("--transect-spacing");
-  dsas::options.transect_offset = program.get<double>("--transect-offset");
 
   std::string s = program.get<std::string>("--intersection-mode");
   if (s == "closest")

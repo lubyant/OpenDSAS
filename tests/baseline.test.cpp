@@ -77,7 +77,6 @@ TEST_F(BaselineTest, test_baseline_transect_points1) {
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
   options.transect_length = 10;
   options.transect_spacing = 0.5;
-  options.transect_offset = 0;
   options.smooth_factor = 1;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   baseline = std::make_unique<Baseline>(points, 0);
@@ -96,7 +95,6 @@ TEST_F(BaselineTest, test_baseline_transect_points1) {
 TEST_F(BaselineTest, test_baseline_transect_points2) {
   options.transect_length = 10;
   options.transect_spacing = 1.5;
-  options.transect_offset = 0;
   options.smooth_factor = 1;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};

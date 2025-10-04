@@ -62,8 +62,8 @@ Baseline::Baseline(const std::vector<BaselinesVertex> &points, int baseline_id)
     : baseline_id_(baseline_id) {
   // create the baselineSeq
   for (size_t i = 0; i < points.size() - 1; i++) {
-    BaselineSeg baselineSeg{options.transect_spacing, options.transect_offset,
-                            points.at(i), points.at(i + 1)};
+    BaselineSeg baselineSeg{options.transect_spacing, points.at(i),
+                            points.at(i + 1)};
     // starting point
     if (i == 0) {
       transects_base_points_.push_back(baselineSeg.leftEdge_);
