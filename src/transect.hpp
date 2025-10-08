@@ -1,6 +1,7 @@
 #ifndef SRC_TRANSECT_HPP_
 #define SRC_TRANSECT_HPP_
 #include <optional>
+#include <stdexcept>
 
 #include "baseline.hpp"
 #include "geometry.hpp"
@@ -49,6 +50,31 @@ struct TransectLine : public LineSegment,
     }
   }
 
+  TransectLine(Point start, Point end, int transect_id, int baseline_id,
+               IntersectionMode mode = IntersectionMode::Closest,
+               TransectOrientation orient = TransectOrientation::Mix)
+      : LineSegment(start, end),
+        transect_id_(transect_id),
+        baseline_id_(baseline_id),
+        mode_(mode),
+        orient_(orient) {
+    switch (orient_) {
+      case TransectOrientation::Left:
+        transect_ref_point_ = start;
+        break;
+      case TransectOrientation::Right:
+        transect_ref_point_ = end;
+        break;
+      case TransectOrientation::Mix:
+        transect_ref_point_ =
+            Point((start.x + end.x) / 2, (start.y + end.y) / 2);
+        break;
+      default:
+        throw std::runtime_error("no valid orient\n");
+    }
+    transect_base_point_ = Point((start.x + end.x) / 2, (start.y + end.y) / 2);
+  }
+
   static LineSegment create_transect(
       Point &transect_base, std::pair<double, double> baseline_normal_vector,
       double transect_length, TransectOrientation orient);
@@ -92,6 +118,9 @@ struct TransectLine : public LineSegment,
 
 std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
     Baseline &);
+
+std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
+    const std::filesystem::path &transect_shp_path);
 
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &,
                    const std::string &);

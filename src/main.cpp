@@ -5,10 +5,14 @@
 #include "grid.hpp"
 #include "intersect.hpp"
 #include "options.hpp"
+#include "shoreline.hpp"
+#include "transect.hpp"
 #include "utility.hpp"
 
-static void cal_erosion_rate(std::vector<dsas::TransectLine> &transects) {
-  for (auto &transect : transects) {
+// --------------------------- runners ----------------------------------
+
+static void cal_erosion_rate(std::vector<dsas::TransectLine>& transects) {
+  for (auto& transect : transects) {
     auto intersects = transect.intersects;
     auto reg_rate = dsas::linearRegressRate(intersects);
     transect.change_rate = reg_rate;
@@ -25,12 +29,12 @@ static void print_messages() {
             << std::filesystem::absolute(dsas::options.intersect_path) << "\n"
             << "Output transects path (with erosion rate): "
             << std::filesystem::absolute(dsas::options.transect_path) << "\n";
-
   std::cout << "Start to run\n";
 }
 
 static void run_root() {
   print_messages();
+
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
   auto shorelines =
       dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
@@ -44,18 +48,13 @@ static void run_root() {
     intersects = dsas::generate_intersects(transects, shorelines);
   }
 
-  // compute regression rate
-  for (auto &transect : transects) {
-    if (!(transect->intersects.empty())) {
-      auto reg_rate = dsas::linearRegressRate(transect->intersects);
-      transect->change_rate = reg_rate;
+  for (auto& t : transects) {
+    if (!t->intersects.empty()) {
+      t->change_rate = dsas::linearRegressRate(t->intersects);
     }
   }
 
-  // read prj
   auto prj = dsas::get_shp_proj(dsas::options.shoreline_path.c_str());
-
-  // save the output
   dsas::save_transect(transects, prj);
   dsas::save_intersects(intersects, prj);
 }
@@ -67,7 +66,31 @@ static void run_cast() {
   dsas::save_transect(transects, prj);
 }
 
-int main(int argc, char *argv[]) {
+static void run_cal() {
+  auto shorelines =
+      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
+  auto transects = dsas::load_transects_from_shp(dsas::options.transect_path);
+
+  auto prj = dsas::get_shp_proj(dsas::options.shoreline_path.c_str());
+
+  std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
+  if (dsas::options.build_index) {
+    auto grids = dsas::build_spatial_grids(shorelines, transects);
+    intersects = dsas::generate_intersects(transects, grids);
+  } else {
+    intersects = dsas::generate_intersects(transects, shorelines);
+  }
+
+  for (auto& t : transects) {
+    if (!t->intersects.empty()) {
+      t->change_rate = dsas::linearRegressRate(t->intersects);
+    }
+  }
+  dsas::save_transect(transects, prj);
+  dsas::save_intersects(intersects, prj);
+}
+
+int main(int argc, char* argv[]) {
   auto cli_status = dsas::parse_args(argc, argv);
   switch (cli_status) {
     case dsas::CliStatus::Root:
@@ -75,6 +98,9 @@ int main(int argc, char *argv[]) {
       break;
     case dsas::CliStatus::Cast:
       run_cast();
+      break;
+    case dsas::CliStatus::Cal:
+      run_cal();
       break;
     default:
       exit(1);
