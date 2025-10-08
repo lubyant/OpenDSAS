@@ -7,8 +7,8 @@
 It is designed for **fast, memory-efficient shoreline change analysis** in modern HPC and command-line workflows.
 
 Compared to the official USGS DSAS:
-- 🚀 **Up to 800× faster** execution
-- 💾 Uses only **~5% of the memory**
+- 🚀 **Up to 800× faster** execution  
+- 💾 Uses only **~5% of the memory**  
 - 🖥️ Optimized for **Linux + CLI/HPC environments**
 
 ---
@@ -16,9 +16,9 @@ Compared to the official USGS DSAS:
 ## 🔍 Why OpenDSAS?
 
 OpenDSAS is ideal if:
-- Your shoreline analysis is **large-scale, time-consuming, or memory-intensive**.
-- You prefer **command-line workflows** and Linux HPC environments.
-- You need **parallelized computation** on large datasets.
+- Your shoreline analysis is **large-scale, time-consuming, or memory-intensive**  
+- You prefer **command-line workflows** and Linux HPC environments  
+- You need **parallelized computation** on large datasets  
 
 ---
 
@@ -33,14 +33,14 @@ sudo apt install ./OpenDSAS-x.y.z.deb
 
 ### Build from Source
 
-#### Prerequisites
+**Prerequisites**
 - Ubuntu 24.04  
 - [CMake](https://cmake.org/) ≥ 3.14  
 - C++20-compatible compiler  
 - [GDAL](https://gdal.org/) ≥ 3.8.5 *(recommended: build from source)*  
 - [Boost](https://www.boost.org/)
 
-#### Steps
+**Steps**
 ```bash
 git clone --recurse-submodules https://github.com/lubyant/OpenDSAS.git
 cd OpenDSAS
@@ -48,7 +48,9 @@ mkdir build
 
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
-sudo cmake --install build --prefix /usr/local/
+
+# if you want to install as a system cmd
+sudo cmake --install build
 ```
 
 ---
@@ -61,20 +63,64 @@ dsas --baseline baseline.shp --shoreline shoreline.shp
 ```
 
 ### Command-Line Options
-| Option                       | Description                                                                                                            | Default          |
-|------------------------------|------------------------------------------------------------------------------------------------------------------------|------------------|
-| `-h, --help`                 | Show help message                                                                                                      | —                |
-| `-v, --version`              | Print version info                                                                                                     | —                |
-| `--baseline [FILE]`          | Path to baseline shapefile (**required**)                                                                              | —                |
-| `--shoreline [FILE]`         | Path to shoreline shapefile (**required**)                                                                             | —                |
-| `--output-intersect [FILE]`  | Save intersections shapefile                                                                                           | `intersects.shp` |
-| `--output-transect [FILE]`   | Save transects shapefile                                                                                                | `transects.shp`  |
-| `--smooth-factor [N]`        | Smoothing factor                                                                                                       | `1`              |
-| `--transect-length [N]`      | Transect length                                                                                                        | `500`            |
-| `--transect-spacing [N]`     | Spacing between transects                                                                                              | `30`             |
-| `--intersection-mode [MODE]` | Intersection rule: `closest` or `farthest`. Controls how intersections are chosen when transects hit multiple shorelines. | `closest`        |
-| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix` (half left, half right).                                              | `mix`            |
-| `-bi, --build_index`         | Build spatial index to speed up intersections (trade-off: faster queries vs slower initial build).                     | —                |
+
+#### Root Command
+| Option                          | Description                                                                                                              | Default          |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------------|------------------|
+| `-h, --help`                    | Show help message                                                                                                        | —                |
+| `-v, --version`                 | Print version info                                                                                                       | —                |
+| `--baseline [FILE]`             | Path to baseline shapefile                                                                                                | —                |
+| `--shoreline [FILE]`            | Path to shoreline shapefile                                                                                              | —                |
+| `--output-intersect [FILE]`     | Save intersections shapefile                                                                                              | `intersects.shp` |
+| `--output-transect [FILE]`      | Save transects shapefile                                                                                                  | `transects.shp`  |
+| `--smooth-factor [N]`           | Smoothing factor                                                                                                         | `1`              |
+| `--transect-length [N]`         | Transect length                                                                                                          | `500`            |
+| `--transect-spacing [N]`        | Spacing between transects                                                                                                | `30`             |
+| `--intersection-mode [MODE]`    | Intersection rule: `closest` or `farthest`                                                                               | `closest`        |
+| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix` (half left, half right)                                                  | `mix`            |
+| `-bi, --build_index`            | Build spatial index (faster queries, slower initial build)                                                               | `false`          |
+
+---
+
+#### Cast Command
+Generate transects from a baseline.
+
+<details>
+<summary>Click to expand <code>cast</code> options</summary>
+
+| Option                          | Description                                                                                                            | Default          |
+|---------------------------------|------------------------------------------------------------------------------------------------------------------------|------------------|
+| `-h, --help`                    | Show help message                                                                                                      | —                |
+| `-v, --version`                 | Print version info                                                                                                     | —                |
+| `--baseline [FILE]`             | Path to baseline shapefile (**required**)                                                                              | —                |
+| `--output-transect [FILE]`      | Save transects shapefile                                                                                                | `transects.shp`  |
+| `--smooth-factor [N]`           | Smoothing factor                                                                                                       | `1`              |
+| `--transect-length [N]`         | Transect length                                                                                                        | `500`            |
+| `--transect-spacing [N]`        | Spacing between transects                                                                                              | `30`             |
+| `--intersection-mode [MODE]`    | Intersection rule: `closest` or `farthest`                                                                             | `closest`        |
+| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix`                                                                        | `mix`            |
+
+</details>
+
+---
+
+#### Cal Command
+Generate intersections and calculate erosion rates using predefined transects.
+
+<details>
+<summary>Click to expand <code>cal</code> options</summary>
+
+| Option                          | Description                                                                                                            | Default          |
+|---------------------------------|------------------------------------------------------------------------------------------------------------------------|------------------|
+| `-h, --help`                    | Show help message                                                                                                      | —                |
+| `-v, --version`                 | Print version info                                                                                                     | —                |
+| `--transect [FILE]`             | Path to transect shapefile (**required**)                                                                              | —                |
+| `--shoreline [FILE]`            | Path to shoreline shapefile (**required**)                                                                             | —                |
+| `--intersection-mode [MODE]`    | Intersection rule: `closest` or `farthest`                                                                             | `closest`        |
+| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix`                                                                        | `mix`            |
+| `-bi, --build_index`            | Build spatial index (faster queries, slower initial build)                                                             | `false`          |
+
+</details>
 
 ---
 
@@ -88,7 +134,7 @@ Must contain a `Date` field:
 | YYYY/MM/DD |
 
 - Example: `2000/01/01`  
-- A shoreline ID field is auto-generated (custom IDs not yet supported).
+- A shoreline ID field is auto-generated (custom IDs not yet supported)
 
 ### Baseline Shapefile
 Must contain an `Id` field:
@@ -118,7 +164,7 @@ OpenDSAS generates two shapefiles:
 ## 🛠 Roadmap
 - [ ] GUI frontend  
 - [ ] Cross-platform support (MSVC / Windows)  
-- [ ] Distribution packages for additional Linux distros  
+- [ ] Distribution packages for other Linux distros  
 
 ---
 
