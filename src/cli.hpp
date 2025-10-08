@@ -5,7 +5,12 @@
 
 namespace dsas {
 
-void parse_args(int argc, char *argv[]);
+enum class CliStatus{
+    Root,
+    Cast
+};
+
+CliStatus parse_args(int argc, char *argv[]);
 
 }
 
