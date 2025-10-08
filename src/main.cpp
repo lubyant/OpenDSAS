@@ -5,6 +5,8 @@
 #include "grid.hpp"
 #include "intersect.hpp"
 #include "options.hpp"
+#include "shoreline.hpp"
+#include "transect.hpp"
 #include "utility.hpp"
 
 // --------------------------- runners ----------------------------------
@@ -64,7 +66,31 @@ static void run_cast() {
   dsas::save_transect(transects, prj);
 }
 
-int main(int argc, char *argv[]) {
+static void run_cal() {
+  auto shorelines =
+      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
+  auto transects = dsas::load_transects_from_shp(dsas::options.transect_path);
+
+  auto prj = dsas::get_shp_proj(dsas::options.shoreline_path.c_str());
+
+  std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
+  if (dsas::options.build_index) {
+    auto grids = dsas::build_spatial_grids(shorelines, transects);
+    intersects = dsas::generate_intersects(transects, grids);
+  } else {
+    intersects = dsas::generate_intersects(transects, shorelines);
+  }
+
+  for (auto& t : transects) {
+    if (!t->intersects.empty()) {
+      t->change_rate = dsas::linearRegressRate(t->intersects);
+    }
+  }
+  dsas::save_transect(transects, prj);
+  dsas::save_intersects(intersects, prj);
+}
+
+int main(int argc, char* argv[]) {
   auto cli_status = dsas::parse_args(argc, argv);
   switch (cli_status) {
     case dsas::CliStatus::Root:
@@ -72,6 +98,9 @@ int main(int argc, char *argv[]) {
       break;
     case dsas::CliStatus::Cast:
       run_cast();
+      break;
+    case dsas::CliStatus::Cal:
+      run_cal();
       break;
     default:
       exit(1);

@@ -3,9 +3,13 @@
 #include <ogrsf_frmts.h>
 
 #include <cstddef>
+#include <cstdlib>
+#include <iostream>
 #include <memory>
+#include <utility>
 
 #include "grid.hpp"
+#include "options.hpp"
 #include "utility.hpp"
 
 namespace dsas {
@@ -236,6 +240,76 @@ std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
         transect_lines.at(transect_lines.size() - 1)->transect_ref_point_);
   }
   return transect_lines;
+}
+
+std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
+    const std::filesystem::path &transect_shp_path) {
+  std::vector<std::unique_ptr<TransectLine>> transects;
+  // Initialize GDAL
+  GDALAllRegister();
+
+  // Open the Shapefile
+  GDALDataset *poDS = nullptr;
+  poDS = static_cast<GDALDataset *>(GDALOpenEx(
+      transect_shp_path.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
+  if (poDS == nullptr) {
+    std::cerr << "Open failed.\n";
+    exit(1);
+  }
+
+  // Get the Layer Containing the Line Features
+  OGRLayer *poLayer = nullptr;
+  poLayer = poDS->GetLayer(0);
+
+  // check field "transect_id"
+  int i_field = poLayer->GetLayerDefn()->GetFieldIndex("TransectId");
+  if (i_field < 0) {
+    std::cerr << "Need to specify TransectId!\n";
+    exit(1);
+  }
+
+  // check field "baseline_id"
+  i_field = poLayer->GetLayerDefn()->GetFieldIndex("BaselineId");
+  if (i_field < 0) {
+    std::cerr << "Need to specify BaselineId!\n";
+    exit(1);
+  }
+
+  // Iterate Through the Features in the Layer and Access Points
+  OGRFeature *poFeature = nullptr;
+  poLayer->ResetReading();
+  while ((poFeature = poLayer->GetNextFeature()) != nullptr) {
+    OGRGeometry *poGeometry = nullptr;
+    poGeometry = poFeature->GetGeometryRef();
+    auto *poLine = dynamic_cast<OGRLineString *>(poGeometry);
+    auto transect_id = poFeature->GetFieldAsInteger("TransectId");
+    auto baseline_id = poFeature->GetFieldAsInteger("BaselineId");
+
+    OGRPoint ogr_left;
+    OGRPoint ogr_right;
+    poLine->getPoint(0, &ogr_left);
+    poLine->getPoint(poLine->getNumPoints() - 1, &ogr_right);
+
+    auto transect = std::make_unique<TransectLine>(
+        Point(ogr_left.getX(), ogr_left.getY()),
+        Point(ogr_right.getX(), ogr_right.getY()), transect_id, baseline_id,
+        options.intersection_mode, options.transect_orient);
+
+    transects.push_back(std::move(transect));
+    OGRFeature::DestroyFeature(poFeature);
+  }
+
+  // check the length and spacing
+  options.transect_length =
+      transects[0]->leftEdge_.distance_to_point(transects[0]->rightEdge_);
+
+  options.transect_spacing =
+      transects[0]->leftEdge_.distance_to_point(transects[1]->leftEdge_);
+
+  // Cleanup
+  GDALClose(poDS);
+
+  return transects;
 }
 
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,

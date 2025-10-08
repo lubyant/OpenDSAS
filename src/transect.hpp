@@ -61,11 +61,14 @@ struct TransectLine : public LineSegment,
     switch (orient_) {
       case TransectOrientation::Left:
         transect_ref_point_ = start;
+        break;
       case TransectOrientation::Right:
         transect_ref_point_ = end;
+        break;
       case TransectOrientation::Mix:
         transect_ref_point_ =
             Point((start.x + end.x) / 2, (start.y + end.y) / 2);
+        break;
       default:
         throw std::runtime_error("no valid orient\n");
     }
