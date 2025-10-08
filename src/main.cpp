@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstdlib>
 
 #include "cli.hpp"
 #include "dsas.hpp"
@@ -31,7 +31,6 @@ static void print_messages() {
 }
 
 static void run_root() {
-  // Original all-in-one flow using baseline + shoreline
   print_messages();
 
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
@@ -65,33 +64,16 @@ static void run_cast() {
   dsas::save_transect(transects, prj);
 }
 
-static void run_cal() {
-  print_messages();
-
-  auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
-  auto shorelines =
-      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
-  auto transects = dsas::generate_transects(baselines);
-
-  std::cout << "Start to run\n";
-}
-
-// ------------------------------ main ----------------------------------
-
-int main(int argc, char* argv[]) {
-  auto cli_state = parse_args(argc, argv);
-  switch (cli_state) {
-    case dsas::CliState::root:
+int main(int argc, char *argv[]) {
+  auto cli_status = dsas::parse_args(argc, argv);
+  switch (cli_status) {
+    case dsas::CliStatus::Root:
       run_root();
       break;
-    case dsas::CliState::cast:
+    case dsas::CliStatus::Cast:
       run_cast();
       break;
-    case dsas::CliState::cal:
-      run_cal();
-      break;
     default:
-      std::cerr << "wrong cli command\n";
       exit(1);
   }
   return 0;
