@@ -19,8 +19,7 @@ static dsas::Options::TransectOrientation parse_transect_orient(
   throw std::runtime_error("Invalid --transect-orientation: " + s);
 }
 
-static void init_root_cmd(argparse::ArgumentParser &root_cmd) {
-
+static void init_root_cmd(argparse::ArgumentParser& root_cmd) {
   root_cmd.add_argument("--baseline")
       .help("Path to the baseline file")
       .default_value(std::string{});
@@ -67,7 +66,7 @@ static void init_root_cmd(argparse::ArgumentParser &root_cmd) {
       .help("Build spatial index to speed up search");
 }
 
-static void init_cast_cmd( argparse::ArgumentParser &cast_cmd) {
+static void init_cast_cmd(argparse::ArgumentParser& cast_cmd) {
   cast_cmd.add_description("Generate transects from a baseline.");
   cast_cmd.add_argument("--baseline")
       .required()
@@ -87,6 +86,12 @@ static void init_cast_cmd( argparse::ArgumentParser &cast_cmd) {
       .scan<'i', int>()
       .default_value(dsas::options.smooth_factor)
       .help("Smoothing factor for filtering");
+  cast_cmd.add_argument("--intersection-mode")
+      .default_value(std::string("closest"))
+      .help("Intersection mode: closest or farthest");
+  cast_cmd.add_argument("--transect-orientation")
+      .default_value(std::string("mix"))
+      .help("Transect orientation: left, right, or mix");
 }
 
 CliStatus parse_args(int argc, char* argv[]) {
@@ -108,6 +113,10 @@ CliStatus parse_args(int argc, char* argv[]) {
       dsas::options.transect_spacing =
           cast_cmd.get<double>("--transect-spacing");
       dsas::options.smooth_factor = cast_cmd.get<int>("--smooth-factor");
+      dsas::options.intersection_mode = parse_intersection_mode(
+          cast_cmd.get<std::string>("--intersection-mode"));
+      dsas::options.transect_orient = parse_transect_orient(
+          cast_cmd.get<std::string>("--transect-orientation"));
       return CliStatus::Cast;
     }
     dsas::options.baseline_path = root_cmd.get<std::string>("--baseline");
