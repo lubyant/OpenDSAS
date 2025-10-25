@@ -2,9 +2,9 @@
 
 # OpenDSAS (Digital Shoreline Analysis System)
 
-**OpenDSAS** is a high-performance, Linux-native reimplementation of the USGS  
+**OpenDSAS** is a high-performance, Cross-platform reimplementation of the USGS  
 [Digital Shoreline Analysis System (DSAS)](https://www.usgs.gov/centers/whcmsc/science/digital-shoreline-analysis-system-dsas).  
-It is designed for **fast, memory-efficient shoreline change analysis** in modern HPC and command-line workflows.
+It is designed for **fast, memory-efficient shoreline change analysis** in command-line workflows.
 
 Compared to the official USGS DSAS:
 - 🚀 **Up to 800× faster** execution  
@@ -163,7 +163,6 @@ OpenDSAS generates two shapefiles:
 
 ## 🛠 Roadmap
 - [ ] GUI frontend  
-- [ ] Cross-platform support (MSVC / Windows)  
 - [ ] Distribution packages for other Linux distros  
 
 ---
