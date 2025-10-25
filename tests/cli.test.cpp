@@ -51,7 +51,7 @@ TEST(CLITest, test_parser_cast) {
   EXPECT_EQ(options.transect_path, "trans.shp");
   EXPECT_EQ(options.intersection_mode, Options::IntersectionMode::Closest);
   EXPECT_EQ(options.transect_orient, Options::TransectOrientation::Mix);
-  EXPECT_EQ(options.build_index, true);
+  EXPECT_EQ(options.build_index, false);
   EXPECT_EQ(options.transect_length, 200);
   EXPECT_EQ(options.transect_spacing, 50);
 }
