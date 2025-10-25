@@ -86,7 +86,7 @@ std::vector<Baseline> load_baselines_shp(
   // Open the Shapefile
   GDALDataset *poDS = nullptr;
   poDS = static_cast<GDALDataset *>(GDALOpenEx(
-      baseline_shp_path.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
+      baseline_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
   if (poDS == nullptr) {
     std::cerr << "Open failed.\n";
     exit(1);

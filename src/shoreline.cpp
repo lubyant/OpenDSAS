@@ -42,7 +42,7 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
   // Open the Shapefile
   GDALDataset *poDS = nullptr;
   poDS = static_cast<GDALDataset *>(GDALOpenEx(
-      shoreline_shp_path.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
+      shoreline_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
   if (poDS == nullptr) {
     std::cerr << "Open failed.\n";
     exit(1);
