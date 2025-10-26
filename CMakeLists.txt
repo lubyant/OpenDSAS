@@ -72,18 +72,23 @@ install(TARGETS dsas RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 # -------------------------
 include(CTest)  # provides BUILD_TESTING option (ON by default in CTest)
 if(BUILD_TESTING)
-  # If you vendor googletest at third_party/googletest
-  add_subdirectory(third_party/googletest)
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+  )
+  # For Windows: Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
 
   file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.test.cpp")
   if(TEST_SOURCES)
     add_executable(dsas_test ${TEST_SOURCES})
-    target_include_directories(dsas_test PRIVATE ${PROJECT_SOURCE_DIR}/src)
-    target_link_libraries(dsas_test PRIVATE
-      dsas_lib
-      gtest
-      gtest_main
+    target_link_libraries(
+      dsas_test PRIVATE dsas_lib GTest::gtest_main
     )
+    include(GoogleTest)
+    gtest_discover_tests(dsas_test)
     add_test(NAME dsas_test COMMAND dsas_test)
   endif()
 endif()
