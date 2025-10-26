@@ -105,5 +105,6 @@ int main(int argc, char* argv[]) {
     default:
       exit(1);
   }
+  std::cout << "Calculation Done!\n";
   return 0;
 }
