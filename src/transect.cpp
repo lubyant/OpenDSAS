@@ -9,6 +9,7 @@
 #include <utility>
 
 #include "grid.hpp"
+#include "intersect.hpp"
 #include "options.hpp"
 #include "utility.hpp"
 
@@ -142,8 +143,9 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
   return intersections;
 }
 
-void save_points(const std::vector<TransectLine> &shapes, const char *pszProj,
-                 const std::filesystem::path &output_path) {
+static void save_points(const std::vector<TransectLine *> &shapes,
+                        const char *pszProj,
+                        const std::filesystem::path &output_path) {
   // Initialize GDAL
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
@@ -169,9 +171,9 @@ void save_points(const std::vector<TransectLine> &shapes, const char *pszProj,
   }
 
   // define attributes
-  for (size_t i = 0; i < shapes[0].get_names().size(); i++) {
-    OGRFieldDefn field(shapes[0].get_names()[i].c_str(),
-                       shapes[0].get_types()[i]);
+  for (size_t i = 0; i < shapes[0]->get_names().size(); i++) {
+    OGRFieldDefn field(shapes[0]->get_names()[i].c_str(),
+                       shapes[0]->get_types()[i]);
     if (layer->CreateField(&field) != OGRERR_NONE) {
       std::cerr << __FILE__ << ", " << __LINE__
                 << ": Failed to create Name field" << std::endl;
@@ -185,11 +187,11 @@ void save_points(const std::vector<TransectLine> &shapes, const char *pszProj,
     OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
     // Step 7: Add the geometry to the feature
     OGRPoint point;
-    point.setX(shape.transect_base_point_.x);
-    point.setY(shape.transect_base_point_.y);
+    point.setX(shape->transect_base_point_.x);
+    point.setY(shape->transect_base_point_.y);
     feature->SetGeometry(&point);
 
-    set_ogr_feature(shape.get_names(), shape.get_values(), *feature);
+    set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
 
     if (layer->CreateFeature(feature) != OGRERR_NONE) {
       std::cerr << "Failed to create feature in shapefile!" << std::endl;
@@ -250,8 +252,9 @@ std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
 
   // Open the Shapefile
   GDALDataset *poDS = nullptr;
-  poDS = static_cast<GDALDataset *>(GDALOpenEx(
-      transect_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
+  poDS = static_cast<GDALDataset *>(
+      GDALOpenEx(transect_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr,
+                 nullptr, nullptr));
   if (poDS == nullptr) {
     std::cerr << "Open failed.\n";
     exit(1);
@@ -313,13 +316,17 @@ std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
 }
 
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
-                   const std::string &prj) {
+                   const std::string &prj, bool save_as_point) {
   std::vector<TransectLine *> tmp_save;
   tmp_save.reserve(transects.size());
   std::transform(transects.begin(), transects.end(),
                  std::back_inserter(tmp_save),
                  [](const auto &up) { return up.get(); });
-  dsas::save_lines(tmp_save, prj.c_str(), dsas::options.transect_path);
+  if (save_as_point) {
+    save_points(tmp_save, prj.c_str(), dsas::options.transect_path);
+  } else {
+    dsas::save_lines(tmp_save, prj.c_str(), dsas::options.transect_path);
+  }
 }
 
 }  // namespace dsas

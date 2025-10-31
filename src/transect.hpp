@@ -122,8 +122,8 @@ std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
 std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
     const std::filesystem::path &transect_shp_path);
 
-void save_transect(const std::vector<std::unique_ptr<TransectLine>> &,
-                   const std::string &);
+void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
+                   const std::string &prj, bool save_as_point = false);
 
 }  // namespace dsas
 

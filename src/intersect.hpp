@@ -51,10 +51,6 @@ struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
   }
 };
 
-// TODO this func belong to utility as template
-void save_points(const std::vector<IntersectPoint *> &shapes,
-                 const char *pszProj, const std::filesystem::path &output_path);
-
 void save_intersects(const std::vector<std::unique_ptr<IntersectPoint>> &,
                      const std::string &);
 }  // namespace dsas

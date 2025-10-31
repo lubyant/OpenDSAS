@@ -204,5 +204,5 @@ TEST_F(TransectTest, test_save_transect) {
   options.transect_path = std::filesystem::temp_directory_path() / "tran.shp";
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
-  dsas::save_transect(transects_lines, prj);
+  save_transect(transects_lines, prj);
 }
