@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <boost/date_time/gregorian/greg_month.hpp>
 #include <memory>
+#include <stdexcept>
 
 #include "intersect.hpp"
 constexpr double TOL = 1e-4;
@@ -68,8 +69,6 @@ TEST_F(DsasTest, test_generate_intersects_without_grids) {
 }
 
 TEST_F(DsasTest, test_linearRegressionRate) {
-  std::vector<IntersectPoint *> intersections;
-
   // it won't used for rate
   Point fake_point{0, 0};
   int fake_tid{0};
@@ -82,20 +81,57 @@ TEST_F(DsasTest, test_linearRegressionRate) {
       2010, boost::gregorian::greg_month::month_enum::Jan, 1};
   boost::gregorian::date date3{
       2020, boost::gregorian::greg_month::month_enum::Jan, 1};
-
   double dist2ref1 = 0;
   double dist2ref2 = 1;
   double dist2ref3 = 2;
 
-  IntersectPoint p1{fake_point, fake_tid, fake_sid, fake_bid, date1, dist2ref1};
-  IntersectPoint p2{fake_point, fake_tid, fake_sid, fake_bid, date2, dist2ref2};
-  IntersectPoint p3{fake_point, fake_tid, fake_sid, fake_bid, date3, dist2ref3};
+  {
+    std::vector<IntersectPoint *> intersections;
+    IntersectPoint p1{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date1,    dist2ref1};
+    IntersectPoint p2{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date2,    dist2ref2};
+    IntersectPoint p3{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date3,    dist2ref3};
 
-  intersections.push_back(&p1);
-  intersections.push_back(&p2);
-  intersections.push_back(&p3);
+    intersections.push_back(&p1);
+    intersections.push_back(&p2);
+    intersections.push_back(&p3);
 
-  double ans = linearRegressRate(intersections);
+    double ans = linearRegressRate(intersections);
 
-  ASSERT_NEAR(ans, 0.1, TOL);
+    ASSERT_NEAR(ans, 0.1, TOL);
+  }
+
+  {
+    std::vector<IntersectPoint *> intersections;
+    IntersectPoint p1{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date1,    dist2ref1};
+    IntersectPoint p2{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date2,    dist2ref2};
+
+    intersections.push_back(&p1);
+    intersections.push_back(&p2);
+
+    double ans = linearRegressRate(intersections);
+
+    ASSERT_NEAR(ans, 0.1, TOL);
+  }
+
+  {
+    std::vector<IntersectPoint *> intersections;
+    IntersectPoint p1{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date1,    dist2ref1};
+
+    intersections.push_back(&p1);
+
+    double ans = linearRegressRate(intersections);
+
+    ASSERT_NEAR(ans, 0, TOL);
+  }
+
+  {
+    std::vector<IntersectPoint *> intersections;
+    EXPECT_THROW(linearRegressRate(intersections), std::runtime_error);
+  }
 }
