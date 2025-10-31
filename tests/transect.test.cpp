@@ -205,5 +205,6 @@ TEST_F(TransectTest, test_save_transect) {
   options.transect_path = tmp_file.string();
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
-  save_transect(transects_lines, prj);
+  { save_transect(transects_lines, prj); }
+  { save_transect(transects_lines, prj, true); }
 }
