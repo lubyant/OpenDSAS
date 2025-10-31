@@ -99,9 +99,10 @@ TEST_F(BaselineTest, test_baseline_transect_points2) {
   ASSERT_NEAR(y[1], transects_points[1].y, TOL);
 }
 
-
-TEST(BaselineLoadTest, test_load_baselines_shp){
-  const std::filesystem::path baseline_shp_path {"tests/test_case/sample_baseline_offshore.geojson"};
+TEST(BaselineLoadTest, test_load_baselines_shp) {
+  const std::filesystem::path baseline_shp_path{
+      std::string(TEST_DATA_DIR) +
+      "/sample_baseline_offshore.geojson"};
   auto ret = load_baselines_shp(baseline_shp_path);
   ASSERT_TRUE(!ret.empty());
 }
