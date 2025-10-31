@@ -80,15 +80,20 @@ TEST_F(DsasTest, test_linearRegressionRate) {
       2000, boost::gregorian::greg_month::month_enum::Jan, 1};
   boost::gregorian::date date2{
       2010, boost::gregorian::greg_month::month_enum::Jan, 1};
+  boost::gregorian::date date3{
+      2020, boost::gregorian::greg_month::month_enum::Jan, 1};
 
   double dist2ref1 = 0;
   double dist2ref2 = 1;
+  double dist2ref3 = 2;
 
   IntersectPoint p1{fake_point, fake_tid, fake_sid, fake_bid, date1, dist2ref1};
   IntersectPoint p2{fake_point, fake_tid, fake_sid, fake_bid, date2, dist2ref2};
+  IntersectPoint p3{fake_point, fake_tid, fake_sid, fake_bid, date3, dist2ref3};
 
   intersections.push_back(&p1);
   intersections.push_back(&p2);
+  intersections.push_back(&p3);
 
   double ans = linearRegressRate(intersections);
 
