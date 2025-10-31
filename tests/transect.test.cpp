@@ -201,7 +201,8 @@ TEST_F(TransectTest, test_save_transect) {
   auto prj = get_shp_proj(shoreline_shp_path.string().c_str());
   std::vector<Point> points{{0, 0}, {1, 1}, {2, 0}, {3, 1},
                             {3, 0}, {4, 1}, {4, 0}};
-  options.transect_path = std::filesystem::temp_directory_path() / "tran.shp";
+  auto tmp_file = std::filesystem::temp_directory_path() / "tran.shp";
+  options.transect_path = tmp_file.string();
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
   save_transect(transects_lines, prj);
