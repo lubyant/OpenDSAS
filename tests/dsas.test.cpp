@@ -134,4 +134,20 @@ TEST_F(DsasTest, test_linearRegressionRate) {
     std::vector<IntersectPoint *> intersections;
     EXPECT_THROW(linearRegressRate(intersections), std::runtime_error);
   }
+
+  {
+    std::vector<IntersectPoint *> intersections;
+    IntersectPoint p1{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date1,    dist2ref1};
+    IntersectPoint p2{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date2,    dist2ref2};
+    IntersectPoint p3{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date2,    dist2ref3};
+
+    intersections.push_back(&p1);
+    intersections.push_back(&p2);
+    intersections.push_back(&p3);
+
+    EXPECT_THROW(linearRegressRate(intersections), std::runtime_error);
+  }
 }
