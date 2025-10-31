@@ -5,4 +5,4 @@
 constexpr double TOL = 1e-4;
 using namespace dsas;
 
-// TODO add test
+TEST(TestIntersect, test_save_intersects) {}

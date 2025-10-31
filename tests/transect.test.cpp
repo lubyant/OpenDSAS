@@ -208,3 +208,9 @@ TEST_F(TransectTest, test_save_transect) {
   { save_transect(transects_lines, prj); }
   { save_transect(transects_lines, prj, true); }
 }
+
+TEST_F(TransectTest, test_load_transects_from_shp) {
+  const std::filesystem::path transect_shp_path{std::string(TEST_DATA_DIR) +
+                                                "/sample_transects.geojson"};
+  load_transects_from_shp(transect_shp_path);
+}
