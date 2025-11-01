@@ -140,6 +140,34 @@
         "Id": 1,
         "Attribute": "DSAS sample data offshore baseline"
       }
+    },
+    {
+      "type": "Feature",
+      "id": -1,
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              464053.937683710770216,
+              4611192.552008114755154
+            ],
+            [
+              463591.16420560789993,
+              4611003.235585253685713
+            ],
+            [
+              463591.16420560789993,
+              4611003.235585253685713
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 0,
+        "Id": 1,
+        "Attribute": "DSAS sample data offshore baseline"
+      }
     }
   ]
 }
