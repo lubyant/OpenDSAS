@@ -82,19 +82,18 @@ if(BUILD_TESTING)
   FetchContent_MakeAvailable(googletest)
 
   file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.test.cpp")
-  add_executable(dsas_test ${TEST_SOURCES})
-  target_link_libraries(
-    dsas_test PRIVATE dsas_lib GTest::gtest_main
-  )
-  target_compile_definitions(dsas_test PRIVATE
-    TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/test_case"
-    DSAS_EXE_PATH="$<TARGET_FILE:dsas>"
-  )
-  include(GoogleTest)
-  gtest_discover_tests(dsas_test 
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-  add_test(NAME dsas_test COMMAND dsas_test)
-
+  if(TEST_SOURCES)
+    add_executable(dsas_test ${TEST_SOURCES})
+    target_link_libraries(
+      dsas_test PRIVATE dsas_lib GTest::gtest_main
+    )
+    target_compile_definitions(dsas_test PRIVATE
+      TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/test_case"
+    )
+    include(GoogleTest)
+    gtest_discover_tests(dsas_test)
+    add_test(NAME dsas_test COMMAND dsas_test)
+  endif()
 endif()
 
 # -------------------------
