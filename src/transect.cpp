@@ -210,9 +210,6 @@ std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
   std::vector<std::unique_ptr<TransectLine>> transect_lines;
   // smoothing the transects
   auto smooth_factor = options.smooth_factor;
-  if (options.smooth_factor < 0) {
-    throw std::runtime_error("smooth factor should no less than 0");
-  }
   auto transect_length = options.transect_length;
   auto mode = options.intersection_mode;
   auto orient = options.transect_orient;
