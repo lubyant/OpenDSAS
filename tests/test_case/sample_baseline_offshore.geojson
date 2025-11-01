@@ -1,18 +1,18 @@
 {
-  "type" : "FeatureCollection",
-  "crs" : {
-    "type" : "name",
-    "properties" : {
-      "name" : "EPSG:32617"
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:32617"
     }
   },
-  "features" : [
+  "features": [
     {
-      "type" : "Feature",
-      "id" : 0,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539059.47981067665,
             3128146.4075929122
@@ -135,10 +135,10 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 0,
-        "Id" : 1,
-        "Attribute" : "DSAS sample data offshore baseline"
+      "properties": {
+        "FID": 0,
+        "Id": 1,
+        "Attribute": "DSAS sample data offshore baseline"
       }
     }
   ]

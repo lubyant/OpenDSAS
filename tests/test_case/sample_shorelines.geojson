@@ -1,18 +1,48 @@
 {
-  "type" : "FeatureCollection",
-  "crs" : {
-    "type" : "name",
-    "properties" : {
-      "name" : "EPSG:32617"
+  "type": "FeatureCollection",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:32617"
     }
   },
-  "features" : [
+  "features": [
     {
-      "type" : "Feature",
-      "id" : 0,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": -1,
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              464053.937683710770216,
+              4611192.552008114755154
+            ],
+            [
+              463591.16420560789993,
+              4611003.235585253685713
+            ],
+            [
+              463591.16420560789993,
+              4611003.235585253685713
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "FID": 5,
+        "Date": "2010/05/09",
+        "Uncy": 2.8356199264526367,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 0,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538667.26270877267,
             3128120.9131824607
@@ -2827,20 +2857,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 0,
-        "Date" : "2006/01/26",
-        "Uncy" : 1.8067200183868408,
-        "Year_" : 2006,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 0,
+        "Date": "2006/01/26",
+        "Uncy": 1.8067200183868408,
+        "Year_": 2006,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 1,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540793.95930872404,
             3142892.8618884571
@@ -4219,20 +4249,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 1,
-        "Date" : "2006/01/25",
-        "Uncy" : 1.6044000387191772,
-        "Year_" : 2006,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 1,
+        "Date": "2006/01/25",
+        "Uncy": 1.6044000387191772,
+        "Year_": 2006,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 2,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 2,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546315.65162121528,
             3147159.0690076398
@@ -4367,20 +4397,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 2,
-        "Date" : "2006/01/25",
-        "Uncy" : 1.4060599803924561,
-        "Year_" : 2006,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 2,
+        "Date": "2006/01/25",
+        "Uncy": 1.4060599803924561,
+        "Year_": 2006,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 3,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 3,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546472.37888631155,
             3147832.4331481899
@@ -9363,20 +9393,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 3,
-        "Date" : "2006/01/25",
-        "Uncy" : 1.6299899816513062,
-        "Year_" : 2006,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 3,
+        "Date": "2006/01/25",
+        "Uncy": 1.6299899816513062,
+        "Year_": 2006,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 4,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 4,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538658.72136507777,
             3128120.3579886132
@@ -9511,20 +9541,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 4,
-        "Date" : "2009/08/30",
-        "Uncy" : 1.6655000448226929,
-        "Year_" : 2009,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 4,
+        "Date": "2009/08/30",
+        "Uncy": 1.6655000448226929,
+        "Year_": 2009,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 5,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 5,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538534.4579903048,
             3130499.7693742504
@@ -11963,20 +11993,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 5,
-        "Date" : "2010/05/09",
-        "Uncy" : 2.8356199264526367,
-        "Year_" : 2010,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 5,
+        "Date": "2010/05/09",
+        "Uncy": 2.8356199264526367,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 6,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 6,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540804.60911509919,
             3142838.7229956309
@@ -12679,20 +12709,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 6,
-        "Date" : "2010/05/09",
-        "Uncy" : 2.0588300228118896,
-        "Year_" : 2010,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 6,
+        "Date": "2010/05/09",
+        "Uncy": 2.0588300228118896,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 7,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 7,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542872.53746734303,
             3145616.6282853438
@@ -13443,20 +13473,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 7,
-        "Date" : "2010/05/09",
-        "Uncy" : 2.205549955368042,
-        "Year_" : 2010,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 7,
+        "Date": "2010/05/09",
+        "Uncy": 2.205549955368042,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 8,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 8,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546289.77502183081,
             3147228.6823958252
@@ -13499,20 +13529,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 8,
-        "Date" : "2010/05/09",
-        "Uncy" : 2.8696498870849609,
-        "Year_" : 2010,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 8,
+        "Date": "2010/05/09",
+        "Uncy": 2.8696498870849609,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 9,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 9,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546362.97376345075,
             3147404.605947427
@@ -16531,20 +16561,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 9,
-        "Date" : "2010/05/09",
-        "Uncy" : 2.8072099685668945,
-        "Year_" : 2010,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 9,
+        "Date": "2010/05/09",
+        "Uncy": 2.8072099685668945,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 10,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 10,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538105.96738264349,
             3166659.8577545765
@@ -17435,20 +17465,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 10,
-        "Date" : "2010/05/09",
-        "Uncy" : 1.6615400314331055,
-        "Year_" : 2010,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 10,
+        "Date": "2010/05/09",
+        "Uncy": 1.6615400314331055,
+        "Year_": 2010,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 11,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 11,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538675.90922596946,
             3128121.4752126662
@@ -19627,20 +19657,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 11,
-        "Date" : "2016/06/03",
-        "Uncy" : 2.1010499000549316,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 11,
+        "Date": "2016/06/03",
+        "Uncy": 2.1010499000549316,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 12,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 12,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539344.15398779162,
             3139527.9865424158
@@ -19671,20 +19701,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 12,
-        "Date" : "2016/06/04",
-        "Uncy" : 3.48826003074646,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 12,
+        "Date": "2016/06/04",
+        "Uncy": 3.48826003074646,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 13,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 13,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539397.2146038264,
             3139741.9327250505
@@ -19703,20 +19733,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 13,
-        "Date" : "2016/06/04",
-        "Uncy" : 5.1479997634887695,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 13,
+        "Date": "2016/06/04",
+        "Uncy": 5.1479997634887695,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 14,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 14,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539438.89761460247,
             3139937.6271607508
@@ -19727,20 +19757,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 14,
-        "Date" : "2016/06/04",
-        "Uncy" : 5.3361601829528809,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 14,
+        "Date": "2016/06/04",
+        "Uncy": 5.3361601829528809,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 15,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 15,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539459.21601008181,
             3140027.815104126
@@ -19759,20 +19789,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 15,
-        "Date" : "2016/06/04",
-        "Uncy" : 4.621610164642334,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 15,
+        "Date": "2016/06/04",
+        "Uncy": 4.621610164642334,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 16,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 16,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539496.93812470289,
             3140204.872159407
@@ -20239,20 +20269,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 16,
-        "Date" : "2016/06/04",
-        "Uncy" : 5.2988200187683105,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 16,
+        "Date": "2016/06/04",
+        "Uncy": 5.2988200187683105,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 17,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 17,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540782.00822987827,
             3142900.4483194677
@@ -20263,20 +20293,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 17,
-        "Date" : "2016/06/04",
-        "Uncy" : 5.1279101371765137,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 17,
+        "Date": "2016/06/04",
+        "Uncy": 5.1279101371765137,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 18,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 18,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540808.52268070716,
             3143049.4420931125
@@ -20287,20 +20317,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 18,
-        "Date" : "2016/06/04",
-        "Uncy" : 6.1763701438903809,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 18,
+        "Date": "2016/06/04",
+        "Uncy": 6.1763701438903809,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 19,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 19,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540878.62169186119,
             3143265.5261839977
@@ -20511,20 +20541,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 19,
-        "Date" : "2016/06/04",
-        "Uncy" : 3.7104001045227051,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 19,
+        "Date": "2016/06/04",
+        "Uncy": 3.7104001045227051,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 20,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 20,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541750.62989262375,
             3144488.6830353453
@@ -20535,20 +20565,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 20,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.6972299814224243,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 20,
+        "Date": "2016/06/04",
+        "Uncy": 1.6972299814224243,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 21,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 21,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541935.50298885477,
             3144699.0778169092
@@ -20567,20 +20597,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 21,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.5499999523162842,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 21,
+        "Date": "2016/06/04",
+        "Uncy": 1.5499999523162842,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 22,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 22,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542110.77476449159,
             3144892.0412905244
@@ -20711,20 +20741,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 22,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.589709997177124,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 22,
+        "Date": "2016/06/04",
+        "Uncy": 1.589709997177124,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 23,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 23,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542737.39801858994,
             3145452.0889523393
@@ -20747,20 +20777,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 23,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.3560800552368164,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 23,
+        "Date": "2016/06/04",
+        "Uncy": 1.3560800552368164,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 24,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 24,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542831.1371916763,
             3145527.5296521527
@@ -20967,20 +20997,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 24,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.7242599725723267,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 24,
+        "Date": "2016/06/04",
+        "Uncy": 1.7242599725723267,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 25,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 25,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544076.5097939251,
             3146250.6043508588
@@ -21075,20 +21105,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 25,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.9515600204467773,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 25,
+        "Date": "2016/06/04",
+        "Uncy": 1.9515600204467773,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 26,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 26,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544673.23350851866,
             3146599.8818023615
@@ -21179,20 +21209,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 26,
-        "Date" : "2016/06/04",
-        "Uncy" : 1.5940300226211548,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 26,
+        "Date": "2016/06/04",
+        "Uncy": 1.5940300226211548,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 27,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 27,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             545254.10057861172,
             3146751.5869689793
@@ -21391,20 +21421,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 27,
-        "Date" : "2016/06/04",
-        "Uncy" : 2.9444200992584229,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 27,
+        "Date": "2016/06/04",
+        "Uncy": 2.9444200992584229,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 28,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 28,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546248.67432731041,
             3147254.3230182584
@@ -21443,20 +21473,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 28,
-        "Date" : "2016/06/04",
-        "Uncy" : 3.2512400150299072,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 28,
+        "Date": "2016/06/04",
+        "Uncy": 3.2512400150299072,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 29,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 29,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538621.21892522241,
             3128117.92030145
@@ -21527,20 +21557,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 29,
-        "Date" : "1930/04/29",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1930,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 29,
+        "Date": "1930/04/29",
+        "Uncy": 10.800000190734863,
+        "Year_": 1930,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 30,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 30,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538469.12029985012,
             3130491.5029515354
@@ -21559,20 +21589,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 30,
-        "Date" : "1930/04/29",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1930,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 30,
+        "Date": "1930/04/29",
+        "Uncy": 10.800000190734863,
+        "Year_": 1930,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 31,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 31,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538483.95128205034,
             3130771.2371836854
@@ -22043,20 +22073,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 31,
-        "Date" : "1929/04/30",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1929,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 31,
+        "Date": "1929/04/30",
+        "Uncy": 10.800000190734863,
+        "Year_": 1929,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 32,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 32,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539009.68623620132,
             3138856.1561947959
@@ -22391,20 +22421,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 32,
-        "Date" : "1876/07/01",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1876,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 32,
+        "Date": "1876/07/01",
+        "Uncy": 10.800000190734863,
+        "Year_": 1876,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 33,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 33,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546356.9862668101,
             3147385.2713989643
@@ -22423,20 +22453,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 33,
-        "Date" : "2016/06/04",
-        "Uncy" : 3.5754899978637695,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 33,
+        "Date": "2016/06/04",
+        "Uncy": 3.5754899978637695,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 34,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 34,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546418.4649994974,
             3147517.7348436792
@@ -22483,20 +22513,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 34,
-        "Date" : "2016/06/04",
-        "Uncy" : 2.2870500087738037,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 34,
+        "Date": "2016/06/04",
+        "Uncy": 2.2870500087738037,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 35,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 35,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546491.47122808953,
             3147875.7400118066
@@ -22527,20 +22557,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 35,
-        "Date" : "2016/06/04",
-        "Uncy" : 3.3246500492095947,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 35,
+        "Date": "2016/06/04",
+        "Uncy": 3.3246500492095947,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 36,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 36,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546466.53370177513,
             3148084.1175117847
@@ -22551,20 +22581,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 36,
-        "Date" : "2016/06/04",
-        "Uncy" : 2.016819953918457,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 36,
+        "Date": "2016/06/04",
+        "Uncy": 2.016819953918457,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 37,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 37,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546434.70436723123,
             3148223.8063800284
@@ -25495,20 +25525,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 37,
-        "Date" : "2016/06/04",
-        "Uncy" : 2.1659901142120361,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 37,
+        "Date": "2016/06/04",
+        "Uncy": 2.1659901142120361,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 38,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 38,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541354.5718415482,
             3162546.1610684362
@@ -27347,20 +27377,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 38,
-        "Date" : "2016/06/17",
-        "Uncy" : 1.7872300148010254,
-        "Year_" : 2016,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 38,
+        "Date": "2016/06/17",
+        "Uncy": 1.7872300148010254,
+        "Year_": 2016,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 39,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 39,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538661.21761018003,
             3128120.5202464466
@@ -28203,20 +28233,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 39,
-        "Date" : "2017/10/23",
-        "Uncy" : 2.6337800025939941,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 39,
+        "Date": "2017/10/23",
+        "Uncy": 2.6337800025939941,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 40,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 40,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538505.73339048505,
             3132601.2127548517
@@ -29055,20 +29085,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 40,
-        "Date" : "2017/10/23",
-        "Uncy" : 3.4158000946044922,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 40,
+        "Date": "2017/10/23",
+        "Uncy": 3.4158000946044922,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 41,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 41,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538933.22918979952,
             3137508.9675413575
@@ -29463,20 +29493,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 41,
-        "Date" : "2017/10/23",
-        "Uncy" : 2.8477299213409424,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 41,
+        "Date": "2017/10/23",
+        "Uncy": 2.8477299213409424,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 42,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 42,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539373.6553898342,
             3139725.9077777825
@@ -30023,20 +30053,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 42,
-        "Date" : "2017/10/23",
-        "Uncy" : 5.8566999435424805,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 42,
+        "Date": "2017/10/23",
+        "Uncy": 5.8566999435424805,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 43,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 43,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540787.3053701726,
             3142897.0856537595
@@ -30107,20 +30137,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 43,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.9234399795532227,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 43,
+        "Date": "2017/10/23",
+        "Uncy": 1.9234399795532227,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 44,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 44,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540969.69269899069,
             3143468.2975836671
@@ -30147,20 +30177,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 44,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.8605200052261353,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 44,
+        "Date": "2017/10/23",
+        "Uncy": 1.8605200052261353,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 45,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 45,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541066.72397295525,
             3143667.2855283828
@@ -30495,20 +30525,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 45,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.9377199411392212,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 45,
+        "Date": "2017/10/23",
+        "Uncy": 1.9377199411392212,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 46,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 46,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542721.99076032697,
             3145468.265084188
@@ -30563,20 +30593,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 46,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.7432800531387329,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 46,
+        "Date": "2017/10/23",
+        "Uncy": 1.7432800531387329,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 47,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 47,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543129.24178363068,
             3145772.1081780288
@@ -30619,20 +30649,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 47,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.964419960975647,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 47,
+        "Date": "2017/10/23",
+        "Uncy": 1.964419960975647,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 48,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 48,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543435.93804291671,
             3145961.0591598684
@@ -30895,20 +30925,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 48,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.7042800188064575,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 48,
+        "Date": "2017/10/23",
+        "Uncy": 1.7042800188064575,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 49,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 49,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544917.85107752762,
             3146689.4156844304
@@ -31187,20 +31217,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 49,
-        "Date" : "2017/10/23",
-        "Uncy" : 2.4655001163482666,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 49,
+        "Date": "2017/10/23",
+        "Uncy": 2.4655001163482666,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 50,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 50,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546265.75718727126,
             3147243.6658850932
@@ -31239,20 +31269,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 50,
-        "Date" : "2017/10/23",
-        "Uncy" : 3.3113501071929932,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 50,
+        "Date": "2017/10/23",
+        "Uncy": 3.3113501071929932,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 51,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 51,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546357.59368025814,
             3147405.3971676244
@@ -31343,20 +31373,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 51,
-        "Date" : "2017/10/23",
-        "Uncy" : 2.4862000942230225,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 51,
+        "Date": "2017/10/23",
+        "Uncy": 2.4862000942230225,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 52,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 52,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546449.61246592656,
             3147829.0222462523
@@ -31407,20 +31437,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 52,
-        "Date" : "2017/10/23",
-        "Uncy" : 2.6121399402618408,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 52,
+        "Date": "2017/10/23",
+        "Uncy": 2.6121399402618408,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 53,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 53,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546415.94668604026,
             3148082.5067371055
@@ -32455,20 +32485,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 53,
-        "Date" : "2017/10/23",
-        "Uncy" : 1.7506300210952759,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 53,
+        "Date": "2017/10/23",
+        "Uncy": 1.7506300210952759,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 54,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 54,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544086.5266277733,
             3153152.5026911879
@@ -34539,20 +34569,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 54,
-        "Date" : "2017/10/25",
-        "Uncy" : 2.2193698883056641,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 54,
+        "Date": "2017/10/25",
+        "Uncy": 2.2193698883056641,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 55,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 55,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540650.87709211593,
             3163443.0984092033
@@ -34987,20 +35017,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 55,
-        "Date" : "2017/10/25",
-        "Uncy" : 2.6183900833129883,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 55,
+        "Date": "2017/10/25",
+        "Uncy": 2.6183900833129883,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 56,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 56,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539122.34217659384,
             3165320.3213384687
@@ -36051,20 +36081,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 56,
-        "Date" : "2017/10/25",
-        "Uncy" : 1.9436700344085693,
-        "Year_" : 2017,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 56,
+        "Date": "2017/10/25",
+        "Uncy": 1.9436700344085693,
+        "Year_": 2017,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 57,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 57,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             535718.05879153335,
             3170361.6709665912
@@ -42731,20 +42761,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 57,
-        "Date" : "1999/11/04",
-        "Uncy" : 2.7999999523162842,
-        "Year_" : 1999,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 57,
+        "Date": "1999/11/04",
+        "Uncy": 2.7999999523162842,
+        "Year_": 1999,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 58,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 58,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540197.73521494307,
             3142471.4333103392
@@ -43003,20 +43033,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 58,
-        "Date" : "1976/01/18",
-        "Uncy" : 3.2000000476837158,
-        "Year_" : 1976,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 58,
+        "Date": "1976/01/18",
+        "Uncy": 3.2000000476837158,
+        "Year_": 1976,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 59,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 59,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541950.57987323112,
             3144988.9752259287
@@ -43315,20 +43345,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 59,
-        "Date" : "1970/02/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1970,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 59,
+        "Date": "1970/02/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1970,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 60,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 60,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542170.06636805984,
             3145222.3510820703
@@ -43371,20 +43401,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 60,
-        "Date" : "1970/02/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1970,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 60,
+        "Date": "1970/02/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1970,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 61,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 61,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543275.78086224757,
             3146004.0311021921
@@ -43559,20 +43589,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 61,
-        "Date" : "1970/02/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1970,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 61,
+        "Date": "1970/02/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1970,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 62,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 62,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544373.42806371523,
             3152705.1579794209
@@ -44927,20 +44957,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 62,
-        "Date" : "1970/02/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1970,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 62,
+        "Date": "1970/02/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1970,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 63,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 63,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542726.18758342974,
             3145775.405492031
@@ -46195,20 +46225,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 63,
-        "Date" : "1964/03/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1964,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 63,
+        "Date": "1964/03/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1964,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 64,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 64,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542253.60386615607,
             3145559.4148490615
@@ -46247,20 +46277,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 64,
-        "Date" : "1929/04/30",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1929,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 64,
+        "Date": "1929/04/30",
+        "Uncy": 10.800000190734863,
+        "Year_": 1929,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 65,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 65,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             542481.9979195958,
             3145771.9251657631
@@ -46335,20 +46365,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 65,
-        "Date" : "1929/04/30",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1929,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 65,
+        "Date": "1929/04/30",
+        "Uncy": 10.800000190734863,
+        "Year_": 1929,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 66,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 66,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543007.21651852899,
             3146179.700782462
@@ -47043,20 +47073,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 66,
-        "Date" : "1929/04/30",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1929,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 66,
+        "Date": "1929/04/30",
+        "Uncy": 10.800000190734863,
+        "Year_": 1929,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 67,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 67,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             545870.16837776452,
             3149520.7353758626
@@ -47635,20 +47665,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 67,
-        "Date" : "1929/04/30",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1929,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 67,
+        "Date": "1929/04/30",
+        "Uncy": 10.800000190734863,
+        "Year_": 1929,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 68,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 68,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             535658.31044808868,
             3170324.14609126
@@ -47911,20 +47941,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 68,
-        "Date" : "1874/07/01",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1874,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 68,
+        "Date": "1874/07/01",
+        "Uncy": 10.800000190734863,
+        "Year_": 1874,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 69,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 69,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538252.12657537835,
             3166524.8522307691
@@ -48783,20 +48813,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 69,
-        "Date" : "1950/07/01",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1950,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 69,
+        "Date": "1950/07/01",
+        "Uncy": 10.800000190734863,
+        "Year_": 1950,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 70,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 70,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538239.07120331284,
             3166531.3092409349
@@ -49027,20 +49057,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 70,
-        "Date" : "1950/07/01",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1950,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 70,
+        "Date": "1950/07/01",
+        "Uncy": 10.800000190734863,
+        "Year_": 1950,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 71,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 71,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541557.22182622028,
             3161929.2988894652
@@ -49923,20 +49953,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 71,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 71,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 72,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 72,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539728.36549780285,
             3164554.2323438688
@@ -49983,20 +50013,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 72,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 72,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 73,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 73,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539674.39877104026,
             3164624.7979335929
@@ -50035,20 +50065,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 73,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 73,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 74,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 74,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539595.32180416281,
             3164715.1477431483
@@ -50163,20 +50193,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 74,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 74,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 75,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 75,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539186.08073351067,
             3165249.6543517965
@@ -50503,20 +50533,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 75,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 75,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 76,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 76,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538431.99417961296,
             3166254.5808222233
@@ -50583,20 +50613,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 76,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 76,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 77,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 77,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538222.45014084969,
             3166510.1496205069
@@ -51051,20 +51081,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 77,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 77,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 78,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 78,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             537242.04719177575,
             3167813.002809796
@@ -51431,20 +51461,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 78,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 78,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 79,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 79,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             536519.04936889536,
             3168969.8934157393
@@ -51635,20 +51665,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 79,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 79,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 80,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 80,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             536162.95550232392,
             3169560.9416183396
@@ -51699,20 +51729,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 80,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 80,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 81,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 81,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             536095.13191605778,
             3169672.7854931201
@@ -51887,20 +51917,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 81,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 81,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 82,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 82,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544254.03209511028,
             3152943.0289168307
@@ -52131,20 +52161,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 82,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 82,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 83,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 83,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544218.80482880422,
             3153009.4327718858
@@ -52171,20 +52201,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 83,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 83,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 84,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 84,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544149.99240930821,
             3153127.3541308404
@@ -52291,20 +52321,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 84,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 84,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 85,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 85,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544135.95442361478,
             3153147.9667591113
@@ -52327,20 +52357,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 85,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 85,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 86,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 86,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544108.85756519448,
             3153195.1879664874
@@ -52367,20 +52397,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 86,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 86,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 87,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 87,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543949.61952259857,
             3153509.715236289
@@ -52623,20 +52653,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 87,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 87,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 88,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 88,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543796.91108736349,
             3153818.2136058696
@@ -52839,20 +52869,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 88,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 88,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 89,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 89,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543705.07522288954,
             3154011.1984284036
@@ -52975,20 +53005,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 89,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 89,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 90,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 90,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543613.41913597519,
             3154227.498965668
@@ -53095,20 +53125,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 90,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 90,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 91,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 91,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543575.61645836756,
             3154315.0549423276
@@ -53187,20 +53217,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 91,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 91,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 92,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 92,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543159.61000327917,
             3155397.7304069209
@@ -53943,20 +53973,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 92,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 92,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 93,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 93,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             541558.8580898603,
             3161926.114024072
@@ -57703,20 +57733,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 93,
-        "Date" : "1967/10/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1967,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 93,
+        "Date": "1967/10/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1967,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 94,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 94,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539116.79627134872,
             3138845.1979731051
@@ -58063,20 +58093,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 94,
-        "Date" : "1966/11/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1966,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 94,
+        "Date": "1966/11/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1966,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 95,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 95,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546303.05738811416,
             3148543.5074859657
@@ -59167,20 +59197,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 95,
-        "Date" : "1966/11/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1966,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 95,
+        "Date": "1966/11/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1966,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 96,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 96,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             546263.34176991298,
             3148650.8524564686
@@ -59227,20 +59257,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 96,
-        "Date" : "1966/11/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1966,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 96,
+        "Date": "1966/11/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1966,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 97,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 97,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544369.69968007237,
             3152706.065705061
@@ -59911,20 +59941,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 97,
-        "Date" : "1966/11/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1966,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 97,
+        "Date": "1966/11/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1966,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 98,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 98,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539122.03681401641,
             3138834.9489135072
@@ -60735,20 +60765,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 98,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 98,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 99,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 99,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540831.34077903675,
             3143369.0969073512
@@ -60875,20 +60905,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 99,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 99,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 100,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 100,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             543282.14700253657,
             3146201.5695678936
@@ -61771,20 +61801,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 100,
-        "Date" : "1947/12/08",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1947,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 100,
+        "Date": "1947/12/08",
+        "Uncy": 10.800000190734863,
+        "Year_": 1947,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 101,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 101,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             544413.14832837146,
             3152698.9991781074
@@ -62703,20 +62733,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 101,
-        "Date" : "1947/12/08",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1947,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 101,
+        "Date": "1947/12/08",
+        "Uncy": 10.800000190734863,
+        "Year_": 1947,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 102,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 102,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540932.8719642103,
             3144133.4472888671
@@ -63035,20 +63065,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 102,
-        "Date" : "1876/07/01",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1876,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 102,
+        "Date": "1876/07/01",
+        "Uncy": 10.800000190734863,
+        "Year_": 1876,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 103,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 103,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539070.9502668482,
             3138843.6980435653
@@ -63735,20 +63765,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 103,
-        "Date" : "1929/04/30",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1929,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 103,
+        "Date": "1929/04/30",
+        "Uncy": 10.800000190734863,
+        "Year_": 1929,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 104,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 104,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             540258.44022012898,
             3142461.3078944483
@@ -64523,20 +64553,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 104,
-        "Date" : "1999/11/04",
-        "Uncy" : 2.7999999523162842,
-        "Year_" : 1999,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 104,
+        "Date": "1999/11/04",
+        "Uncy": 2.7999999523162842,
+        "Year_": 1999,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 105,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 105,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538485.24802646891,
             3130478.7080329787
@@ -64995,20 +65025,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 105,
-        "Date" : "1999/10/11",
-        "Uncy" : 2.7999999523162842,
-        "Year_" : 1999,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 105,
+        "Date": "1999/10/11",
+        "Uncy": 2.7999999523162842,
+        "Year_": 1999,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 106,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 106,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539140.19415660005,
             3138825.8501402461
@@ -66535,20 +66565,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 106,
-        "Date" : "1999/11/04",
-        "Uncy" : 2.7999999523162842,
-        "Year_" : 1999,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 106,
+        "Date": "1999/11/04",
+        "Uncy": 2.7999999523162842,
+        "Year_": 1999,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 107,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 107,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538620.31418657652,
             3128117.8614927484
@@ -67199,20 +67229,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 107,
-        "Date" : "1976/01/18",
-        "Uncy" : 3.2000000476837158,
-        "Year_" : 1976,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 107,
+        "Date": "1976/01/18",
+        "Uncy": 3.2000000476837158,
+        "Year_": 1976,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 108,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 108,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539123.16056483728,
             3138838.6774176243
@@ -67299,20 +67329,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 108,
-        "Date" : "1966/11/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1966,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 108,
+        "Date": "1966/11/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1966,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 109,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 109,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538609.41803391825,
             3128117.1532345237
@@ -68119,20 +68149,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 109,
-        "Date" : "1966/11/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1966,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 109,
+        "Date": "1966/11/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1966,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 110,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 110,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539092.10837579262,
             3138834.7394394171
@@ -68695,20 +68725,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 110,
-        "Date" : "1947/12/01",
-        "Uncy" : 10.800000190734863,
-        "Year_" : 1947,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 110,
+        "Date": "1947/12/01",
+        "Uncy": 10.800000190734863,
+        "Year_": 1947,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 111,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 111,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538957.77459949034,
             3137990.8350558891
@@ -69579,20 +69609,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 111,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 111,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 112,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 112,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538483.5626938506,
             3132608.5976427067
@@ -70191,20 +70221,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 112,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 112,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 113,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 113,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538480.67696310976,
             3132720.3703793008
@@ -70223,20 +70253,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 113,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 113,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 114,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 114,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538525.92627410847,
             3134220.127424865
@@ -70383,20 +70413,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 114,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 114,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 115,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 115,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             539119.34806436603,
             3138831.7615000834
@@ -70475,20 +70505,20 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 115,
-        "Date" : "1976/01/18",
-        "Uncy" : 3.2000000476837158,
-        "Year_" : 1976,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 115,
+        "Date": "1976/01/18",
+        "Uncy": 3.2000000476837158,
+        "Year_": 1976,
+        "Attribute": "DSAS sample data shorelines"
       }
     },
     {
-      "type" : "Feature",
-      "id" : 116,
-      "geometry" : {
-        "type" : "LineString",
-        "coordinates" : [
+      "type": "Feature",
+      "id": 116,
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
           [
             538957.75268412556,
             3137997.4821160669
@@ -70715,12 +70745,12 @@
           ]
         ]
       },
-      "properties" : {
-        "FID" : 116,
-        "Date" : "1969/12/01",
-        "Uncy" : 5.0999999046325684,
-        "Year_" : 1969,
-        "Attribute" : "DSAS sample data shorelines"
+      "properties": {
+        "FID": 116,
+        "Date": "1969/12/01",
+        "Uncy": 5.0999999046325684,
+        "Year_": 1969,
+        "Attribute": "DSAS sample data shorelines"
       }
     }
   ]
