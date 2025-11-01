@@ -1,5 +1,8 @@
 #include "cli.hpp"
 
+#include <iostream>
+#include <stdexcept>
+
 #include "options.hpp"
 
 namespace dsas {
@@ -139,6 +142,9 @@ CliStatus parse_args(int argc, char* argv[]) {
       dsas::options.transect_spacing =
           cast_cmd.get<double>("--transect-spacing");
       dsas::options.smooth_factor = cast_cmd.get<int>("--smooth-factor");
+      if (dsas::options.smooth_factor < 1) {
+        throw std::runtime_error("Error: smooth factor is less than 1");
+      }
       dsas::options.intersection_mode = parse_intersection_mode(
           cast_cmd.get<std::string>("--intersection-mode"));
       dsas::options.transect_orient = parse_transect_orient(
@@ -164,6 +170,9 @@ CliStatus parse_args(int argc, char* argv[]) {
     dsas::options.transect_path =
         root_cmd.get<std::string>("--output-transect");
     dsas::options.smooth_factor = root_cmd.get<int>("--smooth-factor");
+    if (dsas::options.smooth_factor < 1) {
+      throw std::runtime_error("Error: smooth factor is less than 1");
+    }
     dsas::options.transect_length = root_cmd.get<double>("--transect-length");
     dsas::options.transect_spacing = root_cmd.get<double>("--transect-spacing");
     dsas::options.intersection_mode = parse_intersection_mode(

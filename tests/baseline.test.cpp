@@ -63,12 +63,14 @@ class BaselineTest : public ::testing::Test {
 };
 
 TEST_F(BaselineTest, test_baseline_transect_points1) {
-  std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
+  const std::vector<Point> points{{0, 0}, {0, 1}, {1, 1}, {1, 0}};
+
   options.transect_length = 10;
   options.transect_spacing = 0.5;
   options.smooth_factor = 1;
   options.intersection_mode = dsas::Options::IntersectionMode::Closest;
   baseline = std::make_unique<Baseline>(points, 0);
+
   auto transects_points = baseline->transects_base_points_;
 
   ASSERT_EQ(transects_points.size(), 7);
@@ -97,4 +99,11 @@ TEST_F(BaselineTest, test_baseline_transect_points2) {
   ASSERT_NEAR(x[1], transects_points[1].x, TOL);
   ASSERT_NEAR(y[0], transects_points[0].y, TOL);
   ASSERT_NEAR(y[1], transects_points[1].y, TOL);
+}
+
+TEST(BaselineLoadTest, test_load_baselines_shp) {
+  const std::filesystem::path baseline_shp_path{
+      std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
+  auto ret = load_baselines_shp(baseline_shp_path);
+  ASSERT_TRUE(!ret.empty());
 }

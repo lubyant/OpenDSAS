@@ -2,8 +2,11 @@
 
 #include <gtest/gtest.h>
 
+#include <filesystem>
+
 #include "grid.hpp"
 #include "options.hpp"
+#include "utility.hpp"
 using namespace dsas;
 constexpr double TOL = 1e-4;
 
@@ -190,4 +193,25 @@ TEST_F(TransectTest, test_baseline_smooth) {
     auto transects_lines = create_transects_from_baseline(*baseline);
     ASSERT_EQ(baseline->origin_vertices_.size(), 7);
   }
+}
+
+TEST_F(TransectTest, test_save_transect) {
+  const std::filesystem::path shoreline_shp_path{std::string(TEST_DATA_DIR) +
+                                                 "/sample_shorelines.geojson"};
+  auto prj = get_shp_proj(shoreline_shp_path.string().c_str());
+  std::vector<Point> points{{0, 0}, {1, 1}, {2, 0}, {3, 1},
+                            {3, 0}, {4, 1}, {4, 0}};
+  auto tmp_file = std::filesystem::temp_directory_path() / "tran.shp";
+  options.transect_path = tmp_file.string();
+  baseline = std::make_unique<Baseline>(points, 0);
+  auto transects_lines = create_transects_from_baseline(*baseline);
+  { save_transect(transects_lines, prj); }
+  { save_transect(transects_lines, prj, true); }
+}
+
+TEST_F(TransectTest, test_load_transects_from_shp) {
+  const std::filesystem::path transect_shp_path{std::string(TEST_DATA_DIR) +
+                                                "/sample_transects.geojson"};
+  auto transect = load_transects_from_shp(transect_shp_path);
+  ASSERT_TRUE(!transect.empty());
 }
