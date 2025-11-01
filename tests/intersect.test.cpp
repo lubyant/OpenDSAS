@@ -1,9 +1,10 @@
 #include "intersect.hpp"
-#include "utility.hpp"
 
 #include <gtest/gtest.h>
 
 #include <memory>
+
+#include "utility.hpp"
 
 constexpr double TOL = 1e-4;
 using namespace dsas;
@@ -40,5 +41,8 @@ TEST(TestIntersect, test_save_intersects) {
     intersections.push_back(std::move(p1));
     intersections.push_back(std::move(p2));
     intersections.push_back(std::move(p3));
+    auto tmp_file = std::filesystem::temp_directory_path() / "intersects.shp";
+    options.intersect_path = tmp_file.string();
+    save_intersects(intersections, prj);
   }
 }
