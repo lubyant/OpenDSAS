@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 #include "grid.hpp"
@@ -133,7 +134,7 @@ double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   for (size_t i = 1; i < intersections.size(); ++i) {
     if (intersections[i]->date_ == intersections[i - 1]->date_) {
       // Prevent division by zero
-      continue;
+      throw std::runtime_error("Duplicate dates were found!\n");
     }
     x.push_back(intersections[i]->date_.julian_day());
     y.push_back(intersections[i]->distance_to_ref_);

@@ -9,9 +9,9 @@
 namespace dsas {
 
 // TODO: this function belong to utility.h as a template
-void save_points(const std::vector<IntersectPoint *> &shapes,
-                 const char *pszProj,
-                 const std::filesystem::path &output_path) {
+static void save_points(const std::vector<IntersectPoint *> &shapes,
+                        const char *pszProj,
+                        const std::filesystem::path &output_path) {
   assert(shapes.size() > 0);
   // Initialize GDAL
   OGRSpatialReference oSRS;

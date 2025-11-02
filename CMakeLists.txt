@@ -87,6 +87,9 @@ if(BUILD_TESTING)
     target_link_libraries(
       dsas_test PRIVATE dsas_lib GTest::gtest_main
     )
+    target_compile_definitions(dsas_test PRIVATE
+      TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/tests/test_case"
+    )
     include(GoogleTest)
     gtest_discover_tests(dsas_test)
     add_test(NAME dsas_test COMMAND dsas_test)
