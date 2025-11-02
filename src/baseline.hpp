@@ -21,7 +21,7 @@ struct BaselineSeg : public LineSegment {
   }
 };
 
-struct Baseline : public MultiLine<Point>, GDALShpSaver<int> {
+struct Baseline  {
   using BaselinesVertex = Point;
 
   int baseline_id_;
@@ -34,25 +34,6 @@ struct Baseline : public MultiLine<Point>, GDALShpSaver<int> {
 
   Baseline(const std::vector<BaselinesVertex> &points, int baseline_id);
 
-  [[nodiscard]] size_t size() const override {
-    return baseline_vertices_.size();
-  };
-
-  [[nodiscard]] const Point &operator[](size_t i) const override {
-    return baseline_vertices_.at(i);
-  }
-
-  [[nodiscard]] std::vector<std::string> get_names() const override {
-    return {"BaselineId"};
-  }
-
-  [[nodiscard]] std::vector<OGRFieldType> get_types() const override {
-    return {OGRFieldType::OFTInteger};
-  }
-
-  [[nodiscard]] std::tuple<int> get_values() const override {
-    return {baseline_id_};
-  }
 };
 
 std::vector<Baseline> load_baselines_shp(
