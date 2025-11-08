@@ -2,7 +2,7 @@
 
 # OpenDSAS (Digital Shoreline Analysis System)
 
-**OpenDSAS** is a high-performance, Cross-platform reimplementation of the USGS  
+**OpenDSAS** is a high-performance, cross-platform reimplementation of the USGS  
 [Digital Shoreline Analysis System (DSAS)](https://www.usgs.gov/centers/whcmsc/science/digital-shoreline-analysis-system-dsas).  
 It is designed for **fast, memory-efficient shoreline change analysis** in command-line workflows.
 
@@ -42,9 +42,8 @@ sudo apt install ./OpenDSAS-x.y.z.deb
 
 **Steps**
 ```bash
-git clone --recurse-submodules https://github.com/lubyant/OpenDSAS.git
+git clone https://github.com/lubyant/OpenDSAS.git
 cd OpenDSAS
-mkdir build
 
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
@@ -59,7 +58,8 @@ sudo cmake --install build
 
 ### Quick Example
 ```bash
-dsas --baseline baseline.shp --shoreline shoreline.shp
+# compute shoreline change in 1000 meter transect with 10 meter spacing
+dsas --baseline baseline.shp --shoreline shoreline.shp --transect-length 1000 --transect-spacing 10
 ```
 
 ### Command-Line Options
@@ -173,7 +173,7 @@ If you use **OpenDSAS** in your research, please cite it as:
 
 ```bibtex
 @misc{OpenDSAS,
-  author       = {Lu, Boyuan},
+  author       = {Lu, Boyuan; Wang, wei},
   title        = {OpenDSAS: A High-Performance Digital Shoreline Analysis System},
   year         = {2025},
   publisher    = {GitHub},
