@@ -44,7 +44,6 @@ sudo apt install ./OpenDSAS-x.y.z.deb
 ```bash
 git clone https://github.com/lubyant/OpenDSAS.git
 cd OpenDSAS
-mkdir build
 
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
