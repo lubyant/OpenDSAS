@@ -39,7 +39,7 @@ BaselineSeg::BaselineSeg(double spacing, const Point &leftEdge,
   Point p0{x_start, y_start};
 
   // number of step
-  int num = floor((p0.distance_to_point(rightEdge) + spacing_) / spacing_);
+  int num = static_cast<int>(floor((p0.distance_to_point(rightEdge) + spacing_) / spacing_));
 
   // step size
   double dist = sqrt(slope_vector_.second * slope_vector_.second +
