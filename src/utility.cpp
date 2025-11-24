@@ -61,7 +61,7 @@ std::string get_shp_proj(const char *path) {
   }
 
   OGRLayer *poLayer = poDS->GetLayer(0);
-  OGRSpatialReference *poSRS = poLayer->GetSpatialRef();
+  const OGRSpatialReference *poSRS = poLayer->GetSpatialRef();
   std::string psz_prj_;
   if (poSRS != nullptr) {
     char *pszProjection;
