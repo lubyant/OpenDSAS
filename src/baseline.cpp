@@ -85,8 +85,9 @@ std::vector<Baseline> load_baselines_shp(
 
   // Open the Shapefile
   GDALDataset *poDS = nullptr;
-  poDS = static_cast<GDALDataset *>(GDALOpenEx(
-      baseline_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
+  poDS = static_cast<GDALDataset *>(
+      GDALOpenEx(baseline_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr,
+                 nullptr, nullptr));
   if (poDS == nullptr) {
     std::cerr << "Open failed.\n";
     exit(1);
@@ -103,15 +104,15 @@ std::vector<Baseline> load_baselines_shp(
   int baseline_id = 0;
   if (baseline_id_field.empty()) {
     baseline_id = 0;
+    OGRFieldDefn oFieldDefn(options.baseline_id_field.c_str(), OFTInteger);
+    assert(poLayer->CreateField(&oFieldDefn));
   } else {
     OGRFeatureDefn *poFDefn = poLayer->GetLayerDefn();
     int field_index = poFDefn->GetFieldIndex(baseline_id_field.c_str());
 
     if (field_index < 0) {
-      std::cerr << "Field '" << baseline_id_field
-                << "' not found in baseline shapefile.\n";
-      GDALClose(poDS);
-      exit(1);
+      throw std::runtime_error("Field '" + baseline_id_field +
+                               "' not found in baseline shapefile.");
     }
   }
 
@@ -119,7 +120,7 @@ std::vector<Baseline> load_baselines_shp(
     OGRGeometry *poGeometry = nullptr;
     poGeometry = poFeature->GetGeometryRef();
     if (baseline_id_field.empty()) {
-      baseline_id++;
+      poFeature->SetField(options.baseline_id_field.c_str(), baseline_id++);
     } else {
       baseline_id = poFeature->GetFieldAsInteger(baseline_id_field.c_str());
     }
