@@ -145,16 +145,10 @@ double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
           dsas::Options::IntersectionMode::Closest) {
         // keep the closest one
         continue;
-      } else if (dsas::options.intersection_mode ==
-                 dsas::Options::IntersectionMode::Farthest) {
-        // keep the farthest one
-        y.back() = intersections[i]->distance_to_ref_;
-        continue;
-      } else {
-        throw std::runtime_error(
-            "Error: Two intersection points have the same date, cannot compute "
-            "change rate.");
       }
+      // keep the farthest one
+      y.back() = intersections[i]->distance_to_ref_;
+      continue;
     }
     x.push_back(intersections[i]->date_.julian_day());
     y.push_back(intersections[i]->distance_to_ref_);
