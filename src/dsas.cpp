@@ -114,11 +114,18 @@ double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   //  sort the vector
   std::sort(intersections.begin(), intersections.end(),
             [](const IntersectPoint *a, const IntersectPoint *b) {
-              return a->date_ < b->date_;
+              return a->date_ < b->date_ ||
+                     (a->date_ == b->date_ &&
+                      a->distance_to_ref_ < b->distance_to_ref_);
             });
 
   // if two intersections
   if (intersections.size() == 2) {
+    if (intersections[1]->date_ == intersections[0]->date_) {
+      throw std::runtime_error(
+          "Error: Two intersection points have the same date, cannot compute "
+          "change rate.");
+    }
     double d_distance =
         intersections[1]->distance_to_ref_ - intersections[0]->distance_to_ref_;
     double d_year =
@@ -132,9 +139,22 @@ double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   y.push_back(intersections[0]->distance_to_ref_);
   x.push_back(intersections[0]->date_.julian_day());
   for (size_t i = 1; i < intersections.size(); ++i) {
+    // if two intersections have the same date
     if (intersections[i]->date_ == intersections[i - 1]->date_) {
-      // Prevent division by zero
-      throw std::runtime_error("Duplicate dates were found!\n");
+      if (dsas::options.intersection_mode ==
+          dsas::Options::IntersectionMode::Closest) {
+        // keep the closest one
+        continue;
+      } else if (dsas::options.intersection_mode ==
+                 dsas::Options::IntersectionMode::Farthest) {
+        // keep the farthest one
+        y.back() = intersections[i]->distance_to_ref_;
+        continue;
+      } else {
+        throw std::runtime_error(
+            "Error: Two intersection points have the same date, cannot compute "
+            "change rate.");
+      }
     }
     x.push_back(intersections[i]->date_.julian_day());
     y.push_back(intersections[i]->distance_to_ref_);
