@@ -22,7 +22,6 @@ class DsasTest : public ::testing::Test {
     options.transect_length = 10;
     options.transect_spacing = 1;
     options.smooth_factor = 1;
-    options.intersection_mode = dsas::Options::IntersectionMode::Closest;
 
     BaselineSeg::cumulative_segment_distance = 0;
     BaselineSeg::cumulative_transects_distance = 0;
@@ -139,6 +138,17 @@ TEST_F(DsasTest, test_linearRegressionRate) {
     std::vector<IntersectPoint *> intersections;
     IntersectPoint p1{fake_point, fake_tid, fake_sid,
                       fake_bid,   date1,    dist2ref1};
+
+    intersections.push_back(&p1);
+    intersections.push_back(&p1);
+
+    EXPECT_THROW(linearRegressRate(intersections), std::runtime_error);
+  }
+
+  {
+    std::vector<IntersectPoint *> intersections;
+    IntersectPoint p1{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date1,    dist2ref1};
     IntersectPoint p2{fake_point, fake_tid, fake_sid,
                       fake_bid,   date2,    dist2ref2};
     IntersectPoint p3{fake_point, fake_tid, fake_sid,
@@ -147,7 +157,25 @@ TEST_F(DsasTest, test_linearRegressionRate) {
     intersections.push_back(&p1);
     intersections.push_back(&p2);
     intersections.push_back(&p3);
+    dsas::options.intersection_mode = dsas::Options::IntersectionMode::Closest;
 
-    EXPECT_THROW(linearRegressRate(intersections), std::runtime_error);
+    EXPECT_NEAR(linearRegressRate(intersections), 0.1, TOL);
+  }
+
+  {
+    std::vector<IntersectPoint *> intersections;
+    IntersectPoint p1{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date1,    dist2ref1};
+    IntersectPoint p2{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date2,    dist2ref2};
+    IntersectPoint p3{fake_point, fake_tid, fake_sid,
+                      fake_bid,   date2,    dist2ref3};
+
+    intersections.push_back(&p1);
+    intersections.push_back(&p2);
+    intersections.push_back(&p3);
+    dsas::options.intersection_mode = dsas::Options::IntersectionMode::Farthest;
+
+    EXPECT_NEAR(linearRegressRate(intersections), 0.2, TOL);
   }
 }
