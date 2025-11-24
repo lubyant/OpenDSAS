@@ -13,21 +13,17 @@ namespace dsas {
 double mean_shore_segment = 0;
 
 boost::gregorian::date generate_date_from_str(const char *date_str) {
-  std::string date_string = std::string(date_str);
-  std::stringstream ss(date_string);
-  std::string sub_str;
-  std::vector<std::string> y_m_d;
-  while (std::getline(ss, sub_str, '/')) {
-    y_m_d.push_back(sub_str);
+  auto format = dsas::options.date_format;
+  std::istringstream istream(date_str);
+  istream.imbue(std::locale(std::locale::classic(),
+                            new boost::gregorian::date_input_facet(format.c_str())));
+  boost::gregorian::date date;
+  istream >> date;
+  if (istream.fail()) {
+    throw std::runtime_error("Failed to parse date: " + std::string(date_str) +
+                             " using format: " + format);
   }
-  if (y_m_d.size() != 3) {
-    std::cerr << "Shoreline date field is not formated in YYYY/MM/dd\n";
-    exit(1);
-  }
-
-  boost::gregorian::date g_date(std::stoi(y_m_d[0]), std::stoi(y_m_d[1]),
-                                std::stoi(y_m_d[2]));
-  return g_date;
+  return date;
 }
 
 std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
@@ -41,8 +37,9 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
 
   // Open the Shapefile
   GDALDataset *poDS = nullptr;
-  poDS = static_cast<GDALDataset *>(GDALOpenEx(
-      shoreline_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
+  poDS = static_cast<GDALDataset *>(
+      GDALOpenEx(shoreline_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr,
+                 nullptr, nullptr));
   if (poDS == nullptr) {
     std::cerr << "Open failed.\n";
     exit(1);
@@ -59,7 +56,7 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
     OGRGeometry *poGeometry = nullptr;
     poGeometry = poFeature->GetGeometryRef();
     const char *date_field = poFeature->GetFieldAsString(date_field_name);
-    if(date_field == nullptr){
+    if (date_field == nullptr) {
       std::cerr << "date field is not existed!\n";
       exit(1);
     }

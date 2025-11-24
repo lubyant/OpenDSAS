@@ -102,8 +102,16 @@ TEST_F(BaselineTest, test_baseline_transect_points2) {
 }
 
 TEST(BaselineLoadTest, test_load_baselines_shp) {
-  const std::filesystem::path baseline_shp_path{
-      std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
-  auto ret = load_baselines_shp(baseline_shp_path);
-  ASSERT_TRUE(!ret.empty());
+  {
+    const std::filesystem::path baseline_shp_path{
+        std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
+    auto ret = load_baselines_shp(baseline_shp_path);
+    ASSERT_TRUE(!ret.empty());
+  }
+  {
+    const std::filesystem::path baseline_shp_path{
+        std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
+    auto baseline_id_field = "MissingField";
+    ASSERT_THROW(load_baselines_shp(baseline_shp_path, baseline_id_field), std::runtime_error);
+  }
 }

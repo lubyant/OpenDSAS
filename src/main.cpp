@@ -35,9 +35,10 @@ static void print_messages() {
 static void run_root() {
   print_messages();
 
-  auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
-  auto shorelines =
-      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
+  auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path,
+                                            dsas::options.baseline_id_field);
+  auto shorelines = dsas::load_shorelines_shp(dsas::options.shoreline_path,
+                                              dsas::options.date_field.c_str());
   auto transects = dsas::generate_transects(baselines);
 
   std::vector<std::unique_ptr<dsas::IntersectPoint>> intersects;
@@ -60,15 +61,16 @@ static void run_root() {
 }
 
 static void run_cast() {
-  auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path, "Id");
+  auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path,
+                                            dsas::options.baseline_id_field);
   auto transects = dsas::generate_transects(baselines);
   auto prj = dsas::get_shp_proj(dsas::options.baseline_path.c_str());
   dsas::save_transect(transects, prj);
 }
 
 static void run_cal() {
-  auto shorelines =
-      dsas::load_shorelines_shp(dsas::options.shoreline_path, "Date");
+  auto shorelines = dsas::load_shorelines_shp(dsas::options.shoreline_path,
+                                              dsas::options.date_field.c_str());
   auto transects = dsas::load_transects_from_shp(dsas::options.transect_path);
 
   auto prj = dsas::get_shp_proj(dsas::options.shoreline_path.c_str());

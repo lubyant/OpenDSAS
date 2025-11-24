@@ -26,10 +26,19 @@ static void init_root_cmd(argparse::ArgumentParser& root_cmd) {
   root_cmd.add_argument("--baseline")
       .help("Path to the baseline file")
       .default_value(std::string{});
+  root_cmd.add_argument("--bid-field")
+      .help("Field name for baseline ID in baseline data")
+      .default_value(std::string{"Id"});
 
   root_cmd.add_argument("--shoreline")
       .help("Path to the shoreline file")
       .default_value(std::string{});
+  root_cmd.add_argument("--date-field")
+      .default_value(dsas::options.date_field)
+      .help("Field name for date in shoreline data");
+  root_cmd.add_argument("--date-format")
+      .default_value(dsas::options.date_format)
+      .help("Date format in shoreline data");
 
   // Optional parameters with defaults
   root_cmd.add_argument("--output-intersect")
@@ -74,6 +83,9 @@ static void init_cast_cmd(argparse::ArgumentParser& cast_cmd) {
   cast_cmd.add_argument("--baseline")
       .required()
       .help("Path to the baseline file");
+  cast_cmd.add_argument("--bid-field")
+      .help("Field name for baseline ID in baseline data")
+      .default_value(std::string{"Id"});
   cast_cmd.add_argument("--output-transect")
       .default_value(dsas::options.transect_path)
       .help("Path to save the generated transects");
@@ -107,6 +119,12 @@ static void init_cal_cmd(argparse::ArgumentParser& cal_cmd) {
   cal_cmd.add_argument("--shoreline")
       .required()
       .help("Path to the shoreline file");
+  cal_cmd.add_argument("--date-field")
+      .default_value(dsas::options.date_field)
+      .help("Field name for date in shoreline data");
+  cal_cmd.add_argument("--date-format")
+      .default_value(dsas::options.date_format)
+      .help("Date format in shoreline data");
   cal_cmd.add_argument("--intersection-mode")
       .default_value(std::string("closest"))
       .help("Intersection mode: closest or farthest");
@@ -136,6 +154,8 @@ CliStatus parse_args(int argc, char* argv[]) {
     root_cmd.parse_args(argc, argv);
     if (root_cmd.is_subcommand_used("cast")) {
       dsas::options.baseline_path = cast_cmd.get<std::string>("--baseline");
+      dsas::options.baseline_id_field =
+          cast_cmd.get<std::string>("--bid-field");
       dsas::options.transect_path =
           cast_cmd.get<std::string>("--output-transect");
       dsas::options.transect_length = cast_cmd.get<double>("--transect-length");
@@ -154,6 +174,8 @@ CliStatus parse_args(int argc, char* argv[]) {
 
     if (root_cmd.is_subcommand_used("cal")) {
       dsas::options.shoreline_path = cal_cmd.get<std::string>("--shoreline");
+      dsas::options.date_field = cal_cmd.get<std::string>("--date-field");
+      dsas::options.date_format = cal_cmd.get<std::string>("--date-format");
       dsas::options.transect_path = cal_cmd.get<std::string>("--transect");
       dsas::options.intersection_mode = parse_intersection_mode(
           cal_cmd.get<std::string>("--intersection-mode"));
@@ -164,7 +186,10 @@ CliStatus parse_args(int argc, char* argv[]) {
     }
 
     dsas::options.baseline_path = root_cmd.get<std::string>("--baseline");
+    dsas::options.baseline_id_field = root_cmd.get<std::string>("--bid-field");
     dsas::options.shoreline_path = root_cmd.get<std::string>("--shoreline");
+    dsas::options.date_field = root_cmd.get<std::string>("--date-field");
+    dsas::options.date_format = root_cmd.get<std::string>("--date-format");
     dsas::options.intersect_path =
         root_cmd.get<std::string>("--output-intersect");
     dsas::options.transect_path =
