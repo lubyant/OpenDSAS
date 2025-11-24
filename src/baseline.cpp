@@ -109,7 +109,7 @@ std::vector<Baseline> load_baselines_shp(
 
     if (field_index < 0) {
       std::cerr << "Field '" << baseline_id_field
-                << "' not found in shapefile.\n";
+                << "' not found in baseline shapefile.\n";
       GDALClose(poDS);
       exit(1);
     }
