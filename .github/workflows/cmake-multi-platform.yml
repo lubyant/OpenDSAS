@@ -159,8 +159,12 @@ jobs:
       - name: Generate Cobertura XML
         run: |
           gcovr -r . --xml-pretty -o coverage.xml \
-            --exclude '.*third_party/.*' \
-            --exclude '.*tests?/.*' || true
+          --exclude '.*third_party/.*' \
+          --exclude '.*tests?/.*' \
+          --exclude-unreachable-branches \
+          --exclude-throw-branches \
+          --exclude-lines-by-pattern 'GCOVR_EXCL_LINE' \
+          || true
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
