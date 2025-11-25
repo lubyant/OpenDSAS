@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 
+#include "exception.hpp"
 #include "grid.hpp"
 #include "intersect.hpp"
 #include "options.hpp"
@@ -44,7 +45,7 @@ LineSegment TransectLine::create_transect(
           transect_base.create_point(baseline_normal_vector, -transect_length);
       break;
     default:
-      throw std::runtime_error("Not a valid orientation!");
+      OPENDSAS_THROW("Not a valid orientation!");
   }
   return {leftEdge, rightEdge};
 }

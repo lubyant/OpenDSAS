@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "exception.hpp"
 #include "grid.hpp"
 #include "intersect.hpp"
 #include "options.hpp"
@@ -103,7 +104,7 @@ Grids build_spatial_grids(
 double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   // if no intersection
   if (intersections.empty()) {
-    throw std::runtime_error("It should not be empty\n");
+    OPENDSAS_THROW("Intersections should not be empty\n");
   }
 
   // if only one intersection
@@ -122,7 +123,7 @@ double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
   // if two intersections
   if (intersections.size() == 2) {
     if (intersections[1]->date_ == intersections[0]->date_) {
-      throw std::runtime_error(
+      OPENDSAS_THROW(
           "Error: Two intersection points have the same date, cannot compute "
           "change rate.");
     }

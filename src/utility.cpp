@@ -14,7 +14,7 @@ namespace dsas {
 double least_square(const std::vector<long long> &x,
                     const std::vector<double> &y) {
   if (x.size() != y.size()) {
-    throw std::runtime_error("x, y need to have the same size!");
+    return -999.99;
   }
   if (x.empty() || y.empty()) {
     return -999.99;
@@ -43,7 +43,7 @@ std::string get_tiff_proj(const std::string &path) {
   auto *poTIFFDataset =
       static_cast<GDALDataset *>(GDALOpen(path.c_str(), GA_ReadOnly));
   if (poTIFFDataset == nullptr) {
-    throw std::runtime_error("Not available tiff!");
+    OPENDSAS_THROW("tiff file not open!");
   }
   std::string psz_prj_ = std::string(poTIFFDataset->GetProjectionRef());
   GDALClose(poTIFFDataset);
@@ -57,7 +57,7 @@ std::string get_shp_proj(const char *path) {
   poDS = static_cast<GDALDataset *>(
       GDALOpenEx(path, GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
   if (poDS == nullptr) {
-    throw std::runtime_error("shapefile not open!");
+    OPENDSAS_THROW("Open shapefile failed!\n");
   }
 
   OGRLayer *poLayer = poDS->GetLayer(0);
@@ -69,7 +69,7 @@ std::string get_shp_proj(const char *path) {
     psz_prj_ = std::string(pszProjection);
     CPLFree(pszProjection);
   } else {
-    throw std::runtime_error("No spatial reference information available\n");
+    OPENDSAS_THROW("Shapefile has no projection information!\n");
   }
   return psz_prj_;
 }

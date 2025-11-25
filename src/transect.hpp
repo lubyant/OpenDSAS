@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "baseline.hpp"
+#include "exception.hpp"
 #include "geometry.hpp"
 #include "intersect.hpp"
 #include "shoreline.hpp"
@@ -48,7 +49,7 @@ struct TransectLine : public LineSegment,
         orient_(orient) {
     if (std::isnan(transect_ref_point_.x) ||
         std::isnan(transect_ref_point_.y)) {
-      throw std::runtime_error("ref point error");
+      OPENDSAS_THROW("Error: transect reference point is NaN");
     }
   }
 
@@ -72,7 +73,7 @@ struct TransectLine : public LineSegment,
             Point((start.x + end.x) / 2, (start.y + end.y) / 2);
         break;
       default:
-        throw std::runtime_error("no valid orient\n");
+        OPENDSAS_THROW("Not a valid orientation!");
     }
     transect_base_point_ = Point((start.x + end.x) / 2, (start.y + end.y) / 2);
   }
@@ -102,7 +103,7 @@ struct TransectLine : public LineSegment,
       case 2:
         return rightEdge_;
       default:
-        throw std::runtime_error("Not a valid index");
+        OPENDSAS_THROW("Index out of range in TransectLine");
     }
   }
 
@@ -117,12 +118,8 @@ struct TransectLine : public LineSegment,
     return {transect_id_, baseline_id_, change_rate};
   }
 
-  [[nodiscard]] double get_x() const override {
-    return transect_base_point_.x;
-  }
-  [[nodiscard]] double get_y() const override {
-    return transect_base_point_.y;
-  }
+  [[nodiscard]] double get_x() const override { return transect_base_point_.x; }
+  [[nodiscard]] double get_y() const override { return transect_base_point_.y; }
 };
 
 std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(

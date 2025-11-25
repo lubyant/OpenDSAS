@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "exception.hpp"
 #include "options.hpp"
 
 namespace dsas {
@@ -11,7 +12,7 @@ static dsas::Options::IntersectionMode parse_intersection_mode(
     const std::string& s) {
   if (s == "closest") return dsas::Options::IntersectionMode::Closest;
   if (s == "farthest") return dsas::Options::IntersectionMode::Farthest;
-  throw std::runtime_error("Invalid --intersection-mode: " + s);
+  OPENDSAS_THROW("Invalid --intersection-mode: " + s);
 }
 
 static dsas::Options::TransectOrientation parse_transect_orient(
@@ -19,7 +20,7 @@ static dsas::Options::TransectOrientation parse_transect_orient(
   if (s == "left") return dsas::Options::TransectOrientation::Left;
   if (s == "right") return dsas::Options::TransectOrientation::Right;
   if (s == "mix") return dsas::Options::TransectOrientation::Mix;
-  throw std::runtime_error("Invalid --transect-orientation: " + s);
+  OPENDSAS_THROW("Invalid --transect-orientation: " + s);
 }
 
 static void init_root_cmd(argparse::ArgumentParser& root_cmd) {
@@ -163,7 +164,7 @@ CliStatus parse_args(int argc, char* argv[]) {
           cast_cmd.get<double>("--transect-spacing");
       dsas::options.smooth_factor = cast_cmd.get<int>("--smooth-factor");
       if (dsas::options.smooth_factor < 1) {
-        throw std::runtime_error("Error: smooth factor is less than 1");
+        OPENDSAS_THROW("Error: smooth factor is less than 1");
       }
       dsas::options.intersection_mode = parse_intersection_mode(
           cast_cmd.get<std::string>("--intersection-mode"));
@@ -196,7 +197,7 @@ CliStatus parse_args(int argc, char* argv[]) {
         root_cmd.get<std::string>("--output-transect");
     dsas::options.smooth_factor = root_cmd.get<int>("--smooth-factor");
     if (dsas::options.smooth_factor < 1) {
-      throw std::runtime_error("Error: smooth factor is less than 1");
+      OPENDSAS_THROW("Error: smooth factor is less than 1");
     }
     dsas::options.transect_length = root_cmd.get<double>("--transect-length");
     dsas::options.transect_spacing = root_cmd.get<double>("--transect-spacing");

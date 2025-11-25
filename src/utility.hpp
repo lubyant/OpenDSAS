@@ -20,6 +20,7 @@
 #include <tuple>
 #include <vector>
 
+#include "exception.hpp"
 #include "geometry.hpp"
 #include "options.hpp"
 
@@ -122,33 +123,33 @@ requires std::derived_from<T, MultiLine<Point>> &&
 void save_lines(const std::vector<T *> &lines, const char *pszProj,
                 const std::filesystem::path &output_path) {
   if (lines.empty()) {
-    throw std::runtime_error("save_lines: no shapes provided");
+    OPENDSAS_THROW("No line to save!");
   }
 
   // GCOVR_EXCL_START
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
-    throw std::runtime_error("Projection setting failed");
+    OPENDSAS_THROW("Projection setting failed");
   }
 
   GDALDriver *driver =
       GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
   if (!driver) {
-    throw std::runtime_error("Unable to load ESRI Shapefile driver");
+    OPENDSAS_THROW("Unable to load ESRI Shapefile driver");
   }
 
   GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
                                         GDT_Unknown, nullptr);
   if (!dataset) {
-    throw std::runtime_error("Failed to create dataset: " +
-                             output_path.string());
+    OPENDSAS_THROW("Failed to create output shapefile: " +
+                   output_path.string());
   }
 
   try {
     OGRLayer *layer =
         dataset->CreateLayer("line", &oSRS, wkbLineString, nullptr);
     if (!layer) {
-      throw std::runtime_error("Failed to create layer");
+      OPENDSAS_THROW("Failed to create layer in shapefile");
     }
 
     auto names = lines[0]->get_names();
@@ -156,7 +157,7 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     for (size_t i = 0; i < names.size(); ++i) {
       OGRFieldDefn field(names[i].c_str(), types[i]);
       if (layer->CreateField(&field) != OGRERR_NONE) {
-        throw std::runtime_error("Failed to create field: " + names[i]);
+        OPENDSAS_THROW("Failed to create field: " + names[i]);
       }
     }
 
@@ -165,7 +166,7 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
 
       OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
       if (!feature) {
-        throw std::runtime_error("Failed to create feature");
+        OPENDSAS_THROW("Failed to create new feature");
       }
 
       OGRLineString line;
@@ -177,12 +178,12 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
 
       if (feature->SetGeometry(&line) != OGRERR_NONE) {
         OGRFeature::DestroyFeature(feature);
-        throw std::runtime_error("Failed to set geometry");
+        OPENDSAS_THROW("Failed to set geometry");
       }
 
       if (layer->CreateFeature(feature) != OGRERR_NONE) {
         OGRFeature::DestroyFeature(feature);
-        throw std::runtime_error("Failed to write line feature");
+        OPENDSAS_THROW("Failed to write feature");
       }
 
       OGRFeature::DestroyFeature(feature);
@@ -202,33 +203,33 @@ requires std::derived_from<T, PointAttribute<double>> &&
 void save_points(const std::vector<T *> &shapes, const char *pszProj,
                  const std::filesystem::path &output_path) {
   if (shapes.empty()) {
-    throw std::runtime_error("save_points: no shapes provided");
+    OPENDSAS_THROW("No point to save!");
   }
 
   // GCOVR_EXCL_START
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
-    throw std::runtime_error("Projection setting failed");
+    OPENDSAS_THROW("Projection setting failed");
   }
 
   GDALDriver *driver =
       GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
   if (!driver) {
-    throw std::runtime_error("Unable to load ESRI Shapefile driver");
+    OPENDSAS_THROW("Unable to load ESRI Shapefile driver");
   }
 
   GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
                                         GDT_Unknown, nullptr);
 
   if (!dataset) {
-    throw std::runtime_error("Failed to create output shapefile: " +
-                             output_path.string());
+    OPENDSAS_THROW("Failed to create output shapefile: " +
+                   output_path.string());
   }
 
   try {
     OGRLayer *layer = dataset->CreateLayer("points", &oSRS, wkbPoint, nullptr);
     if (!layer) {
-      throw std::runtime_error("Failed to create layer in shapefile");
+      OPENDSAS_THROW("Failed to create layer in shapefile");
     }
 
     // Create fields
@@ -237,7 +238,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     for (size_t i = 0; i < names.size(); ++i) {
       OGRFieldDefn field(names[i].c_str(), types[i]);
       if (layer->CreateField(&field) != OGRERR_NONE) {
-        throw std::runtime_error("Failed to create field: " + names[i]);
+        OPENDSAS_THROW("Failed to create field: " + names[i]);
       }
     }
 
@@ -245,7 +246,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     for (auto *shape : shapes) {
       OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
       if (!feature) {
-        throw std::runtime_error("Failed to create new feature");
+        OPENDSAS_THROW("Failed to create new feature");
       }
 
       try {
@@ -255,7 +256,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
         set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
 
         if (layer->CreateFeature(feature) != OGRERR_NONE) {
-          throw std::runtime_error("Failed to write feature");
+          OPENDSAS_THROW("Failed to write feature");
         }
 
         OGRFeature::DestroyFeature(feature);
