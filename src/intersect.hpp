@@ -4,8 +4,9 @@
 #include "geometry.hpp"
 
 namespace dsas {
-#define IntersectPoint_t int, int, int, const char *, double, double, double
-struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
+using IntersectField =
+    std::tuple<int, int, int, const char *, double, double, double>;
+struct IntersectPoint : public Point, GDALShpSavable<IntersectField> {
   int transect_id_;
   int shoreline_id_;
   int baseline_id_;
@@ -40,7 +41,7 @@ struct IntersectPoint : public Point, GDALShpSaver<IntersectPoint_t> {
             OGRFieldType::OFTReal};
   }
 
-  [[nodiscard]] std::tuple<IntersectPoint_t> get_values() const override {
+  [[nodiscard]] value_tuple get_values() const override {
     return {baseline_id_,
             transect_id_,
             shoreline_id_,

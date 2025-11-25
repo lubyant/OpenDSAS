@@ -9,6 +9,7 @@
 #include <ogrsf_frmts.h>
 
 #include <cassert>
+#include <concepts>
 #include <cstdint>
 #include <filesystem>
 #include <functional>
@@ -96,19 +97,28 @@ inline bool computeIntersectPoint(const Point &p1, const Point &p2,
   }
 }
 
-template <size_t I = 0, typename... Args>
-typename std::enable_if<I == sizeof...(Args), void>::type set_ogr_feature(
-    const std::vector<std::string> &, const std::tuple<Args...> &,
-    OGRFeature &) {}
-template <size_t I = 0, typename... Args>
-typename std::enable_if<I != sizeof...(Args), void>::type set_ogr_feature(
-    const std::vector<std::string> &names, const std::tuple<Args...> &values,
-    OGRFeature &ogr_feature) {
-  ogr_feature.SetField(names[I].c_str(), std::get<I>(values));
-  set_ogr_feature<I + 1, Args...>(names, values, ogr_feature);
+template <typename... Args>
+void set_ogr_feature(const std::vector<std::string> &names,
+                     const std::tuple<Args...> &values, OGRFeature &ogr_feature)
+requires(sizeof...(Args) > 0)
+{
+  assert(names.size() == sizeof...(Args));
+
+  std::size_t i = 0;
+
+  std::apply(
+      [&](auto &&...vs) {
+        // Fold over the parameter pack with side effects
+        ((ogr_feature.SetField(names[i++].c_str(),
+                               std::forward<decltype(vs)>(vs))),
+         ...);
+      },
+      values);
 }
 
 template <typename T>
+requires std::derived_from<T, MultiLine<Point>> &&
+         std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
 void save_lines(const std::vector<T *> &lines, const char *pszProj,
                 const std::filesystem::path &output_path) {
   assert(lines.size() > 0);
@@ -159,12 +169,12 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     OGRLineString line;
 
     // Step 6: Create a line geometry and add points to it
-    for (size_t i = 0; i < shape->size(); i++) {
-      if (std::isnan((*shape)[i].x) || std::isnan((*shape)[i].y)) {
-        std::cerr << (*shape)[i].x << std::endl;
+    for (const auto &vertice : *shape) {
+      if (std::isnan(vertice.get_x()) || std::isnan(vertice.get_y())) {
+        std::cerr << vertice.get_x() << std::endl;
         exit(1);
       }
-      line.addPoint((*shape)[i].x, (*shape)[i].y);
+      line.addPoint(vertice.get_x(), vertice.get_y());
     }
 
     set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
@@ -180,6 +190,71 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     if (err != OGRERR_NONE) {
       throw std::runtime_error("Failed to set geometry");
     }
+    OGRFeature::DestroyFeature(feature);
+  }
+
+  // Clean up
+  GDALClose(dataset);
+}
+
+template <typename T>
+requires std::derived_from<T, PointAttribute<double>> &&
+         std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
+void save_points(const std::vector<T *> &shapes, const char *pszProj,
+                 const std::filesystem::path &output_path) {
+  assert(shapes.size() > 0);
+  // Initialize GDAL
+  OGRSpatialReference oSRS;
+  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
+    throw std::runtime_error("Projection setting fail!");
+  }
+
+  // Get the shapefile driver
+  GDALDriver *driver =
+      GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
+  if (driver == nullptr) {
+    throw std::runtime_error("Unable to get ESRI Shapefile driver");
+  }
+
+  // Create a new shapefile
+  GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
+                                        GDT_Unknown, nullptr);
+
+  // Step 4: Create a layer for the shapefile
+  OGRLayer *layer =
+      dataset->CreateLayer("pointLayer", &oSRS, wkbPoint, nullptr);
+  if (layer == nullptr) {
+    throw std::runtime_error("Layer is not created!");
+  }
+
+  // define attributes
+  for (size_t i = 0; i < shapes[0]->get_names().size(); i++) {
+    OGRFieldDefn field(shapes[0]->get_names()[i].c_str(),
+                       shapes[0]->get_types()[i]);
+    if (layer->CreateField(&field) != OGRERR_NONE) {
+      std::cerr << __FILE__ << ", " << __LINE__
+                << ": Failed to create Name field" << std::endl;
+      exit(1);
+    }
+  }
+
+  // Step 6: Create a line geometry and add points to it
+  for (const auto *shape : shapes) {
+    // Step 5: Create a new feature
+    OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
+    // Step 7: Add the geometry to the feature
+    OGRPoint point;
+    point.setX(shape->get_x());
+    point.setY(shape->get_y());
+    feature->SetGeometry(&point);
+
+    set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
+
+    if (layer->CreateFeature(feature) != OGRERR_NONE) {
+      std::cerr << "Failed to create feature in shapefile!" << std::endl;
+      exit(1);
+    }
+
     OGRFeature::DestroyFeature(feature);
   }
 

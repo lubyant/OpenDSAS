@@ -108,8 +108,8 @@ Grids build_shoreline_index(
   };
 
   Grids grids;
-  for (size_t si = 0; si < shorelines.size(); ++si) {
-    const auto &pts = shorelines[si]->shoreline_vertices_;
+  for (const auto & shoreline : shorelines) {
+    const auto &pts = shoreline->shoreline_vertices_;
     if (pts.size() < 2) continue;
 
     for (size_t j = 0; j + 1 < pts.size(); ++j) {
@@ -141,7 +141,7 @@ Grids build_shoreline_index(
                 xmin + ix * grids_id, ymin + iy * grid_size, ix, iy);
           }
           grids[grids_id]->shoreline_segs.emplace_back(a, b,
-                                                       shorelines[si].get());
+                                                       shoreline.get());
         }
       }
     }

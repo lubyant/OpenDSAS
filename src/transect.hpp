@@ -11,10 +11,12 @@
 namespace dsas {
 struct Grid;  // forward declaration
 
-#define transect_t int, int, double
+using TransectFields = std::tuple<int, int, double>;
+
 struct TransectLine : public LineSegment,
                       MultiLine<Point>,
-                      GDALShpSaver<transect_t> {
+                      PointAttribute<double>,
+                      GDALShpSavable<TransectFields> {
   using IntersectionMode = dsas::Options::IntersectionMode;
   using TransectOrientation = dsas::Options::TransectOrientation;
   using Grids = std::unordered_map<size_t, std::unique_ptr<Grid>>;
@@ -111,8 +113,15 @@ struct TransectLine : public LineSegment,
     return {OGRFieldType::OFTInteger, OGRFieldType::OFTInteger,
             OGRFieldType::OFTReal};
   }
-  [[nodiscard]] std::tuple<transect_t> get_values() const override {
+  [[nodiscard]] value_tuple get_values() const override {
     return {transect_id_, baseline_id_, change_rate};
+  }
+
+  [[nodiscard]] double get_x() const override {
+    return transect_base_point_.x;
+  }
+  [[nodiscard]] double get_y() const override {
+    return transect_base_point_.y;
   }
 };
 
