@@ -125,7 +125,7 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     throw std::runtime_error("save_lines: no shapes provided");
   }
 
-  // LCOV_EXCL_START
+  // GCOVR_EXCL_START
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
     throw std::runtime_error("Projection setting failed");
@@ -193,7 +193,7 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     GDALClose(dataset);
     throw;
   }
-  // LCOV_EXCL_END
+  // GCOVR_EXCL_STOP
 }
 
 template <typename T>
@@ -205,7 +205,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     throw std::runtime_error("save_points: no shapes provided");
   }
 
-  // LCOV_EXCL_START
+  // GCOVR_EXCL_START
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
     throw std::runtime_error("Projection setting failed");
@@ -271,7 +271,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     GDALClose(dataset);
     throw;
   }
-  // LCOV_EXCL_END
+  // GCOVR_EXCL_STOP
 }
 
 double least_square(const std::vector<long long> &x,
