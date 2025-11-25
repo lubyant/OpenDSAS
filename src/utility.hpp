@@ -126,19 +126,19 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
   }
 
   OGRSpatialReference oSRS;
-  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
+  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {  // LCOV_EXCL_LINE
     throw std::runtime_error("Projection setting failed");
   }
 
   GDALDriver *driver =
       GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
-  if (!driver) {
+  if (!driver) {  // LCOV_EXCL_LINE
     throw std::runtime_error("Unable to load ESRI Shapefile driver");
   }
 
   GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
                                         GDT_Unknown, nullptr);
-  if (!dataset) {
+  if (!dataset) {  // LCOV_EXCL_LINE
     throw std::runtime_error("Failed to create dataset: " +
                              output_path.string());
   }
@@ -146,7 +146,7 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
   try {
     OGRLayer *layer =
         dataset->CreateLayer("line", &oSRS, wkbLineString, nullptr);
-    if (!layer) {
+    if (!layer) {  // LCOV_EXCL_LINE
       throw std::runtime_error("Failed to create layer");
     }
 
@@ -154,7 +154,7 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     auto types = lines[0]->get_types();
     for (size_t i = 0; i < names.size(); ++i) {
       OGRFieldDefn field(names[i].c_str(), types[i]);
-      if (layer->CreateField(&field) != OGRERR_NONE) {
+      if (layer->CreateField(&field) != OGRERR_NONE) {  // LCOV_EXCL_LINE
         throw std::runtime_error("Failed to create field: " + names[i]);
       }
     }
@@ -174,12 +174,12 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
 
       set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
 
-      if (feature->SetGeometry(&line) != OGRERR_NONE) {
+      if (feature->SetGeometry(&line) != OGRERR_NONE) {  // LCOV_EXCL_LINE
         OGRFeature::DestroyFeature(feature);
         throw std::runtime_error("Failed to set geometry");
       }
 
-      if (layer->CreateFeature(feature) != OGRERR_NONE) {
+      if (layer->CreateFeature(feature) != OGRERR_NONE) {  // LCOV_EXCL_LINE
         OGRFeature::DestroyFeature(feature);
         throw std::runtime_error("Failed to write line feature");
       }
@@ -205,27 +205,27 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
 
   // Prepare spatial reference
   OGRSpatialReference oSRS;
-  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
+  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {  // LCOV_EXCL_LINE
     throw std::runtime_error("Projection setting failed");
   }
 
   GDALDriver *driver =
       GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
-  if (!driver) {
+  if (!driver) {  // LCOV_EXCL_LINE
     throw std::runtime_error("Unable to load ESRI Shapefile driver");
   }
 
   GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
                                         GDT_Unknown, nullptr);
 
-  if (!dataset) {
+  if (!dataset) {  // LCOV_EXCL_LINE
     throw std::runtime_error("Failed to create output shapefile: " +
                              output_path.string());
   }
 
   try {
     OGRLayer *layer = dataset->CreateLayer("points", &oSRS, wkbPoint, nullptr);
-    if (!layer) {
+    if (!layer) {  // LCOV_EXCL_LINE
       throw std::runtime_error("Failed to create layer in shapefile");
     }
 
@@ -234,7 +234,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     auto types = shapes[0]->get_types();
     for (size_t i = 0; i < names.size(); ++i) {
       OGRFieldDefn field(names[i].c_str(), types[i]);
-      if (layer->CreateField(&field) != OGRERR_NONE) {
+      if (layer->CreateField(&field) != OGRERR_NONE) {  // LCOV_EXCL_LINE
         throw std::runtime_error("Failed to create field: " + names[i]);
       }
     }
@@ -242,7 +242,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     // Write features
     for (auto *shape : shapes) {
       OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
-      if (!feature) {
+      if (!feature) {  // LCOV_EXCL_LINE
         throw std::runtime_error("Failed to create new feature");
       }
 
@@ -252,7 +252,7 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
 
         set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
 
-        if (layer->CreateFeature(feature) != OGRERR_NONE) {
+        if (layer->CreateFeature(feature) != OGRERR_NONE) {  // LCOV_EXCL_LINE
           throw std::runtime_error("Failed to write feature");
         }
 
