@@ -170,10 +170,6 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
 
     // Step 6: Create a line geometry and add points to it
     for (const auto &vertice : *shape) {
-      if (std::isnan(vertice.get_x()) || std::isnan(vertice.get_y())) {
-        std::cerr << vertice.get_x() << std::endl;
-        exit(1);
-      }
       line.addPoint(vertice.get_x(), vertice.get_y());
     }
 
