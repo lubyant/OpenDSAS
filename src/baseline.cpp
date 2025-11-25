@@ -1,4 +1,5 @@
 #include "baseline.hpp"
+#include "exception.hpp"
 
 #include <ogrsf_frmts.h>
 
@@ -111,7 +112,7 @@ std::vector<Baseline> load_baselines_shp(
     int field_index = poFDefn->GetFieldIndex(baseline_id_field.c_str());
 
     if (field_index < 0) {
-      throw std::runtime_error("Field '" + baseline_id_field +
+      OPENDSAS_THROW("Field '" + baseline_id_field +
                                "' not found in baseline shapefile.");
     }
   }

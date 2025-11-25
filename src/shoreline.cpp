@@ -6,6 +6,7 @@
 #include <queue>
 
 #include "baseline.hpp"
+#include "exception.hpp"
 #include "grid.hpp"
 
 namespace dsas {
@@ -15,13 +16,14 @@ double mean_shore_segment = 0;
 boost::gregorian::date generate_date_from_str(const char *date_str) {
   auto format = dsas::options.date_format;
   std::istringstream istream(date_str);
-  istream.imbue(std::locale(std::locale::classic(),
-                            new boost::gregorian::date_input_facet(format.c_str())));
+  istream.imbue(
+      std::locale(std::locale::classic(),
+                  new boost::gregorian::date_input_facet(format.c_str())));
   boost::gregorian::date date;
   istream >> date;
   if (istream.fail()) {
-    throw std::runtime_error("Failed to parse date: " + std::string(date_str) +
-                             " using format: " + format);
+    OPENDSAS_THROW("Failed to parse date: " + std::string(date_str) +
+                   " using format: " + format);
   }
   return date;
 }
