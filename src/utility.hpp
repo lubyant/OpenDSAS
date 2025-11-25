@@ -189,8 +189,8 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
 
     GDALClose(dataset);
   } catch (...) {
-    GDALClose(dataset);
-    throw;
+    GDALClose(dataset);  // LCOV_EXCL_LINE
+    throw;               // LCOV_EXCL_LINE
   }
 }
 
@@ -267,8 +267,8 @@ void save_points(const std::vector<T *> &shapes, const char *pszProj,
     GDALClose(dataset);
   } catch (...) {
     // Ensure dataset is closed on any error
-    GDALClose(dataset);
-    throw;
+    GDALClose(dataset);  // LCOV_EXCL_LINE
+    throw;               // LCOV_EXCL_LINE
   }
 }
 
