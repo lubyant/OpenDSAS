@@ -198,63 +198,69 @@ requires std::derived_from<T, PointAttribute<double>> &&
          std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
 void save_points(const std::vector<T *> &shapes, const char *pszProj,
                  const std::filesystem::path &output_path) {
-  assert(shapes.size() > 0);
-  // Initialize GDAL
+  if (shapes.empty()) {
+    throw std::runtime_error("save_points: no shapes provided");
+  }
+
+  // Prepare spatial reference
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
-    throw std::runtime_error("Projection setting fail!");
+    throw std::runtime_error("Projection setting failed");
   }
 
-  // Get the shapefile driver
   GDALDriver *driver =
       GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
-  if (driver == nullptr) {
-    throw std::runtime_error("Unable to get ESRI Shapefile driver");
+  if (!driver) {
+    throw std::runtime_error("Unable to load ESRI Shapefile driver");
   }
 
-  // Create a new shapefile
   GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
                                         GDT_Unknown, nullptr);
 
-  // Step 4: Create a layer for the shapefile
-  OGRLayer *layer =
-      dataset->CreateLayer("pointLayer", &oSRS, wkbPoint, nullptr);
-  if (layer == nullptr) {
-    throw std::runtime_error("Layer is not created!");
+  if (!dataset) {
+    throw std::runtime_error("Failed to create output shapefile: " +
+                             output_path.string());
   }
 
-  // define attributes
-  for (size_t i = 0; i < shapes[0]->get_names().size(); i++) {
-    OGRFieldDefn field(shapes[0]->get_names()[i].c_str(),
-                       shapes[0]->get_types()[i]);
+  OGRLayer *layer = dataset->CreateLayer("points", &oSRS, wkbPoint, nullptr);
+  if (!layer) {
+    GDALClose(dataset);
+    throw std::runtime_error("Failed to create layer in shapefile");
+  }
+
+  // Create fields
+  auto names = shapes[0]->get_names();
+  auto types = shapes[0]->get_types();
+  for (size_t i = 0; i < names.size(); i++) {
+    OGRFieldDefn field(names[i].c_str(), types[i]);
     if (layer->CreateField(&field) != OGRERR_NONE) {
-      std::cerr << __FILE__ << ", " << __LINE__
-                << ": Failed to create Name field" << std::endl;
-      exit(1);
+      GDALClose(dataset);
+      throw std::runtime_error("Failed to create field: " + names[i]);
     }
   }
 
-  // Step 6: Create a line geometry and add points to it
-  for (const auto *shape : shapes) {
-    // Step 5: Create a new feature
+  // Write features
+  for (auto *shape : shapes) {
     OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
-    // Step 7: Add the geometry to the feature
-    OGRPoint point;
-    point.setX(shape->get_x());
-    point.setY(shape->get_y());
+    if (!feature) {
+      GDALClose(dataset);
+      throw std::runtime_error("Failed to create new feature");
+    }
+
+    OGRPoint point(shape->get_x(), shape->get_y());
     feature->SetGeometry(&point);
 
     set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
 
     if (layer->CreateFeature(feature) != OGRERR_NONE) {
-      std::cerr << "Failed to create feature in shapefile!" << std::endl;
-      exit(1);
+      OGRFeature::DestroyFeature(feature);
+      GDALClose(dataset);
+      throw std::runtime_error("Failed to write feature");
     }
 
     OGRFeature::DestroyFeature(feature);
   }
 
-  // Clean up
   GDALClose(dataset);
 }
 
