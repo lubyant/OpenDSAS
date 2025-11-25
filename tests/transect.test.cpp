@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <filesystem>
+#include <stdexcept>
 
 #include "grid.hpp"
 #include "options.hpp"
@@ -207,6 +208,14 @@ TEST_F(TransectTest, test_save_transect) {
   auto transects_lines = create_transects_from_baseline(*baseline);
   { save_transect(transects_lines, prj); }
   { save_transect(transects_lines, prj, true); }
+  {
+    transects_lines.clear();
+    ASSERT_THROW(save_transect(transects_lines, prj), std::runtime_error);
+  }
+  {
+    prj = "INVALID PROJ STRING";
+    ASSERT_THROW(save_transect(transects_lines, prj), std::runtime_error);
+  }
 }
 
 TEST_F(TransectTest, test_load_transects_from_shp) {
