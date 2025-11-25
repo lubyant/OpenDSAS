@@ -121,7 +121,9 @@ requires std::derived_from<T, MultiLine<Point>> &&
          std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
 void save_lines(const std::vector<T *> &lines, const char *pszProj,
                 const std::filesystem::path &output_path) {
-  assert(lines.size() > 0);
+  if (lines.empty()) {
+    throw std::runtime_error("no shapes provided");
+  }
   GDALAllRegister();
   // Step 1: Initialize GDAL
   OGRSpatialReference oSRS;

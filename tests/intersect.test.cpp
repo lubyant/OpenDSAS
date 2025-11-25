@@ -29,6 +29,9 @@ TEST(TestIntersect, test_save_intersects) {
   double dist2ref2 = 1;
   double dist2ref3 = 2;
 
+  auto tmp_file = std::filesystem::temp_directory_path() / "intersects.shp";
+  options.intersect_path = tmp_file.string();
+
   {
     std::vector<std::unique_ptr<IntersectPoint>> intersections;
     auto p1 = std::make_unique<dsas::IntersectPoint>(
@@ -41,8 +44,25 @@ TEST(TestIntersect, test_save_intersects) {
     intersections.push_back(std::move(p1));
     intersections.push_back(std::move(p2));
     intersections.push_back(std::move(p3));
-    auto tmp_file = std::filesystem::temp_directory_path() / "intersects.shp";
-    options.intersect_path = tmp_file.string();
     save_intersects(intersections, prj);
+  }
+  {
+    std::vector<std::unique_ptr<IntersectPoint>> intersections;
+    ASSERT_THROW(save_intersects(intersections, prj), std::runtime_error);
+  }
+  {
+    std::vector<std::unique_ptr<IntersectPoint>> intersections;
+    auto p1 = std::make_unique<dsas::IntersectPoint>(
+        fake_point, fake_tid, fake_sid, fake_bid, date1, dist2ref1);
+    auto p2 = std::make_unique<dsas::IntersectPoint>(
+        fake_point, fake_tid, fake_sid, fake_bid, date2, dist2ref2);
+    auto p3 = std::make_unique<dsas::IntersectPoint>(
+        fake_point, fake_tid, fake_sid, fake_bid, date3, dist2ref3);
+
+    intersections.push_back(std::move(p1));
+    intersections.push_back(std::move(p2));
+    intersections.push_back(std::move(p3));
+    prj = "INVALID_PROJ_STRING";
+    ASSERT_THROW(save_intersects(intersections, prj), std::runtime_error);
   }
 }
