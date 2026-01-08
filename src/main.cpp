@@ -1,8 +1,12 @@
 #include <cstdlib>
+#include <filesystem>
+#include <iostream>
+#include <memory>
+#include <vector>
 
+#include "baseline.hpp"
 #include "cli.hpp"
 #include "dsas.hpp"
-#include "grid.hpp"
 #include "intersect.hpp"
 #include "options.hpp"
 #include "shoreline.hpp"
@@ -10,8 +14,8 @@
 #include "utility.hpp"
 
 // --------------------------- runners ----------------------------------
-
-static void cal_erosion_rate(std::vector<dsas::TransectLine>& transects) {
+namespace {
+void cal_erosion_rate(std::vector<dsas::TransectLine>& transects) {
   for (auto& transect : transects) {
     auto intersects = transect.intersects;
     auto reg_rate = dsas::linearRegressRate(intersects);
@@ -19,7 +23,7 @@ static void cal_erosion_rate(std::vector<dsas::TransectLine>& transects) {
   }
 }
 
-static void print_messages() {
+void print_messages() {
   std::cout << "Welcome to digital shoreline analysis system\n";
   std::cout << "Your shoreline path: "
             << std::filesystem::absolute(dsas::options.shoreline_path) << "\n"
@@ -32,7 +36,7 @@ static void print_messages() {
   std::cout << "Start to run\n";
 }
 
-static void run_root() {
+void run_root() {
   print_messages();
 
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path,
@@ -49,9 +53,9 @@ static void run_root() {
     intersects = dsas::generate_intersects(transects, shorelines);
   }
 
-  for (auto& t : transects) {
-    if (!t->intersects.empty()) {
-      t->change_rate = dsas::linearRegressRate(t->intersects);
+  for (auto& transect : transects) {
+    if (!transect->intersects.empty()) {
+      transect->change_rate = dsas::linearRegressRate(transect->intersects);
     }
   }
 
@@ -60,7 +64,7 @@ static void run_root() {
   dsas::save_intersects(intersects, prj);
 }
 
-static void run_cast() {
+void run_cast() {
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path,
                                             dsas::options.baseline_id_field);
   auto transects = dsas::generate_transects(baselines);
@@ -68,7 +72,7 @@ static void run_cast() {
   dsas::save_transect(transects, prj);
 }
 
-static void run_cal() {
+void run_cal() {
   auto shorelines = dsas::load_shorelines_shp(dsas::options.shoreline_path,
                                               dsas::options.date_field.c_str());
   auto transects = dsas::load_transects_from_shp(dsas::options.transect_path);
@@ -83,14 +87,15 @@ static void run_cal() {
     intersects = dsas::generate_intersects(transects, shorelines);
   }
 
-  for (auto& t : transects) {
-    if (!t->intersects.empty()) {
-      t->change_rate = dsas::linearRegressRate(t->intersects);
+  for (auto& transect : transects) {
+    if (!transect->intersects.empty()) {
+      transect->change_rate = dsas::linearRegressRate(transect->intersects);
     }
   }
   dsas::save_transect(transects, prj);
   dsas::save_intersects(intersects, prj);
 }
+}  // namespace
 
 int main(int argc, char* argv[]) {
   auto cli_status = dsas::parse_args(argc, argv);
