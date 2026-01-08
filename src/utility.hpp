@@ -8,21 +8,17 @@
 #include <gdal_priv.h>
 #include <ogrsf_frmts.h>
 
+#include <algorithm>
 #include <cassert>
 #include <concepts>
-#include <cstdint>
 #include <filesystem>
-#include <functional>
-#include <future>
 #include <iostream>
-#include <numeric>
-#include <queue>
+#include <string>
 #include <tuple>
 #include <vector>
 
 #include "exception.hpp"
 #include "geometry.hpp"
-#include "options.hpp"
 
 namespace dsas {
 
@@ -44,14 +40,14 @@ inline bool testRectangularOfIntersection(const dsas::Point &p1,
                                           const dsas::Point &p2,
                                           const dsas::Point &p3,
                                           const dsas::Point &p4) {
-  double l_x_min = std::min(p1.x, p2.x);
-  double l_x_max = std::max(p1.x, p2.x);
-  double r_x_min = std::min(p3.x, p4.x);
-  double r_x_max = std::max(p3.x, p4.x);
-  double l_y_min = std::min(p1.y, p2.y);
-  double l_y_max = std::max(p1.y, p2.y);
-  double r_y_min = std::min(p3.y, p4.y);
-  double r_y_max = std::max(p3.y, p4.y);
+  const double l_x_min = std::min(p1.x, p2.x);
+  const double l_x_max = std::max(p1.x, p2.x);
+  const double r_x_min = std::min(p3.x, p4.x);
+  const double r_x_max = std::max(p3.x, p4.x);
+  const double l_y_min = std::min(p1.y, p2.y);
+  const double l_y_max = std::max(p1.y, p2.y);
+  const double r_y_min = std::min(p3.y, p4.y);
+  const double r_y_max = std::max(p3.y, p4.y);
   return (l_x_max >= r_x_min) && (r_x_max >= l_x_min) && (r_y_max >= l_y_min) &&
          (l_y_max >= r_y_min);
 }

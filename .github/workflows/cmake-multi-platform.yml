@@ -163,7 +163,6 @@ jobs:
           --exclude '.*tests?/.*' \
           --exclude-unreachable-branches \
           --exclude-throw-branches \
-          --exclude-lines-by-pattern 'GCOVR_EXCL_LINE' \
           || true
 
       - name: Upload to Codecov
