@@ -113,6 +113,7 @@ requires(sizeof...(Args) > 0)
       values);
 }
 
+// GCOVR_EXCL_START
 template <typename T>
 requires std::derived_from<T, MultiLine<Point>> &&
          std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
@@ -122,7 +123,6 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     OPENDSAS_THROW("No line to save!");
   }
 
-  // GCOVR_EXCL_START
   OGRSpatialReference oSRS;
   if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
     OPENDSAS_THROW("Projection setting failed");
@@ -190,9 +190,8 @@ void save_lines(const std::vector<T *> &lines, const char *pszProj,
     GDALClose(dataset);
     throw;
   }
-  // GCOVR_EXCL_STOP
 }
-
+// GCOVR_EXCL_STOP
 template <typename T>
 requires std::derived_from<T, PointAttribute<double>> &&
          std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
