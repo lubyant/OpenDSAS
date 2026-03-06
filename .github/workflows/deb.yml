@@ -52,10 +52,14 @@ jobs:
       - name: Configure
         run: |
           set -eux
+          # Detect the installed GDAL runtime package (soname differs per distro)
+          GDAL_PKG=$(dpkg -l | awk '/^ii\s+libgdal[0-9]/{print $2}' | head -1)
+          echo "Detected GDAL runtime package: $GDAL_PKG"
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=OFF \
             -DGDAL_USE_STATIC_LIBS=OFF \
+            -DCPACK_DEBIAN_PACKAGE_DEPENDS="libc6 (>= 2.17), libstdc++6 (>= 5), libgomp1, ${GDAL_PKG}" \
             ${{ matrix.cmake_compiler_flags }}
 
       - name: Build

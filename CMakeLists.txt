@@ -107,8 +107,9 @@ set(CPACK_PACKAGE_CONTACT "Boyuan Lu blu38@wisc.edu")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenDSAS — high-performance Digital Shoreline Analysis System (CLI)")
 set(CPACK_DEBIAN_PACKAGE_SECTION "science")
 
-# Let dpkg-shlibdeps compute runtime shared-library deps automatically
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+# Runtime deps are injected by the CI per-distro (GDAL soname varies).
+# Disable shlibdeps to avoid hangs in stripped-down container environments.
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS OFF)
 
 # Optional: ship docs
 # install(FILES LICENSE README.md DESTINATION ${CMAKE_INSTALL_DOCDIR})
