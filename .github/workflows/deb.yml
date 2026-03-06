@@ -15,10 +15,17 @@ jobs:
         include:
           - ubuntu: "20.04"
             codename: focal
+            # GCC 9 (default on Focal) has incomplete C++20 support; use GCC 10
+            extra_pkgs: "gcc-10 g++-10"
+            cmake_compiler_flags: "-DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_C_COMPILER=gcc-10"
           - ubuntu: "22.04"
             codename: jammy
+            extra_pkgs: ""
+            cmake_compiler_flags: ""
           - ubuntu: "24.04"
             codename: noble
+            extra_pkgs: ""
+            cmake_compiler_flags: ""
     container:
       image: ubuntu:${{ matrix.ubuntu }}
 
@@ -34,7 +41,8 @@ jobs:
             ca-certificates git curl pkg-config \
             build-essential cmake \
             libgdal-dev \
-            file dpkg-dev
+            file dpkg-dev \
+            ${{ matrix.extra_pkgs }}
           update-ca-certificates
           git config --system http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
           # sanity checks
@@ -47,7 +55,8 @@ jobs:
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=OFF \
-            -DGDAL_USE_STATIC_LIBS=OFF
+            -DGDAL_USE_STATIC_LIBS=OFF \
+            ${{ matrix.cmake_compiler_flags }}
 
       - name: Build
         run: cmake --build build -j"$(nproc)"
