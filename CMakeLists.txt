@@ -32,7 +32,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(argparse)
 
 # GDAL (module mode works on Debian/Ubuntu)
-find_package(GDAL CONFIG REQUIRED)
+find_package(GDAL REQUIRED)
 
 # Boost headers (no specific components)
 find_package(Boost REQUIRED)
