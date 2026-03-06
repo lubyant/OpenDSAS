@@ -1,4 +1,4 @@
-name: build-and-test-deb (noble only)
+name: build-and-test-deb
 
 on:
   push:
@@ -9,7 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ubuntu:24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ubuntu: "20.04"
+            codename: focal
+          - ubuntu: "22.04"
+            codename: jammy
+          - ubuntu: "24.04"
+            codename: noble
+    container:
+      image: ubuntu:${{ matrix.ubuntu }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +41,7 @@ jobs:
           gdal-config --version
           pkg-config --modversion gdal
 
-      - name: Configure (C++20; disable tests in CI)
+      - name: Configure
         run: |
           set -eux
           cmake -B build \
@@ -42,31 +54,47 @@ jobs:
 
       - name: Package (.deb via CPack)
         run: |
+          set -eux
           cpack -B build/dist -G DEB --config build/CPackConfig.cmake
+          # Append Ubuntu codename so all three artifacts are distinct
+          for f in build/dist/*.deb; do
+            mv "$f" "${f%.deb}-${{ matrix.codename }}.deb"
+          done
           ls -l build/dist
 
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: opendsas-noble
+          name: opendsas-${{ matrix.codename }}
           path: build/dist/*.deb
 
   test-install:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ubuntu: "20.04"
+            codename: focal
+          - ubuntu: "22.04"
+            codename: jammy
+          - ubuntu: "24.04"
+            codename: noble
+
     steps:
       - name: Download .deb
         uses: actions/download-artifact@v4
         with:
-          name: opendsas-noble
+          name: opendsas-${{ matrix.codename }}
           path: dist
 
       - name: Show downloaded files
         run: ls -lah dist
 
-      - name: Test install inside clean noble
+      - name: Test install inside clean Ubuntu ${{ matrix.ubuntu }}
         run: |
-          docker run --rm -v "$PWD/dist:/pkg:ro" ubuntu:24.04 bash -lc '
+          docker run --rm -v "$PWD/dist:/pkg:ro" ubuntu:${{ matrix.ubuntu }} bash -lc '
             set -euo pipefail
             export DEBIAN_FRONTEND=noninteractive
             apt-get update
@@ -84,6 +112,14 @@ jobs:
     needs: [build, test-install]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: opendsas-focal
+          path: dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: opendsas-jammy
+          path: dist
       - uses: actions/download-artifact@v4
         with:
           name: opendsas-noble
