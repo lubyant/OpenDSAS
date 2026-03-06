@@ -15,15 +15,18 @@ jobs:
         include:
           - ubuntu: "20.04"
             codename: focal
+            gdal_pkg: libgdal26
             # GCC 9 (default on Focal) has incomplete C++20 support; use GCC 10
             extra_pkgs: "gcc-10 g++-10"
             cmake_compiler_flags: "-DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_C_COMPILER=gcc-10"
           - ubuntu: "22.04"
             codename: jammy
+            gdal_pkg: libgdal30
             extra_pkgs: ""
             cmake_compiler_flags: ""
           - ubuntu: "24.04"
             codename: noble
+            gdal_pkg: libgdal34
             extra_pkgs: ""
             cmake_compiler_flags: ""
     container:
@@ -52,14 +55,11 @@ jobs:
       - name: Configure
         run: |
           set -eux
-          # Detect the installed GDAL runtime package (soname differs per distro)
-          GDAL_PKG=$(dpkg -l | awk '/^ii\s+libgdal[0-9]/{print $2}' | head -1)
-          echo "Detected GDAL runtime package: $GDAL_PKG"
           cmake -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=OFF \
             -DGDAL_USE_STATIC_LIBS=OFF \
-            -DCPACK_DEBIAN_PACKAGE_DEPENDS="libc6 (>= 2.17), libstdc++6 (>= 5), libgomp1, ${GDAL_PKG}" \
+            "-DCPACK_DEBIAN_PACKAGE_DEPENDS=libc6 (>= 2.17), libstdc++6 (>= 5), libgomp1, ${{ matrix.gdal_pkg }}" \
             ${{ matrix.cmake_compiler_flags }}
 
       - name: Build
