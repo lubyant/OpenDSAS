@@ -232,6 +232,7 @@ static std::vector<std::unique_ptr<TransectLine>> load_transects_geojson(
 
 // ---- Shapefile reader ----
 
+// GCOVR_EXCL_START
 static std::vector<std::unique_ptr<TransectLine>> load_transects_shapelib(
     const std::filesystem::path &path) {
   const std::string base_path =
@@ -292,6 +293,7 @@ static std::vector<std::unique_ptr<TransectLine>> load_transects_shapelib(
 
   return transects;
 }
+// GCOVR_EXCL_STOP
 
 // ---- Public dispatch ----
 

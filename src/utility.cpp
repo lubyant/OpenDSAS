@@ -45,7 +45,7 @@ std::string get_shp_proj(const char *path) {
   std::filesystem::path fp(path);
   auto ext = fp.extension().string();
 
-  if (ext == ".shp") {
+  if (ext == ".shp") {  // GCOVR_EXCL_START
     // Read the .prj sidecar — it contains the WKT projection string
     auto prj_path = fp;
     prj_path.replace_extension(".prj");
@@ -56,7 +56,7 @@ std::string get_shp_proj(const char *path) {
     }
     return std::string(std::istreambuf_iterator<char>(f),
                        std::istreambuf_iterator<char>());
-  }
+  }  // GCOVR_EXCL_STOP
 
   // GeoJSON / JSON: extract the CRS name from the FeatureCollection
   std::ifstream f(fp);

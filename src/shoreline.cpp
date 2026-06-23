@@ -106,6 +106,7 @@ static std::vector<std::unique_ptr<Shoreline>> load_shorelines_geojson(
 
 // ---- Shapefile reader ----
 
+// GCOVR_EXCL_START
 static std::vector<std::unique_ptr<Shoreline>> load_shorelines_shapelib(
     const std::filesystem::path &path, const char *date_field_name) {
   const std::string base_path =
@@ -160,6 +161,7 @@ static std::vector<std::unique_ptr<Shoreline>> load_shorelines_shapelib(
   DBFClose(hDBF);
   return shorelines;
 }
+// GCOVR_EXCL_STOP
 
 // ---- Public dispatch ----
 

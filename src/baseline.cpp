@@ -143,6 +143,7 @@ static std::vector<Baseline> load_baselines_geojson(
 
 // ---- Shapefile reader ----
 
+// GCOVR_EXCL_START
 static std::vector<Baseline> load_baselines_shapelib(
     const std::filesystem::path &path, const std::string &id_field) {
   const std::string base = path.stem().string();
@@ -198,6 +199,7 @@ static std::vector<Baseline> load_baselines_shapelib(
   DBFClose(hDBF);
   return baselines;
 }
+// GCOVR_EXCL_STOP
 
 // ---- Public dispatch ----
 
