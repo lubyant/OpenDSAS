@@ -10,8 +10,8 @@
 
 #include <gdal_priv.h>
 
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <cmath>
+#include <compare>
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -24,6 +24,32 @@
 
 // classes
 namespace dsas {
+
+struct Date {
+  int year_{};
+  int month_{};  // 1-12
+  int day_{};
+
+  [[nodiscard]] int year() const { return year_; }
+  [[nodiscard]] int month() const { return month_; }
+  [[nodiscard]] int day() const { return day_; }
+
+  // Standard Julian Day Number for Gregorian calendar (Meeus algorithm).
+  // Used as a linear x-axis in regression; only differences matter.
+  [[nodiscard]] long long julian_day() const {
+    int a = (14 - month_) / 12;
+    int y = year_ + 4800 - a;
+    int m = month_ + 12 * a - 3;
+    return day_ + (153 * m + 2) / 5 + 365LL * y + y / 4 - y / 100 +
+           y / 400 - 32045;
+  }
+
+  auto operator<=>(const Date&) const = default;
+};
+
+inline long long days_between(const Date& a, const Date& b) {
+  return a.julian_day() - b.julian_day();
+}
 
 template <typename T>
 struct MultiLine {

@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <boost/date_time/gregorian/greg_month.hpp>
 #include <memory>
 #include <stdexcept>
 
@@ -30,7 +29,7 @@ class DsasTest : public ::testing::Test {
     baselines.push_back(std::move(baseline));
 
     std::vector<Point> shore_vertices{{0, 1}, {1, 1}, {2, 1}, {3, 1}};
-    boost::gregorian::date t_date(2000, 1, 1);
+    dsas::Date t_date{2000, 1, 1};
     auto shoreline = std::make_unique<Shoreline>(shore_vertices, 0, t_date);
     shorelines.push_back(std::move(shoreline));
   }
@@ -74,12 +73,9 @@ TEST_F(DsasTest, test_linearRegressionRate) {
   int fake_bid{0};
   int fake_sid{0};
 
-  boost::gregorian::date date1{
-      2000, boost::gregorian::greg_month::month_enum::Jan, 1};
-  boost::gregorian::date date2{
-      2010, boost::gregorian::greg_month::month_enum::Jan, 1};
-  boost::gregorian::date date3{
-      2020, boost::gregorian::greg_month::month_enum::Jan, 1};
+  dsas::Date date1{2000, 1, 1};
+  dsas::Date date2{2010, 1, 1};
+  dsas::Date date3{2020, 1, 1};
   double dist2ref1 = 0;
   double dist2ref2 = 1;
   double dist2ref3 = 2;

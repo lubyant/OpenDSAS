@@ -12,9 +12,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Library/external prefs
 set(BUILD_SHARED_LIBS OFF)
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
 
 # Nice install dir vars like bin/, lib/
 include(GNUInstallDirs)
@@ -33,9 +30,6 @@ FetchContent_MakeAvailable(argparse)
 
 # GDAL (module mode works on Debian/Ubuntu)
 find_package(GDAL CONFIG REQUIRED)
-
-# Boost headers (no specific components)
-find_package(Boost REQUIRED)
 
 # OpenMP
 find_package(OpenMP REQUIRED)
@@ -56,7 +50,6 @@ target_include_directories(dsas_lib PUBLIC
 target_link_libraries(dsas_lib PUBLIC
   argparse          # header-only
   GDAL::GDAL
-  Boost::headers
   OpenMP::OpenMP_CXX
 )
 

@@ -2,6 +2,7 @@
 #define SRC_TRANSECT_HPP_
 #include <optional>
 #include <stdexcept>
+#include <unordered_map>
 
 #include "baseline.hpp"
 #include "exception.hpp"

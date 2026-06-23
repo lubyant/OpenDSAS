@@ -3,6 +3,9 @@
 
 #include <ogrsf_frmts.h>
 
+#include <cassert>
+#include <iostream>
+
 namespace dsas {
 
 /**

@@ -3,7 +3,10 @@
 #include <ogrsf_frmts.h>
 
 #include <cstddef>
+#include <iomanip>
+#include <iostream>
 #include <queue>
+#include <sstream>
 
 #include "baseline.hpp"
 #include "exception.hpp"
@@ -13,19 +16,17 @@ namespace dsas {
 
 double mean_shore_segment = 0;
 
-boost::gregorian::date generate_date_from_str(const char *date_str) {
+Date generate_date_from_str(const char *date_str) {
   auto format = dsas::options.date_format;
-  std::istringstream istream(date_str);
-  istream.imbue(
-      std::locale(std::locale::classic(),
-                  new boost::gregorian::date_input_facet(format.c_str())));
-  boost::gregorian::date date;
-  istream >> date;
-  if (istream.fail()) {
+  std::tm tm{};
+  std::istringstream ss(date_str);
+  ss.imbue(std::locale::classic());
+  ss >> std::get_time(&tm, format.c_str());
+  if (ss.fail()) {
     OPENDSAS_THROW("Failed to parse date: " + std::string(date_str) +
                    " using format: " + format);
   }
-  return date;
+  return Date{tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday};
 }
 
 std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(

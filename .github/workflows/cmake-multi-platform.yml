@@ -54,7 +54,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin libomp-dev
+          sudo apt-get install -y libgdal-dev gdal-bin libomp-dev
 
       # ---------- Windows: vcpkg with caches ----------
       # Cache the vcpkg repo folder so we don't reclone each run
@@ -98,7 +98,7 @@ jobs:
       # If you adopt manifest mode (add vcpkg.json), you can delete this explicit install step.
       - name: Install ports (Windows, explicit)
         if: matrix.os == 'windows-latest'
-        run: .\vcpkg\vcpkg install boost-date-time:x64-windows gdal:x64-windows
+        run: .\vcpkg\vcpkg install gdal:x64-windows
 
       # ---------- Configure / Build / Test ----------
       - name: Configure CMake
@@ -137,7 +137,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin libomp-dev
+          sudo apt-get install -y libgdal-dev gdal-bin libomp-dev
           sudo apt-get install -y gcovr
 
       - name: Configure with coverage flags

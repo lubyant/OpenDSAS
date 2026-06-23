@@ -1,6 +1,9 @@
 #ifndef SRC_INTERSECT_HPP_
 #define SRC_INTERSECT_HPP_
 
+#include <iomanip>
+#include <sstream>
+
 #include "geometry.hpp"
 
 namespace dsas {
@@ -10,12 +13,11 @@ struct IntersectPoint : public Point, GDALShpSavable<IntersectField> {
   int transect_id_;
   int shoreline_id_;
   int baseline_id_;
-  boost::gregorian::date date_;
+  Date date_;
   std::string date_string_;
   double distance_to_ref_{-1};
-  IntersectPoint(Point point, int transect_id, int shoreline_id,
-                 int baseline_id, boost::gregorian::date date,
-                 double distance_to_ref)
+  IntersectPoint(Point point, int transect_id, int shoreline_id, int baseline_id,
+                 Date date, double distance_to_ref)
       : Point(point),
         transect_id_(transect_id),
         shoreline_id_(shoreline_id),
@@ -24,7 +26,7 @@ struct IntersectPoint : public Point, GDALShpSavable<IntersectField> {
         distance_to_ref_(distance_to_ref) {
     std::ostringstream oss;
     oss << date_.year() << "/" << std::setw(2) << std::setfill('0')
-        << date_.month().as_number() << "/" << std::setw(2) << std::setfill('0')
+        << date_.month() << "/" << std::setw(2) << std::setfill('0')
         << date_.day();
     date_string_ = oss.str();
   }
