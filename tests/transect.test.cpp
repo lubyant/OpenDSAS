@@ -202,12 +202,25 @@ TEST_F(TransectTest, test_save_transect) {
   auto prj = get_shp_proj(shoreline_shp_path.string().c_str());
   std::vector<Point> points{{0, 0}, {1, 1}, {2, 0}, {3, 1},
                             {3, 0}, {4, 1}, {4, 0}};
-  auto tmp_file = std::filesystem::temp_directory_path() / "tran.shp";
-  options.transect_path = tmp_file.string();
   baseline = std::make_unique<Baseline>(points, 0);
   auto transects_lines = create_transects_from_baseline(*baseline);
+
+  // Shapefile output
+  options.transect_path =
+      (std::filesystem::temp_directory_path() / "tran.shp").string();
   { save_transect(transects_lines, prj); }
   { save_transect(transects_lines, prj, true); }
+
+  // GeoJSON output — lines
+  options.transect_path =
+      (std::filesystem::temp_directory_path() / "tran.geojson").string();
+  { save_transect(transects_lines, prj); }
+
+  // GeoJSON output — points
+  options.transect_path =
+      (std::filesystem::temp_directory_path() / "tran_pts.geojson").string();
+  { save_transect(transects_lines, prj, true); }
+
   {
     transects_lines.clear();
     ASSERT_THROW(save_transect(transects_lines, prj), std::runtime_error);

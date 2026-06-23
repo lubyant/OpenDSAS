@@ -1,7 +1,9 @@
 #include "intersect.hpp"
 
 #include <gtest/gtest.h>
+#include <nlohmann/json.hpp>
 
+#include <fstream>
 #include <memory>
 
 #include "utility.hpp"
@@ -29,37 +31,40 @@ TEST(TestIntersect, test_save_intersects) {
   auto tmp_file = std::filesystem::temp_directory_path() / "intersects.shp";
   options.intersect_path = tmp_file.string();
 
-  {
-    std::vector<std::unique_ptr<IntersectPoint>> intersections;
-    auto p1 = std::make_unique<dsas::IntersectPoint>(
-        fake_point, fake_tid, fake_sid, fake_bid, date1, dist2ref1);
-    auto p2 = std::make_unique<dsas::IntersectPoint>(
-        fake_point, fake_tid, fake_sid, fake_bid, date2, dist2ref2);
-    auto p3 = std::make_unique<dsas::IntersectPoint>(
-        fake_point, fake_tid, fake_sid, fake_bid, date3, dist2ref3);
+  auto make_pts = [&]() {
+    std::vector<std::unique_ptr<IntersectPoint>> v;
+    v.push_back(std::make_unique<IntersectPoint>(
+        fake_point, fake_tid, fake_sid, fake_bid, date1, dist2ref1));
+    v.push_back(std::make_unique<IntersectPoint>(
+        fake_point, fake_tid, fake_sid, fake_bid, date2, dist2ref2));
+    v.push_back(std::make_unique<IntersectPoint>(
+        fake_point, fake_tid, fake_sid, fake_bid, date3, dist2ref3));
+    return v;
+  };
 
-    intersections.push_back(std::move(p1));
-    intersections.push_back(std::move(p2));
-    intersections.push_back(std::move(p3));
-    save_intersects(intersections, prj);
+  // Shapefile output
+  options.intersect_path = tmp_file.string();
+  { save_intersects(make_pts(), prj); }
+
+  // GeoJSON output — verify the file is valid JSON with expected structure
+  auto geojson_file = std::filesystem::temp_directory_path() / "intersects.geojson";
+  options.intersect_path = geojson_file.string();
+  { save_intersects(make_pts(), prj); }
+  {
+    std::ifstream f(geojson_file);
+    ASSERT_TRUE(f.good());
+    auto j = nlohmann::json::parse(f);
+    ASSERT_EQ(j["type"].get<std::string>(), "FeatureCollection");
+    ASSERT_EQ(j["features"].size(), 3u);
+    ASSERT_EQ(j["features"][0]["geometry"]["type"].get<std::string>(), "Point");
   }
+
   {
     std::vector<std::unique_ptr<IntersectPoint>> intersections;
     ASSERT_THROW(save_intersects(intersections, prj), std::runtime_error);
   }
   {
-    std::vector<std::unique_ptr<IntersectPoint>> intersections;
-    auto p1 = std::make_unique<dsas::IntersectPoint>(
-        fake_point, fake_tid, fake_sid, fake_bid, date1, dist2ref1);
-    auto p2 = std::make_unique<dsas::IntersectPoint>(
-        fake_point, fake_tid, fake_sid, fake_bid, date2, dist2ref2);
-    auto p3 = std::make_unique<dsas::IntersectPoint>(
-        fake_point, fake_tid, fake_sid, fake_bid, date3, dist2ref3);
-
-    intersections.push_back(std::move(p1));
-    intersections.push_back(std::move(p2));
-    intersections.push_back(std::move(p3));
     prj = "INVALID_PROJ_STRING";
-    ASSERT_THROW(save_intersects(intersections, prj), std::runtime_error);
+    ASSERT_THROW(save_intersects(make_pts(), prj), std::runtime_error);
   }
 }
