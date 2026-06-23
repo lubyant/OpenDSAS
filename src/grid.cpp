@@ -1,5 +1,6 @@
 #include "grid.hpp"
 
+#include <cassert>
 #include <cstddef>
 #include <memory>
 #include <queue>

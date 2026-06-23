@@ -14,12 +14,9 @@ TEST(TestIntersect, test_save_intersects) {
       std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
   auto prj = get_shp_proj(baseline_shp_path.string().c_str());
 
-  boost::gregorian::date date1{
-      2000, boost::gregorian::greg_month::month_enum::Jan, 1};
-  boost::gregorian::date date2{
-      2010, boost::gregorian::greg_month::month_enum::Jan, 1};
-  boost::gregorian::date date3{
-      2020, boost::gregorian::greg_month::month_enum::Jan, 1};
+  dsas::Date date1{2000, 1, 1};
+  dsas::Date date2{2010, 1, 1};
+  dsas::Date date3{2020, 1, 1};
 
   Point fake_point{0, 0};
   int fake_tid{0};

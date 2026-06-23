@@ -9,34 +9,20 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    env:
-      # Enable vcpkg's GitHub Actions binary cache provider
-      VCPKG_FEATURE_FLAGS: binarycaching
-      VCPKG_BINARY_SOURCES: clear;x-gha,readwrite
-
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        # Windows disabled until GDAL dependency is replaced (PR 2)
+        os: [ubuntu-latest]
         build_type: [Release]
-        c_compiler: [gcc, clang, cl]
+        c_compiler: [gcc, clang]
         include:
-          - os: windows-latest
-            c_compiler: cl
-            cpp_compiler: cl
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-        exclude:
-          - os: windows-latest
-            c_compiler: gcc
-          - os: windows-latest
-            c_compiler: clang
-          - os: ubuntu-latest
-            c_compiler: cl
 
     steps:
       - uses: actions/checkout@v4
@@ -54,70 +40,16 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin libomp-dev
-
-      # ---------- Windows: vcpkg with caches ----------
-      # Cache the vcpkg repo folder so we don't reclone each run
-      - name: Restore vcpkg repo cache (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}\vcpkg
-          key: vcpkg-repo-${{ runner.os }}-${{ hashFiles('**/vcpkg-commit.txt') }}
-          restore-keys: |
-            vcpkg-repo-${{ runner.os }}-
-
-      - name: Clone vcpkg (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          if (-Not (Test-Path -Path "vcpkg")) {
-            git clone https://github.com/microsoft/vcpkg.git
-          }
-          if (Test-Path -Path "vcpkg-commit.txt") {
-            Push-Location vcpkg
-            git fetch --depth 1 origin
-            $commit = Get-Content ..\vcpkg-commit.txt | Select-Object -First 1
-            git checkout --force --detach $commit
-            Pop-Location
-          }
-
-      - name: Bootstrap vcpkg (Windows)
-        if: matrix.os == 'windows-latest'
-        run: .\vcpkg\bootstrap-vcpkg.bat
-
-      # Cache vcpkg source tarballs so misses rebuild faster
-      - name: Cache vcpkg downloads (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: actions/cache@v4
-        with:
-          path: C:\Users\runneradmin\AppData\Local\vcpkg\downloads
-          key: vcpkg-downloads-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
-          restore-keys: |
-            vcpkg-downloads-${{ runner.os }}-
-
-      # If you adopt manifest mode (add vcpkg.json), you can delete this explicit install step.
-      - name: Install ports (Windows, explicit)
-        if: matrix.os == 'windows-latest'
-        run: .\vcpkg\vcpkg install boost-date-time:x64-windows gdal:x64-windows
+          sudo apt-get install -y libgdal-dev gdal-bin libomp-dev
 
       # ---------- Configure / Build / Test ----------
       - name: Configure CMake
-        shell: bash
         run: |
-          cmake_args="-B ${{ steps.strings.outputs.build-output-dir }} \
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
             -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -S ${{ github.workspace }}"
-
-          if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-            cmake_args="$cmake_args \
-              -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-              -DVCPKG_TARGET_TRIPLET=x64-windows \
-              -DVCPKG_HOST_TRIPLET=x64-windows"
-          fi
-
-          cmake $cmake_args
+            -S ${{ github.workspace }}
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
@@ -137,7 +69,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev libboost-date-time-dev gdal-bin libomp-dev
+          sudo apt-get install -y libgdal-dev gdal-bin libomp-dev
           sudo apt-get install -y gcovr
 
       - name: Configure with coverage flags
