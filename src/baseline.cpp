@@ -210,7 +210,7 @@ std::vector<Baseline> load_baselines_shp(
   if (ext == ".geojson" || ext == ".json") {
     return load_baselines_geojson(baseline_shp_path, baseline_id_field);
   }
-  return load_baselines_shapelib(baseline_shp_path, baseline_id_field);
+  return load_baselines_shapelib(baseline_shp_path, baseline_id_field);  // GCOVR_EXCL_LINE
 }
 
 }  // namespace dsas

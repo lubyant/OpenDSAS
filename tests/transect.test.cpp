@@ -223,4 +223,29 @@ TEST_F(TransectTest, test_load_transects_from_shp) {
                                                 "/sample_transects.geojson"};
   auto transect = load_transects_from_shp(transect_shp_path);
   ASSERT_TRUE(!transect.empty());
+
+  // Empty features array — should throw
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "empty_transects.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","features":[]})";
+    f.close();
+    ASSERT_THROW(load_transects_from_shp(tmp), std::runtime_error);
+  }
+  // Missing TransectId field — should throw
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "no_tid.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[0,0],[1,1]]},"properties":{"BaselineId":0}}]})";
+    f.close();
+    ASSERT_THROW(load_transects_from_shp(tmp), std::runtime_error);
+  }
+  // Missing BaselineId field — should throw
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "no_bid.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"LineString","coordinates":[[0,0],[1,1]]},"properties":{"TransectId":0}}]})";
+    f.close();
+    ASSERT_THROW(load_transects_from_shp(tmp), std::runtime_error);
+  }
 }

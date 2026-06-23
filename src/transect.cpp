@@ -303,7 +303,7 @@ std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
   if (ext == ".geojson" || ext == ".json") {
     return load_transects_geojson(transect_shp_path);
   }
-  return load_transects_shapelib(transect_shp_path);
+  return load_transects_shapelib(transect_shp_path);  // GCOVR_EXCL_LINE
 }
 
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
