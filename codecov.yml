@@ -1,0 +1,9 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 5%   # allow up to 5% drop (guards against methodology change at base)
+    patch:
+      default:
+        target: 80%
