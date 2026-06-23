@@ -58,16 +58,24 @@ std::string get_shp_proj(const char *path) {
                        std::istreambuf_iterator<char>());
   }  // GCOVR_EXCL_STOP
 
-  // GeoJSON / JSON: extract the CRS name from the FeatureCollection
+  // GeoJSON / JSON: extract the CRS authority string.
+  // RFC 7946 removed the "crs" member; files without it are implicitly WGS84.
+  // The pre-RFC (2008) format uses: {"type":"name","properties":{"name":"EPSG:…"}}
   std::ifstream f(fp);
   if (!f) {
     OPENDSAS_THROW("Cannot open file: " + fp.string());
   }
   auto j = nlohmann::json::parse(f);
   if (!j.contains("crs")) {
-    OPENDSAS_THROW("GeoJSON file has no CRS information: " + fp.string());
+    return "EPSG:4326";  // RFC 7946 implicit WGS84
   }
-  return j["crs"]["properties"]["name"].get<std::string>();
+  const auto &crs = j["crs"];
+  if (!crs.contains("type") || crs["type"].get<std::string>() != "name" ||
+      !crs.contains("properties") || !crs["properties"].contains("name")) {
+    OPENDSAS_THROW("Unsupported GeoJSON CRS format (expected type=name): " +
+                   fp.string());
+  }
+  return crs["properties"]["name"].get<std::string>();
 }
 
 }  // namespace dsas
