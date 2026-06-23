@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
+
 #include "options.hpp"
 
 using namespace dsas;
@@ -102,16 +104,31 @@ TEST_F(BaselineTest, test_baseline_transect_points2) {
 }
 
 TEST(BaselineLoadTest, test_load_baselines_shp) {
+  const std::filesystem::path baseline_shp_path{
+      std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
+
+  // Default (empty id_field)
   {
-    const std::filesystem::path baseline_shp_path{
-        std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
     auto ret = load_baselines_shp(baseline_shp_path);
     ASSERT_TRUE(!ret.empty());
   }
+  // Non-empty id_field that exists in the file — exercises the id read branch
   {
-    const std::filesystem::path baseline_shp_path{
-        std::string(TEST_DATA_DIR) + "/sample_baseline_offshore.geojson"};
-    auto baseline_id_field = "MissingField";
-    ASSERT_THROW(load_baselines_shp(baseline_shp_path, baseline_id_field), std::runtime_error);
+    auto ret = load_baselines_shp(baseline_shp_path, "Id");
+    ASSERT_TRUE(!ret.empty());
+  }
+  // Non-empty id_field that is missing — should throw
+  {
+    ASSERT_THROW(load_baselines_shp(baseline_shp_path, "MissingField"),
+                 std::runtime_error);
+  }
+  // GeoJSON with an unsupported geometry type — feature skipped, empty result
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "baseline_pt.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[0,0]},"properties":{"Id":1}}]})";
+    f.close();
+    auto ret = load_baselines_shp(tmp);
+    ASSERT_TRUE(ret.empty());
   }
 }
