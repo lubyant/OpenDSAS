@@ -52,9 +52,6 @@ if(NOT shapelib_POPULATED)
   FetchContent_Populate(shapelib)
 endif()
 
-# GDAL (still used by loaders — removed in a later PR)
-find_package(GDAL CONFIG REQUIRED)
-
 # OpenMP
 find_package(OpenMP REQUIRED)
 
@@ -83,7 +80,6 @@ target_include_directories(dsas_lib PUBLIC
 target_link_libraries(dsas_lib PUBLIC
   argparse
   nlohmann_json::nlohmann_json
-  GDAL::GDAL
   OpenMP::OpenMP_CXX
 )
 
