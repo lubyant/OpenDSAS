@@ -3,7 +3,10 @@
 //
 #include "utility.hpp"
 
+#include <nlohmann/json.hpp>
+
 #include <cassert>
+#include <fstream>
 #include <limits>
 #include <unordered_set>
 
@@ -38,39 +41,41 @@ double least_square(const std::vector<long long> &x,
   return co_var / var;
 }
 
-std::string get_tiff_proj(const std::string &path) {
-  GDALAllRegister();
-  auto *poTIFFDataset =
-      static_cast<GDALDataset *>(GDALOpen(path.c_str(), GA_ReadOnly));
-  if (poTIFFDataset == nullptr) {
-    OPENDSAS_THROW("tiff file not open!");
-  }
-  std::string psz_prj_ = std::string(poTIFFDataset->GetProjectionRef());
-  GDALClose(poTIFFDataset);
-  return psz_prj_;
-}
-
 std::string get_shp_proj(const char *path) {
-  GDALAllRegister();
+  std::filesystem::path fp(path);
+  auto ext = fp.extension().string();
 
-  GDALDataset *poDS;
-  poDS = static_cast<GDALDataset *>(
-      GDALOpenEx(path, GDAL_OF_VECTOR, nullptr, nullptr, nullptr));
-  if (poDS == nullptr) {
-    OPENDSAS_THROW("Open shapefile failed!\n");
-  }
+  if (ext == ".shp") {  // GCOVR_EXCL_START
+    // Read the .prj sidecar — it contains the WKT projection string
+    auto prj_path = fp;
+    prj_path.replace_extension(".prj");
+    std::ifstream f(prj_path);
+    if (!f) {
+      OPENDSAS_THROW("Shapefile has no projection information (missing .prj): " +
+                     prj_path.string());
+    }
+    return std::string(std::istreambuf_iterator<char>(f),
+                       std::istreambuf_iterator<char>());
+  }  // GCOVR_EXCL_STOP
 
-  OGRLayer *poLayer = poDS->GetLayer(0);
-  const OGRSpatialReference *poSRS = poLayer->GetSpatialRef();
-  std::string psz_prj_;
-  if (poSRS != nullptr) {
-    char *pszProjection;
-    poSRS->exportToWkt(&pszProjection);
-    psz_prj_ = std::string(pszProjection);
-    CPLFree(pszProjection);
-  } else {
-    OPENDSAS_THROW("Shapefile has no projection information!\n");
+  // GeoJSON / JSON: extract the CRS authority string.
+  // RFC 7946 removed the "crs" member; files without it are implicitly WGS84.
+  // The pre-RFC (2008) format uses: {"type":"name","properties":{"name":"EPSG:…"}}
+  std::ifstream f(fp);
+  if (!f) {
+    OPENDSAS_THROW("Cannot open file: " + fp.string());
   }
-  return psz_prj_;
+  auto j = nlohmann::json::parse(f);
+  if (!j.contains("crs")) {
+    return "EPSG:4326";  // RFC 7946 implicit WGS84
+  }
+  const auto &crs = j["crs"];
+  if (!crs.contains("type") || crs["type"].get<std::string>() != "name" ||
+      !crs.contains("properties") || !crs["properties"].contains("name")) {
+    OPENDSAS_THROW("Unsupported GeoJSON CRS format (expected type=name): " +
+                   fp.string());
+  }
+  return crs["properties"]["name"].get<std::string>();
 }
+
 }  // namespace dsas

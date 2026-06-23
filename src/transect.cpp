@@ -259,9 +259,9 @@ void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
                  std::back_inserter(tmp_save),
                  [](const auto &up) { return up.get(); });
   if (save_as_point) {
-    save_points(tmp_save, prj.c_str(), dsas::options.transect_path);
+    save_points(tmp_save, prj, dsas::options.transect_path);
   } else {
-    save_lines(tmp_save, prj.c_str(), dsas::options.transect_path);
+    save_lines(tmp_save, prj, dsas::options.transect_path);
   }
 }
 

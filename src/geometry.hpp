@@ -8,8 +8,6 @@
 #define EPS_OFFSET 1e-6
 #define PI 3.1415926
 
-#include <gdal_priv.h>
-
 #include <cmath>
 #include <compare>
 #include <filesystem>
@@ -106,18 +104,20 @@ struct MultiLine {
   [[nodiscard]] const_iterator cend() const { return end(); }
 };
 
+enum class FieldType { Integer, Real, String };
+
 template <typename Tuple>
-struct GDALShpSavable;
+struct ShpSavable;
 
 template <typename... Args>
-struct GDALShpSavable<std::tuple<Args...>> {
+struct ShpSavable<std::tuple<Args...>> {
   using value_tuple = std::tuple<Args...>;
 
   [[nodiscard]] virtual std::vector<std::string> get_names() const = 0;
-  [[nodiscard]] virtual std::vector<OGRFieldType> get_types() const = 0;
+  [[nodiscard]] virtual std::vector<FieldType> get_types() const = 0;
   [[nodiscard]] virtual value_tuple get_values() const = 0;
 
-  virtual ~GDALShpSavable() = default;
+  virtual ~ShpSavable() = default;
 };
 
 template <typename T>

@@ -5,6 +5,9 @@
 #include "utility.hpp"
 
 #include "gtest/gtest.h"
+
+#include <fstream>
+
 #define TOL 1e-4
 using namespace dsas;
 TEST(UtilityTest, TestCrossProduct) {
@@ -29,5 +32,28 @@ TEST(UtilityTest, TestIntersect) {
     Point p4{1, 1};
 
     ASSERT_TRUE(isTwoSegmentIntersected(p1, p2, p3, p4));
+  }
+}
+
+TEST(UtilityTest, TestGetShpProj) {
+  // Non-existent file — should throw
+  ASSERT_THROW(get_shp_proj("/nonexistent/path.geojson"), std::runtime_error);
+
+  // RFC 7946 GeoJSON without "crs" — implicit WGS84, returns EPSG:4326
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "no_crs.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","features":[]})";
+    f.close();
+    ASSERT_EQ(get_shp_proj(tmp.string().c_str()), "EPSG:4326");
+  }
+
+  // Old-format "crs" with type != "name" — should throw
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "link_crs.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","crs":{"type":"link","properties":{"href":"http://example.com","type":"proj4"}},"features":[]})";
+    f.close();
+    ASSERT_THROW(get_shp_proj(tmp.string().c_str()), std::runtime_error);
   }
 }
