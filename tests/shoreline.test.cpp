@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
 #include <stdexcept>
 using namespace dsas;
 #define TOL 1e-4
@@ -9,7 +10,23 @@ using namespace dsas;
 TEST(TestShoreline, test_load_shorelines_shp) {
   const std::filesystem::path shoreline_shp_path{std::string(TEST_DATA_DIR) +
                                                  "/sample_shorelines.geojson"};
-  load_shorelines_shp(shoreline_shp_path, "date");
+  // Normal load (case-insensitive field match: "date" → "Date")
+  auto ret = load_shorelines_shp(shoreline_shp_path, "date");
+  ASSERT_TRUE(!ret.empty());
+
+  // Wrong date field name — should throw (date field not found)
+  ASSERT_THROW(load_shorelines_shp(shoreline_shp_path, "WrongField"),
+               std::runtime_error);
+
+  // GeoJSON with unsupported geometry type — feature skipped, empty result
+  {
+    auto tmp = std::filesystem::temp_directory_path() / "shore_pt.geojson";
+    std::ofstream f(tmp);
+    f << R"({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[0,0]},"properties":{"Date":"2000/01/01"}}]})";
+    f.close();
+    auto r = load_shorelines_shp(tmp, "Date");
+    ASSERT_TRUE(r.empty());
+  }
 }
 
 TEST(TestShoreline, test_generate_date_from_str) {

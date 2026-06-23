@@ -172,7 +172,7 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
   if (ext == ".geojson" || ext == ".json") {
     return load_shorelines_geojson(shoreline_shp_path, date_field_name);
   }
-  return load_shorelines_shapelib(shoreline_shp_path, date_field_name);
+  return load_shorelines_shapelib(shoreline_shp_path, date_field_name);  // GCOVR_EXCL_LINE
 }
 
 }  // namespace dsas
