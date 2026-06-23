@@ -3,10 +3,16 @@
 #include <ogrsf_frmts.h>
 
 #include <cstddef>
-#include <iomanip>
+#include <ctime>
 #include <iostream>
 #include <queue>
+
+#ifndef _WIN32
+#include <cstring>  // memset — ensure tm is clean before strptime
+#else
+#include <iomanip>
 #include <sstream>
+#endif
 
 #include "baseline.hpp"
 #include "exception.hpp"
@@ -19,6 +25,14 @@ double mean_shore_segment = 0;
 Date generate_date_from_str(const char *date_str) {
   auto format = dsas::options.date_format;
   std::tm tm{};
+#ifndef _WIN32
+  // strptime is POSIX: reliable %b/%B/%y support with correct century pivot
+  const char *end = strptime(date_str, format.c_str(), &tm);
+  if (end == nullptr || *end != '\0') {
+    OPENDSAS_THROW("Failed to parse date: " + std::string(date_str) +
+                   " using format: " + format);
+  }
+#else
   std::istringstream ss(date_str);
   ss.imbue(std::locale::classic());
   ss >> std::get_time(&tm, format.c_str());
@@ -26,6 +40,7 @@ Date generate_date_from_str(const char *date_str) {
     OPENDSAS_THROW("Failed to parse date: " + std::string(date_str) +
                    " using format: " + format);
   }
+#endif
   return Date{tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday};
 }
 
