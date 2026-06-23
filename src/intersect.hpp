@@ -9,7 +9,7 @@
 namespace dsas {
 using IntersectField =
     std::tuple<int, int, int, const char *, double, double, double>;
-struct IntersectPoint : public Point, GDALShpSavable<IntersectField> {
+struct IntersectPoint : public Point, ShpSavable<IntersectField> {
   int transect_id_;
   int shoreline_id_;
   int baseline_id_;
@@ -36,11 +36,10 @@ struct IntersectPoint : public Point, GDALShpSavable<IntersectField> {
             "ref_dist",   "X",          "Y"};
   }
 
-  [[nodiscard]] std::vector<OGRFieldType> get_types() const override {
-    return {OGRFieldType::OFTInteger, OGRFieldType::OFTInteger,
-            OGRFieldType::OFTInteger, OGRFieldType::OFTString,
-            OGRFieldType::OFTReal,    OGRFieldType::OFTReal,
-            OGRFieldType::OFTReal};
+  [[nodiscard]] std::vector<FieldType> get_types() const override {
+    return {FieldType::Integer, FieldType::Integer, FieldType::Integer,
+            FieldType::String,  FieldType::Real,    FieldType::Real,
+            FieldType::Real};
   }
 
   [[nodiscard]] value_tuple get_values() const override {
