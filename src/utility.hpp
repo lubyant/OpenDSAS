@@ -5,6 +5,7 @@
 #ifndef SRC_UTILITY_HPP_
 #define SRC_UTILITY_HPP_
 
+#include <nlohmann/json.hpp>
 #include <shapefil.h>
 
 #include <algorithm>
@@ -148,7 +149,82 @@ inline void write_prj(const std::filesystem::path &shp_path,
   if (f) f << prj;
 }
 
-// GCOVR_EXCL_START
+// Build a JSON properties object from a ShpSavable's names + values tuple.
+template <typename Tuple, size_t... Is>
+nlohmann::json tuple_to_json_props(const std::vector<std::string> &names,
+                                   const Tuple &t,
+                                   std::index_sequence<Is...>) {
+  nlohmann::json props;
+  ((props[names[Is]] = std::get<Is>(t)), ...);
+  return props;
+}
+
+template <typename T>
+requires std::derived_from<T, ShpSavable<typename T::value_tuple>>
+nlohmann::json shape_to_props(const T *shape) {
+  auto values = shape->get_values();
+  return tuple_to_json_props(
+      shape->get_names(), values,
+      std::make_index_sequence<
+          std::tuple_size_v<typename T::value_tuple>>{});
+}
+
+// ---- GeoJSON writers ----
+
+template <typename T>
+requires std::derived_from<T, MultiLine<Point>> &&
+         std::derived_from<T, ShpSavable<typename T::value_tuple>>
+void save_lines_geojson(const std::vector<T *> &lines, const std::string &prj,
+                        const std::filesystem::path &output_path) {
+  nlohmann::json fc;
+  fc["type"] = "FeatureCollection";
+  fc["crs"] = {{"type", "name"}, {"properties", {{"name", prj}}}};
+  fc["features"] = nlohmann::json::array();
+
+  for (const auto *shape : lines) {
+    if (shape->size() < 1) continue;
+    nlohmann::json coords = nlohmann::json::array();
+    for (const auto &pt : *shape) {
+      coords.push_back({pt.get_x(), pt.get_y()});
+    }
+    nlohmann::json feature;
+    feature["type"] = "Feature";
+    feature["geometry"] = {{"type", "LineString"}, {"coordinates", std::move(coords)}};
+    feature["properties"] = shape_to_props(shape);
+    fc["features"].push_back(std::move(feature));
+  }
+
+  std::ofstream f(output_path);
+  if (!f) OPENDSAS_THROW("Cannot write: " + output_path.string());
+  f << fc.dump(2);
+}
+
+template <typename T>
+requires std::derived_from<T, PointAttribute<double>> &&
+         std::derived_from<T, ShpSavable<typename T::value_tuple>>
+void save_points_geojson(const std::vector<T *> &shapes, const std::string &prj,
+                         const std::filesystem::path &output_path) {
+  nlohmann::json fc;
+  fc["type"] = "FeatureCollection";
+  fc["crs"] = {{"type", "name"}, {"properties", {{"name", prj}}}};
+  fc["features"] = nlohmann::json::array();
+
+  for (auto *shape : shapes) {
+    nlohmann::json feature;
+    feature["type"] = "Feature";
+    feature["geometry"] = {{"type", "Point"},
+                            {"coordinates", {shape->get_x(), shape->get_y()}}};
+    feature["properties"] = shape_to_props(shape);
+    fc["features"].push_back(std::move(feature));
+  }
+
+  std::ofstream f(output_path);
+  if (!f) OPENDSAS_THROW("Cannot write: " + output_path.string());
+  f << fc.dump(2);
+}
+
+// ---- Shapefile + dispatch writers ----
+
 template <typename T>
 requires std::derived_from<T, MultiLine<Point>> &&
          std::derived_from<T, ShpSavable<typename T::value_tuple>>
@@ -161,6 +237,13 @@ void save_lines(const std::vector<T *> &lines, const std::string &prj,
     OPENDSAS_THROW("Projection setting failed");
   }
 
+  auto ext = output_path.extension().string();
+  if (ext == ".geojson" || ext == ".json") {
+    save_lines_geojson(lines, prj, output_path);
+    return;
+  }
+
+  // GCOVR_EXCL_START
   auto base = output_path;
   base.replace_extension("");
   const std::string base_str = base.string();
@@ -202,8 +285,8 @@ void save_lines(const std::vector<T *> &lines, const std::string &prj,
   SHPClose(hSHP);
   DBFClose(hDBF);
   write_prj(output_path, prj);
+  // GCOVR_EXCL_STOP
 }
-// GCOVR_EXCL_STOP
 
 template <typename T>
 requires std::derived_from<T, PointAttribute<double>> &&
@@ -215,6 +298,12 @@ void save_points(const std::vector<T *> &shapes, const std::string &prj,
   }
   if (!looks_like_proj(prj)) {
     OPENDSAS_THROW("Projection setting failed");
+  }
+
+  auto ext = output_path.extension().string();
+  if (ext == ".geojson" || ext == ".json") {
+    save_points_geojson(shapes, prj, output_path);
+    return;
   }
 
   // GCOVR_EXCL_START

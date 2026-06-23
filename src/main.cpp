@@ -13,8 +13,27 @@
 #include "transect.hpp"
 #include "utility.hpp"
 
-// --------------------------- runners ----------------------------------
+// --------------------------- helpers ----------------------------------
 namespace {
+
+// If the input file is GeoJSON, replace the .shp default extension on output
+// paths so that output format matches input format.
+void sync_output_format(const std::string &input_path) {
+  auto ext = std::filesystem::path(input_path).extension().string();
+  if (ext != ".geojson" && ext != ".json") return;
+  auto fix = [](std::string &p) {
+    std::filesystem::path fp(p);
+    if (fp.extension() == ".shp") {
+      fp.replace_extension(".geojson");
+      p = fp.string();
+    }
+  };
+  fix(dsas::options.transect_path);
+  fix(dsas::options.intersect_path);
+}
+
+// --------------------------- runners ----------------------------------
+
 void cal_erosion_rate(std::vector<dsas::TransectLine>& transects) {
   for (auto& transect : transects) {
     auto intersects = transect.intersects;
@@ -37,6 +56,7 @@ void print_messages() {
 }
 
 void run_root() {
+  sync_output_format(dsas::options.baseline_path);
   print_messages();
 
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path,
@@ -65,6 +85,7 @@ void run_root() {
 }
 
 void run_cast() {
+  sync_output_format(dsas::options.baseline_path);
   auto baselines = dsas::load_baselines_shp(dsas::options.baseline_path,
                                             dsas::options.baseline_id_field);
   auto transects = dsas::generate_transects(baselines);
@@ -73,6 +94,7 @@ void run_cast() {
 }
 
 void run_cal() {
+  sync_output_format(dsas::options.shoreline_path);
   auto shorelines = dsas::load_shorelines_shp(dsas::options.shoreline_path,
                                               dsas::options.date_field.c_str());
   auto transects = dsas::load_transects_from_shp(dsas::options.transect_path);
