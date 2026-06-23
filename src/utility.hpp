@@ -5,13 +5,13 @@
 #ifndef SRC_UTILITY_HPP_
 #define SRC_UTILITY_HPP_
 
-#include <gdal_priv.h>
-#include <ogrsf_frmts.h>
+#include <shapefil.h>
 
 #include <algorithm>
 #include <cassert>
 #include <concepts>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <tuple>
@@ -94,186 +94,172 @@ inline bool computeIntersectPoint(const Point &p1, const Point &p2,
   }
 }
 
+// Returns true if s looks like WKT or an EPSG code — used to validate
+// the projection string before writing .prj files.
+inline bool looks_like_proj(const std::string &s) {
+  return s.rfind("PROJCS[", 0) == 0 || s.rfind("GEOGCS[", 0) == 0 ||
+         s.rfind("EPSG:", 0) == 0;
+}
+
+// Overloaded helpers to write a single DBF attribute by C++ type.
+inline void write_dbf_field(DBFHandle h, int rec, int fld, int v) {
+  DBFWriteIntegerAttribute(h, rec, fld, v);
+}
+inline void write_dbf_field(DBFHandle h, int rec, int fld, double v) {
+  DBFWriteDoubleAttribute(h, rec, fld, v);
+}
+inline void write_dbf_field(DBFHandle h, int rec, int fld, const char *v) {
+  DBFWriteStringAttribute(h, rec, fld, v);
+}
+
 template <typename... Args>
-void set_ogr_feature(const std::vector<std::string> &names,
-                     const std::tuple<Args...> &values, OGRFeature &ogr_feature)
-requires(sizeof...(Args) > 0)
-{
-  assert(names.size() == sizeof...(Args));
-
-  std::size_t i = 0;
-
+void write_dbf_record(DBFHandle h, int rec,
+                      const std::tuple<Args...> &values) {
+  int fld = 0;
   std::apply(
       [&](auto &&...vs) {
-        // Fold over the parameter pack with side effects
-        ((ogr_feature.SetField(names[i++].c_str(),
-                               std::forward<decltype(vs)>(vs))),
-         ...);
+        ((write_dbf_field(h, rec, fld++, std::forward<decltype(vs)>(vs))), ...);
       },
       values);
+}
+
+// Map our FieldType enum to shapelib's DBFFieldType + width/decimal defaults.
+inline void dbf_add_field(DBFHandle h, const std::string &name,
+                          FieldType ft) {
+  switch (ft) {
+    case FieldType::Integer:
+      DBFAddField(h, name.c_str(), FTInteger, 10, 0);
+      break;
+    case FieldType::Real:
+      DBFAddField(h, name.c_str(), FTDouble, 20, 8);
+      break;
+    case FieldType::String:
+      DBFAddField(h, name.c_str(), FTString, 64, 0);
+      break;
+  }
+}
+
+// Write a .prj sidecar (plain-text projection string alongside the .shp).
+inline void write_prj(const std::filesystem::path &shp_path,
+                      const std::string &prj) {
+  auto prj_path = shp_path;
+  prj_path.replace_extension(".prj");
+  std::ofstream f(prj_path);
+  if (f) f << prj;
 }
 
 // GCOVR_EXCL_START
 template <typename T>
 requires std::derived_from<T, MultiLine<Point>> &&
-         std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
-void save_lines(const std::vector<T *> &lines, const char *pszProj,
+         std::derived_from<T, ShpSavable<typename T::value_tuple>>
+void save_lines(const std::vector<T *> &lines, const std::string &prj,
                 const std::filesystem::path &output_path) {
   if (lines.empty()) {
     OPENDSAS_THROW("No line to save!");
   }
-
-  OGRSpatialReference oSRS;
-  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
+  if (!looks_like_proj(prj)) {
     OPENDSAS_THROW("Projection setting failed");
   }
 
-  GDALDriver *driver =
-      GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
-  if (!driver) {
-    OPENDSAS_THROW("Unable to load ESRI Shapefile driver");
+  auto base = output_path;
+  base.replace_extension("");
+  const std::string base_str = base.string();
+
+  SHPHandle hSHP = SHPCreate(base_str.c_str(), SHPT_ARC);
+  if (!hSHP) {
+    OPENDSAS_THROW("Failed to create shapefile: " + output_path.string());
+  }
+  DBFHandle hDBF = DBFCreate(base_str.c_str());
+  if (!hDBF) {
+    SHPClose(hSHP);
+    OPENDSAS_THROW("Failed to create DBF: " + output_path.string());
   }
 
-  GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
-                                        GDT_Unknown, nullptr);
-  if (!dataset) {
-    OPENDSAS_THROW("Failed to create output shapefile: " +
-                   output_path.string());
+  auto names = lines[0]->get_names();
+  auto types = lines[0]->get_types();
+  for (size_t i = 0; i < names.size(); ++i) {
+    dbf_add_field(hDBF, names[i], types[i]);
   }
 
-  try {
-    OGRLayer *layer =
-        dataset->CreateLayer("line", &oSRS, wkbLineString, nullptr);
-    if (!layer) {
-      OPENDSAS_THROW("Failed to create layer in shapefile");
+  int rec = 0;
+  for (const auto *shape : lines) {
+    if (shape->size() < 1) continue;
+    std::vector<double> xs, ys;
+    xs.reserve(shape->size());
+    ys.reserve(shape->size());
+    for (const auto &pt : *shape) {
+      xs.push_back(pt.get_x());
+      ys.push_back(pt.get_y());
     }
-
-    auto names = lines[0]->get_names();
-    auto types = lines[0]->get_types();
-    for (size_t i = 0; i < names.size(); ++i) {
-      OGRFieldDefn field(names[i].c_str(), types[i]);
-      if (layer->CreateField(&field) != OGRERR_NONE) {
-        OPENDSAS_THROW("Failed to create field: " + names[i]);
-      }
-    }
-
-    for (const auto *shape : lines) {
-      if (shape->size() < 1) continue;
-
-      OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
-      if (!feature) {
-        OPENDSAS_THROW("Failed to create new feature");
-      }
-
-      OGRLineString line;
-      for (const auto &vertice : *shape) {
-        line.addPoint(vertice.get_x(), vertice.get_y());
-      }
-
-      set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
-
-      if (feature->SetGeometry(&line) != OGRERR_NONE) {
-        OGRFeature::DestroyFeature(feature);
-        OPENDSAS_THROW("Failed to set geometry");
-      }
-
-      if (layer->CreateFeature(feature) != OGRERR_NONE) {
-        OGRFeature::DestroyFeature(feature);
-        OPENDSAS_THROW("Failed to write feature");
-      }
-
-      OGRFeature::DestroyFeature(feature);
-    }
-
-    GDALClose(dataset);
-  } catch (...) {
-    GDALClose(dataset);
-    throw;
+    SHPObject *obj = SHPCreateSimpleObject(SHPT_ARC,
+                                           static_cast<int>(xs.size()),
+                                           xs.data(), ys.data(), nullptr);
+    SHPWriteObject(hSHP, -1, obj);
+    SHPDestroyObject(obj);
+    write_dbf_record(hDBF, rec++, shape->get_values());
   }
+
+  SHPClose(hSHP);
+  DBFClose(hDBF);
+  write_prj(output_path, prj);
 }
 // GCOVR_EXCL_STOP
+
 template <typename T>
 requires std::derived_from<T, PointAttribute<double>> &&
-         std::derived_from<T, GDALShpSavable<typename T::value_tuple>>
-void save_points(const std::vector<T *> &shapes, const char *pszProj,
+         std::derived_from<T, ShpSavable<typename T::value_tuple>>
+void save_points(const std::vector<T *> &shapes, const std::string &prj,
                  const std::filesystem::path &output_path) {
   if (shapes.empty()) {
     OPENDSAS_THROW("No point to save!");
   }
-
-  // GCOVR_EXCL_START
-  OGRSpatialReference oSRS;
-  if (oSRS.importFromWkt(&pszProj) != OGRERR_NONE) {
+  if (!looks_like_proj(prj)) {
     OPENDSAS_THROW("Projection setting failed");
   }
 
-  GDALDriver *driver =
-      GetGDALDriverManager()->GetDriverByName("ESRI Shapefile");
-  if (!driver) {
-    OPENDSAS_THROW("Unable to load ESRI Shapefile driver");
+  // GCOVR_EXCL_START
+  auto base = output_path;
+  base.replace_extension("");
+  const std::string base_str = base.string();
+
+  SHPHandle hSHP = SHPCreate(base_str.c_str(), SHPT_POINT);
+  if (!hSHP) {
+    OPENDSAS_THROW("Failed to create shapefile: " + output_path.string());
+  }
+  DBFHandle hDBF = DBFCreate(base_str.c_str());
+  if (!hDBF) {
+    SHPClose(hSHP);
+    OPENDSAS_THROW("Failed to create DBF: " + output_path.string());
   }
 
-  GDALDataset *dataset = driver->Create(output_path.string().c_str(), 0, 0, 0,
-                                        GDT_Unknown, nullptr);
-
-  if (!dataset) {
-    OPENDSAS_THROW("Failed to create output shapefile: " +
-                   output_path.string());
+  auto names = shapes[0]->get_names();
+  auto types = shapes[0]->get_types();
+  for (size_t i = 0; i < names.size(); ++i) {
+    dbf_add_field(hDBF, names[i], types[i]);
   }
 
-  try {
-    OGRLayer *layer = dataset->CreateLayer("points", &oSRS, wkbPoint, nullptr);
-    if (!layer) {
-      OPENDSAS_THROW("Failed to create layer in shapefile");
-    }
-
-    // Create fields
-    auto names = shapes[0]->get_names();
-    auto types = shapes[0]->get_types();
-    for (size_t i = 0; i < names.size(); ++i) {
-      OGRFieldDefn field(names[i].c_str(), types[i]);
-      if (layer->CreateField(&field) != OGRERR_NONE) {
-        OPENDSAS_THROW("Failed to create field: " + names[i]);
-      }
-    }
-
-    // Write features
-    for (auto *shape : shapes) {
-      OGRFeature *feature = OGRFeature::CreateFeature(layer->GetLayerDefn());
-      if (!feature) {
-        OPENDSAS_THROW("Failed to create new feature");
-      }
-
-      try {
-        OGRPoint point(shape->get_x(), shape->get_y());
-        feature->SetGeometry(&point);
-
-        set_ogr_feature(shape->get_names(), shape->get_values(), *feature);
-
-        if (layer->CreateFeature(feature) != OGRERR_NONE) {
-          OPENDSAS_THROW("Failed to write feature");
-        }
-
-        OGRFeature::DestroyFeature(feature);
-      } catch (...) {
-        OGRFeature::DestroyFeature(feature);
-        throw;
-      }
-    }
-
-    // Success path: close dataset
-    GDALClose(dataset);
-  } catch (...) {
-    GDALClose(dataset);
-    throw;
+  int rec = 0;
+  for (auto *shape : shapes) {
+    double x = shape->get_x(), y = shape->get_y();
+    SHPObject *obj =
+        SHPCreateSimpleObject(SHPT_POINT, 1, &x, &y, nullptr);
+    SHPWriteObject(hSHP, -1, obj);
+    SHPDestroyObject(obj);
+    write_dbf_record(hDBF, rec++, shape->get_values());
   }
+
+  SHPClose(hSHP);
+  DBFClose(hDBF);
+  write_prj(output_path, prj);
   // GCOVR_EXCL_STOP
 }
 
 double least_square(const std::vector<long long> &x,
                     const std::vector<double> &y);
 
-std::string get_tiff_proj(const std::string &path);
+// Extracts the projection string from a vector file.
+// For .shp: reads the adjacent .prj sidecar (returns WKT).
+// For .geojson/.json: extracts the "crs"."properties"."name" value (e.g. "EPSG:32617").
 std::string get_shp_proj(const char *path);
 }  // namespace dsas
 #endif

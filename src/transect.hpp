@@ -18,7 +18,7 @@ using TransectFields = std::tuple<int, int, double>;
 struct TransectLine : public LineSegment,
                       MultiLine<Point>,
                       PointAttribute<double>,
-                      GDALShpSavable<TransectFields> {
+                      ShpSavable<TransectFields> {
   using IntersectionMode = dsas::Options::IntersectionMode;
   using TransectOrientation = dsas::Options::TransectOrientation;
   using Grids = std::unordered_map<size_t, std::unique_ptr<Grid>>;
@@ -111,9 +111,8 @@ struct TransectLine : public LineSegment,
   [[nodiscard]] std::vector<std::string> get_names() const override {
     return {"TransectId", "BaselineId", "ChangeRate"};
   }
-  [[nodiscard]] std::vector<OGRFieldType> get_types() const override {
-    return {OGRFieldType::OFTInteger, OGRFieldType::OFTInteger,
-            OGRFieldType::OFTReal};
+  [[nodiscard]] std::vector<FieldType> get_types() const override {
+    return {FieldType::Integer, FieldType::Integer, FieldType::Real};
   }
   [[nodiscard]] value_tuple get_values() const override {
     return {transect_id_, baseline_id_, change_rate};

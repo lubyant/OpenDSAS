@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 # -------------------------
 # Project & global settings
 # -------------------------
-project(opendsas VERSION 1.4 LANGUAGES CXX)
+project(opendsas VERSION 1.4 LANGUAGES C CXX)
 add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}" APP_VERSION="${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 20)
@@ -20,16 +20,37 @@ include(GNUInstallDirs)
 # Dependencies
 # -------------------------
 
-# argparse (header-only)
 include(FetchContent)
+
+# argparse (header-only)
 FetchContent_Declare(
   argparse
   GIT_REPOSITORY https://github.com/p-ranav/argparse.git
 )
 FetchContent_MakeAvailable(argparse)
 
-# GDAL (module mode works on Debian/Ubuntu)
-find_package(GDAL CONFIG REQUIRED)
+# nlohmann/json (header-only, for GeoJSON I/O)
+FetchContent_Declare(
+  nlohmann_json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG v3.11.3
+  GIT_SHALLOW TRUE
+)
+set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
+set(JSON_Install OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(nlohmann_json)
+
+# shapelib (embed source files directly to avoid target-naming complexity)
+FetchContent_Declare(
+  shapelib
+  GIT_REPOSITORY https://github.com/OSGeo/shapelib.git
+  GIT_TAG v1.6.1
+  GIT_SHALLOW TRUE
+)
+FetchContent_GetProperties(shapelib)
+if(NOT shapelib_POPULATED)
+  FetchContent_Populate(shapelib)
+endif()
 
 # OpenMP
 find_package(OpenMP REQUIRED)
@@ -44,12 +65,21 @@ list(REMOVE_ITEM ALL_SRC_CPP "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
 # Core library
 add_library(dsas_lib ${ALL_SRC_CPP} ${ALL_SRC_HPP})
+
+# Compile shapelib C sources directly into the library
+target_sources(dsas_lib PRIVATE
+  ${shapelib_SOURCE_DIR}/shpopen.c
+  ${shapelib_SOURCE_DIR}/dbfopen.c
+  ${shapelib_SOURCE_DIR}/safileio.c
+)
+
 target_include_directories(dsas_lib PUBLIC
   ${PROJECT_SOURCE_DIR}/src
+  ${shapelib_SOURCE_DIR}
 )
 target_link_libraries(dsas_lib PUBLIC
-  argparse          # header-only
-  GDAL::GDAL
+  argparse
+  nlohmann_json::nlohmann_json
   OpenMP::OpenMP_CXX
 )
 

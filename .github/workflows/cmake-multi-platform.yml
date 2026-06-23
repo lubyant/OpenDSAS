@@ -40,7 +40,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev gdal-bin libomp-dev
+          sudo apt-get install -y libomp-dev
 
       # ---------- Configure / Build / Test ----------
       - name: Configure CMake
@@ -69,8 +69,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgdal-dev gdal-bin libomp-dev
-          sudo apt-get install -y gcovr
+          sudo apt-get install -y libomp-dev gcovr
 
       - name: Configure with coverage flags
         run: |

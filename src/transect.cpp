@@ -1,6 +1,7 @@
 #include "transect.hpp"
 
-#include <ogrsf_frmts.h>
+#include <nlohmann/json.hpp>
+#include <shapefil.h>
 
 #include <cstddef>
 #include <cstdlib>
@@ -180,75 +181,127 @@ std::vector<std::unique_ptr<TransectLine>> create_transects_from_baseline(
   return transect_lines;
 }
 
-std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
-    const std::filesystem::path &transect_shp_path) {
+// ---- GeoJSON reader ----
+
+static std::vector<std::unique_ptr<TransectLine>> load_transects_geojson(
+    const std::filesystem::path &path) {
+  std::ifstream f(path);
+  if (!f) OPENDSAS_THROW("Cannot open: " + path.string());
+  auto j = nlohmann::json::parse(f);
+
+  if (!j.contains("features") || j["features"].empty()) {
+    OPENDSAS_THROW("No features found in transect file: " + path.string());
+  }
+
+  // Validate required fields in first feature
+  const auto &first_props = j["features"][0]["properties"];
+  if (!first_props.contains("TransectId")) {
+    OPENDSAS_THROW("Need to specify TransectId!");
+  }
+  if (!first_props.contains("BaselineId")) {
+    OPENDSAS_THROW("Need to specify BaselineId!");
+  }
+
   std::vector<std::unique_ptr<TransectLine>> transects;
-  // Initialize GDAL
-  GDALAllRegister();
+  for (auto &feature : j["features"]) {
+    auto &props = feature["properties"];
+    int transect_id = props["TransectId"].get<int>();
+    int baseline_id = props["BaselineId"].get<int>();
 
-  // Open the Shapefile
-  GDALDataset *poDS = nullptr;
-  poDS = static_cast<GDALDataset *>(
-      GDALOpenEx(transect_shp_path.string().c_str(), GDAL_OF_VECTOR, nullptr,
-                 nullptr, nullptr));
-  if (poDS == nullptr) {
-    std::cerr << "Open failed.\n";
-    exit(1);
+    auto &coords = feature["geometry"]["coordinates"];
+    Point left(coords.front()[0].get<double>(), coords.front()[1].get<double>());
+    Point right(coords.back()[0].get<double>(), coords.back()[1].get<double>());
+
+    transects.push_back(std::make_unique<TransectLine>(
+        left, right, transect_id, baseline_id,
+        options.intersection_mode, options.transect_orient));
   }
 
-  // Get the Layer Containing the Line Features
-  OGRLayer *poLayer = nullptr;
-  poLayer = poDS->GetLayer(0);
-
-  // check field "transect_id"
-  int i_field = poLayer->GetLayerDefn()->GetFieldIndex("TransectId");
-  if (i_field < 0) {
-    std::cerr << "Need to specify TransectId!\n";
-    exit(1);
+  // Derive length and spacing from the loaded transects
+  if (transects.size() >= 1) {
+    options.transect_length =
+        transects[0]->leftEdge_.distance_to_point(transects[0]->rightEdge_);
   }
-
-  // check field "baseline_id"
-  i_field = poLayer->GetLayerDefn()->GetFieldIndex("BaselineId");
-  if (i_field < 0) {
-    std::cerr << "Need to specify BaselineId!\n";
-    exit(1);
+  if (transects.size() >= 2) {
+    options.transect_spacing =
+        transects[0]->leftEdge_.distance_to_point(transects[1]->leftEdge_);
   }
-
-  // Iterate Through the Features in the Layer and Access Points
-  OGRFeature *poFeature = nullptr;
-  poLayer->ResetReading();
-  while ((poFeature = poLayer->GetNextFeature()) != nullptr) {
-    OGRGeometry *poGeometry = nullptr;
-    poGeometry = poFeature->GetGeometryRef();
-    auto *poLine = dynamic_cast<OGRLineString *>(poGeometry);
-    auto transect_id = poFeature->GetFieldAsInteger("TransectId");
-    auto baseline_id = poFeature->GetFieldAsInteger("BaselineId");
-
-    OGRPoint ogr_left;
-    OGRPoint ogr_right;
-    poLine->getPoint(0, &ogr_left);
-    poLine->getPoint(poLine->getNumPoints() - 1, &ogr_right);
-
-    auto transect = std::make_unique<TransectLine>(
-        Point(ogr_left.getX(), ogr_left.getY()),
-        Point(ogr_right.getX(), ogr_right.getY()), transect_id, baseline_id,
-        options.intersection_mode, options.transect_orient);
-
-    transects.push_back(std::move(transect));
-    OGRFeature::DestroyFeature(poFeature);
-  }
-
-  // check the length and spacing
-  options.transect_length =
-      transects[0]->leftEdge_.distance_to_point(transects[0]->rightEdge_);
-
-  options.transect_spacing =
-      transects[0]->leftEdge_.distance_to_point(transects[1]->leftEdge_);
-
-  // Cleanup
-  GDALClose(poDS);
 
   return transects;
+}
+
+// ---- Shapefile reader ----
+
+static std::vector<std::unique_ptr<TransectLine>> load_transects_shapelib(
+    const std::filesystem::path &path) {
+  const std::string base_path =
+      (path.parent_path() / path.stem()).string();
+
+  SHPHandle hSHP = SHPOpen(base_path.c_str(), "rb");
+  if (!hSHP) OPENDSAS_THROW("Cannot open shapefile: " + path.string());
+  DBFHandle hDBF = DBFOpen(base_path.c_str(), "rb");
+  if (!hDBF) {
+    SHPClose(hSHP);
+    OPENDSAS_THROW("Cannot open DBF: " + path.string());
+  }
+
+  int tid_idx = DBFGetFieldIndex(hDBF, "TransectId");
+  if (tid_idx < 0) {
+    SHPClose(hSHP); DBFClose(hDBF);
+    OPENDSAS_THROW("Need to specify TransectId!");
+  }
+  int bid_idx = DBFGetFieldIndex(hDBF, "BaselineId");
+  if (bid_idx < 0) {
+    SHPClose(hSHP); DBFClose(hDBF);
+    OPENDSAS_THROW("Need to specify BaselineId!");
+  }
+
+  int n_entities = 0;
+  SHPGetInfo(hSHP, &n_entities, nullptr, nullptr, nullptr);
+
+  std::vector<std::unique_ptr<TransectLine>> transects;
+  for (int i = 0; i < n_entities; ++i) {
+    int transect_id = DBFReadIntegerAttribute(hDBF, i, tid_idx);
+    int baseline_id = DBFReadIntegerAttribute(hDBF, i, bid_idx);
+
+    SHPObject *obj = SHPReadObject(hSHP, i);
+    if (!obj || obj->nVertices < 2) {
+      if (obj) SHPDestroyObject(obj);
+      continue;
+    }
+    Point left(obj->padfX[0], obj->padfY[0]);
+    Point right(obj->padfX[obj->nVertices - 1], obj->padfY[obj->nVertices - 1]);
+    SHPDestroyObject(obj);
+
+    transects.push_back(std::make_unique<TransectLine>(
+        left, right, transect_id, baseline_id,
+        options.intersection_mode, options.transect_orient));
+  }
+
+  SHPClose(hSHP);
+  DBFClose(hDBF);
+
+  if (transects.size() >= 1) {
+    options.transect_length =
+        transects[0]->leftEdge_.distance_to_point(transects[0]->rightEdge_);
+  }
+  if (transects.size() >= 2) {
+    options.transect_spacing =
+        transects[0]->leftEdge_.distance_to_point(transects[1]->leftEdge_);
+  }
+
+  return transects;
+}
+
+// ---- Public dispatch ----
+
+std::vector<std::unique_ptr<TransectLine>> load_transects_from_shp(
+    const std::filesystem::path &transect_shp_path) {
+  auto ext = transect_shp_path.extension().string();
+  if (ext == ".geojson" || ext == ".json") {
+    return load_transects_geojson(transect_shp_path);
+  }
+  return load_transects_shapelib(transect_shp_path);
 }
 
 void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
@@ -259,9 +312,9 @@ void save_transect(const std::vector<std::unique_ptr<TransectLine>> &transects,
                  std::back_inserter(tmp_save),
                  [](const auto &up) { return up.get(); });
   if (save_as_point) {
-    save_points(tmp_save, prj.c_str(), dsas::options.transect_path);
+    save_points(tmp_save, prj, dsas::options.transect_path);
   } else {
-    save_lines(tmp_save, prj.c_str(), dsas::options.transect_path);
+    save_lines(tmp_save, prj, dsas::options.transect_path);
   }
 }
 

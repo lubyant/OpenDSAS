@@ -1,7 +1,5 @@
 #include "intersect.hpp"
 
-#include <ogrsf_frmts.h>
-
 #include <cassert>
 
 #include "utility.hpp"
@@ -16,6 +14,6 @@ void save_intersects(
   std::transform(intersects.begin(), intersects.end(),
                  std::back_inserter(tmp_save),
                  [](const auto &up) { return up.get(); });
-  save_points(tmp_save, prj.c_str(), dsas::options.intersect_path);
+  save_points(tmp_save, prj, dsas::options.intersect_path);
 }
 }  // namespace dsas
