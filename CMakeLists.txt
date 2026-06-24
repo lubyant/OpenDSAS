@@ -52,10 +52,27 @@ if(NOT shapelib_POPULATED)
   FetchContent_Populate(shapelib)
 endif()
 
-# OpenMP (disable via -DWITH_OPENMP=OFF for static builds where libgomp.a is
-# unavailable, e.g. Alpine/musl — produces a portable single-threaded binary).
+# OpenMP (disable via -DWITH_OPENMP=OFF for static builds where a static
+# OpenMP runtime is unavailable).
 option(WITH_OPENMP "Enable OpenMP parallelism" ON)
 if(WITH_OPENMP)
+  # Apple Clang does not bundle OpenMP; hint CMake to find libomp from Homebrew.
+  if(APPLE)
+    execute_process(
+      COMMAND brew --prefix libomp
+      OUTPUT_VARIABLE LIBOMP_PREFIX
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    if(LIBOMP_PREFIX)
+      set(OpenMP_C_FLAGS "-Xpreprocessor -fopenmp")
+      set(OpenMP_CXX_FLAGS "-Xpreprocessor -fopenmp")
+      set(OpenMP_C_LIB_NAMES "omp")
+      set(OpenMP_CXX_LIB_NAMES "omp")
+      set(OpenMP_omp_LIBRARY "${LIBOMP_PREFIX}/lib/libomp.dylib")
+      include_directories("${LIBOMP_PREFIX}/include")
+    endif()
+  endif()
   find_package(OpenMP REQUIRED)
 endif()
 

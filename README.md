@@ -34,11 +34,11 @@ sudo apt install ./OpenDSAS-x.y.z.deb
 ### Build from Source
 
 **Prerequisites**
-- Ubuntu 24.04  
-- [CMake](https://cmake.org/) ≥ 3.14  
-- C++20-compatible compiler  
-- [GDAL](https://gdal.org/) ≥ 3.8.5 *(recommended: build from source)*  
-- [Boost](https://www.boost.org/)
+- CMake ≥ 3.14  
+- C++20-compatible compiler (GCC 11+, Clang 14+, MSVC 2022+)  
+- OpenMP (Linux: `libomp-dev`; macOS: `brew install libomp`)
+
+All other dependencies ([nlohmann/json](https://github.com/nlohmann/json), [shapelib](https://github.com/OSGeo/shapelib), [argparse](https://github.com/p-ranav/argparse)) are fetched automatically by CMake — no manual installation needed.
 
 **Steps**
 ```bash
@@ -56,10 +56,20 @@ sudo cmake --install build
 
 ## ⚙️ Usage
 
+### Supported Input Formats
+
+Both **Shapefile** (`.shp`) and **GeoJSON** (`.geojson` / `.json`) are accepted for all input files.  
+All input and output files in a single command must use the **same format** — mixing formats (e.g. a `.geojson` input with a `.shp` output) is an error.
+
 ### Quick Example
 ```bash
-# compute shoreline change in 1000 meter transect with 10 meter spacing
+# Shapefile inputs
 dsas --baseline baseline.shp --shoreline shoreline.shp --transect-length 1000 --transect-spacing 10
+
+# GeoJSON inputs
+dsas --baseline baseline.geojson --shoreline shoreline.geojson \
+     --output-intersect intersects.geojson --output-transect transects.geojson \
+     --transect-length 1000 --transect-spacing 10
 ```
 
 ### Command-Line Options
@@ -69,13 +79,13 @@ dsas --baseline baseline.shp --shoreline shoreline.shp --transect-length 1000 --
 | ------------------------------- | ----------------------------------------------------------------------- | ---------------- |
 | `-h, --help`                    | Show help message                                                       | —                |
 | `-v, --version`                 | Print version info                                                      | —                |
-| `--baseline [FILE]`             | Path to baseline shapefile                                              | —                |
+| `--baseline [FILE]`             | Path to baseline file (`.shp` or `.geojson`)                            | —                |
 | `--bid-field [STR]`             | Field name for baseline ID in baseline data                             | `id`             |
-| `--shoreline [FILE]`            | Path to shoreline shapefile                                             | —                |
+| `--shoreline [FILE]`            | Path to shoreline file (`.shp` or `.geojson`)                           | —                |
 | `--date-field [STR]`            | Field name for date in shoreline data                                   | `Date`           |
 | `--date-format [STR]`           | Date format in shoreline data                                           | `%Y/%m/%d`       |
-| `--output-intersect [FILE]`     | Save intersections shapefile                                            | `intersects.shp` |
-| `--output-transect [FILE]`      | Save transects shapefile                                                | `transects.shp`  |
+| `--output-intersect [FILE]`     | Output intersections file (must match input format)                     | `intersects.shp` |
+| `--output-transect [FILE]`      | Output transects file (must match input format)                         | `transects.shp`  |
 | `--smooth-factor [N]`           | Smoothing factor                                                        | `1`              |
 | `--transect-length [N]`         | Transect length                                                         | `500`            |
 | `--transect-spacing [N]`        | Spacing between transects                                               | `30`             |
@@ -95,9 +105,9 @@ Generate transects from a baseline.
 | ------------------------------- | ----------------------------------------------- | --------------- |
 | `-h, --help`                    | Show help message                               | —               |
 | `-v, --version`                 | Print version info                              | —               |
-| `--baseline [FILE]`             | Path to baseline shapefile (**required**)       | —               |
-| `--bid-field [STR]`             | Field name for baseline ID in baseline data     | `id`            |
-| `--output-transect [FILE]`      | Save transects shapefile                        | `transects.shp` |
+| `--baseline [FILE]`             | Path to baseline file (`.shp` or `.geojson`) (**required**) | —               |
+| `--bid-field [STR]`             | Field name for baseline ID in baseline data                 | `id`            |
+| `--output-transect [FILE]`      | Output transects file (must match input format)             | `transects.shp` |
 | `--smooth-factor [N]`           | Smoothing factor                                | `1`             |
 | `--transect-length [N]`         | Transect length                                 | `500`           |
 | `--transect-spacing [N]`        | Spacing between transects                       | `30`            |
@@ -118,13 +128,14 @@ Generate intersections and calculate erosion rates using predefined transects.
 | ------------------------------- | ---------------------------------------------------------- | ---------- |
 | `-h, --help`                    | Show help message                                          | —          |
 | `-v, --version`                 | Print version info                                         | —          |
-| `--transect [FILE]`             | Path to transect shapefile (**required**)                  | —          |
-| `--shoreline [FILE]`            | Path to shoreline shapefile (**required**)                 | —          |
-| `--date-field [STR]`            | Field name for date in shoreline data                      | `Date`     |
-| `--date-format [STR]`           | Date format in shoreline data                              | `%Y/%m/%d` |
-| `--intersection-mode [MODE]`    | Intersection rule: `closest` or `farthest`                 | `closest`  |
-| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix`            | `mix`      |
-| `-bi, --build_index`            | Build spatial index (faster queries, slower initial build) | `false`    |
+| `--transect [FILE]`             | Path to transect file (`.shp` or `.geojson`) (**required**)      | —                |
+| `--shoreline [FILE]`            | Path to shoreline file (`.shp` or `.geojson`) (**required**)     | —                |
+| `--date-field [STR]`            | Field name for date in shoreline data                             | `Date`           |
+| `--date-format [STR]`           | Date format in shoreline data                                     | `%Y/%m/%d`       |
+| `--output-intersect [FILE]`     | Output intersections file (must match input format)               | `intersects.shp` |
+| `--intersection-mode [MODE]`    | Intersection rule: `closest` or `farthest`                        | `closest`        |
+| `--transect-orientation [MODE]` | Transect orientation: `left`, `right`, or `mix`                   | `mix`            |
+| `-bi, --build_index`            | Build spatial index (faster queries, slower initial build)        | `false`          |
 
 </details>
 
@@ -132,8 +143,11 @@ Generate intersections and calculate erosion rates using predefined transects.
 
 ## 🗂 Preparing Input Data
 
-### Shoreline Shapefile
-Must contain a `Date` (or specify by `--date-field` flag) field:
+Input files may be **Shapefile** (`.shp`) or **GeoJSON** (`.geojson` / `.json`).  
+All files in one command invocation must use the same format.
+
+### Shoreline File
+Must contain a `Date` field (or the name given by `--date-field`):
 
 | Date       |
 | ---------- |
@@ -142,8 +156,8 @@ Must contain a `Date` (or specify by `--date-field` flag) field:
 - Example: `2000/01/01`  
 - A shoreline ID field is auto-generated (custom IDs not yet supported)
 
-### Baseline Shapefile
-Must contain an `Id` (or specify by `--bid-field`) field:
+### Baseline File
+Must contain an `Id` field (or the name given by `--bid-field`):
 
 | Id          |
 | ----------- |
@@ -153,7 +167,7 @@ Must contain an `Id` (or specify by `--bid-field`) field:
 
 ## 📤 Output
 
-OpenDSAS generates two shapefiles:
+OpenDSAS generates two output files (Shapefile by default; format matches your inputs):
 
 ### 1. `intersects.shp`
 | BaselineId  | TransectId  | ShoreID      | Date              | ref_dist             | X   | Y   |
