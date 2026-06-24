@@ -148,4 +148,29 @@ TEST_F(CLITest, test_format_consistency) {
     auto status = parse_args(sizeof(args) / sizeof(args[0]), args);
     EXPECT_EQ(status, CliStatus::Cast);
   }
+  // .json extension is treated as GeoJSON (same as .geojson)
+  {
+    char *args[] = {(char *)"dsas",         (char *)"cast",
+                    (char *)"--baseline",   (char *)"base.json",
+                    (char *)"--output-transect", (char *)"trans.json"};
+    auto status = parse_args(sizeof(args) / sizeof(args[0]), args);
+    EXPECT_EQ(status, CliStatus::Cast);
+  }
+  // Unrecognised extensions are skipped; only known-format paths are compared
+  {
+    char *args[] = {(char *)"dsas",         (char *)"cast",
+                    (char *)"--baseline",   (char *)"base.csv",
+                    (char *)"--output-transect", (char *)"trans.shp"};
+    auto status = parse_args(sizeof(args) / sizeof(args[0]), args);
+    EXPECT_EQ(status, CliStatus::Cast);
+  }
+  // Empty (unspecified) paths are skipped
+  {
+    char *args[] = {(char *)"dsas",
+                    (char *)"--shoreline",       (char *)"shore.shp",
+                    (char *)"--output-transect", (char *)"trans.shp"};
+    // --baseline is not provided, so baseline_path is "" — skipped in check
+    auto status = parse_args(sizeof(args) / sizeof(args[0]), args);
+    EXPECT_EQ(status, CliStatus::Root);
+  }
 }

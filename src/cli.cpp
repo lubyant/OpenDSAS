@@ -14,7 +14,6 @@ namespace {
 
 // Returns "Shapefile", "GeoJSON", or "" for unrecognised extensions.
 static std::string format_group(const std::string& path) {
-  if (path.empty()) return "";
   auto ext = std::filesystem::path(path).extension().string();
   if (ext == ".shp") return "Shapefile";
   if (ext == ".geojson" || ext == ".json") return "GeoJSON";
