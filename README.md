@@ -24,23 +24,47 @@ OpenDSAS is ideal if:
 
 ## 📦 Installation
 
-### Install from Release (Ubuntu 24.04)
-Download the `.deb` package from [Releases](https://github.com/lubyant/OpenDSAS/releases) and install:
+### Linux
+
+Download the pre-built static binary from [Releases](https://github.com/lubyant/OpenDSAS/releases):
 
 ```bash
-sudo apt install ./OpenDSAS-x.y.z.deb
+# Replace vX.Y with the latest version, e.g. v1.4
+curl -LO https://github.com/lubyant/OpenDSAS/releases/download/vX.Y/opendsas-vX.Y-linux-x86_64
+chmod +x opendsas-vX.Y-linux-x86_64
+sudo mv opendsas-vX.Y-linux-x86_64 /usr/local/bin/dsas
 ```
+
+The binary is fully statically linked — it runs on any Linux distribution (Ubuntu, Debian, RHEL, Alpine, etc.) with no dependencies.
+
+An `arm64` build (`opendsas-vX.Y-linux-arm64`) is also available for ARM servers and Raspberry Pi.
+
+### macOS
+
+Install via [Homebrew](https://brew.sh) using the OpenDSAS tap:
+
+```bash
+brew tap lubyant/opendsas
+brew install lubyant/opendsas/opendsas
+```
+
+Requires Apple Silicon (M1/M2/M3). An Intel build is not provided.
+
+### Windows
+
+Download `opendsas-vX.Y-windows-x86_64.exe` from [Releases](https://github.com/lubyant/OpenDSAS/releases), rename it to `dsas.exe`, and add it to your `PATH`.
+
+---
 
 ### Build from Source
 
 **Prerequisites**
-- CMake ≥ 3.14  
-- C++20-compatible compiler (GCC 11+, Clang 14+, MSVC 2022+)  
-- OpenMP (Linux: `libomp-dev`; macOS: `brew install libomp`)
+- CMake ≥ 3.14
+- C++20-compatible compiler (GCC 11+, Clang 14+, MSVC 2022+)
+- macOS only: `brew install libomp`
 
-All other dependencies ([nlohmann/json](https://github.com/nlohmann/json), [shapelib](https://github.com/OSGeo/shapelib), [argparse](https://github.com/p-ranav/argparse)) are fetched automatically by CMake — no manual installation needed.
+All other dependencies ([nlohmann/json](https://github.com/nlohmann/json), [shapelib](https://github.com/OSGeo/shapelib), [argparse](https://github.com/p-ranav/argparse)) are fetched automatically by CMake.
 
-**Steps**
 ```bash
 git clone https://github.com/lubyant/OpenDSAS.git
 cd OpenDSAS
@@ -48,7 +72,7 @@ cd OpenDSAS
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
 
-# if you want to install as a system cmd
+# optional: install to system PATH
 sudo cmake --install build
 ```
 
@@ -183,7 +207,6 @@ OpenDSAS generates two output files (Shapefile by default; format matches your i
 
 ## 🛠 Roadmap
 - [ ] GUI frontend  
-- [ ] Distribution packages for other Linux distros  
 
 ---
 
