@@ -1,4 +1,4 @@
-name: Alpine static binary
+name: Static binary (portable Linux)
 
 on:
   push:
@@ -9,35 +9,32 @@ on:
 
 jobs:
   build:
-    name: Build static binary (Alpine / musl)
+    name: Build static binary (Ubuntu / glibc-static)
     runs-on: ubuntu-latest
-    container: alpine:3.20
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install build tools
         run: |
-          apk add --no-cache \
-            build-base cmake git libomp-dev
+          sudo apt-get update
+          sudo apt-get install -y cmake git build-essential
 
       - name: Configure (static with OpenMP)
         run: |
-          # Alpine's GCC ships only a shared libgomp.so, but LLVM's libomp-dev
-          # includes libomp.a.  GCC supports -fopenmp=libomp (since GCC 5) to
-          # use LLVM's runtime instead of its own, giving us a static OpenMP.
-          LIBOMP_A=$(find /usr -name "libomp.a" 2>/dev/null | head -1)
-          [ -n "$LIBOMP_A" ] || { echo "ERROR: libomp.a not found"; exit 1; }
-          echo "Using static libomp: $LIBOMP_A"
+          # Ubuntu's GCC ships libgomp.a inside its toolchain directory.
+          # CMake FindOpenMP would normally pick up the shared libgomp.so; we
+          # pass the static archive explicitly so the -static link flag works.
+          LIBGOMP_A=$(find /usr/lib/gcc -name "libgomp.a" | head -1)
+          [ -n "$LIBGOMP_A" ] || { echo "ERROR: libgomp.a not found"; exit 1; }
+          echo "Using static libgomp: $LIBGOMP_A"
           cmake -B build -S . \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_EXE_LINKER_FLAGS="-static" \
-            -DOpenMP_C_FLAGS="-fopenmp=libomp" \
-            -DOpenMP_CXX_FLAGS="-fopenmp=libomp" \
-            -DOpenMP_C_LIB_NAMES="omp" \
-            -DOpenMP_CXX_LIB_NAMES="omp" \
-            -DOpenMP_omp_LIBRARY="$LIBOMP_A"
+            -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++" \
+            -DOpenMP_C_LIB_NAMES="gomp" \
+            -DOpenMP_CXX_LIB_NAMES="gomp" \
+            -DOpenMP_gomp_LIBRARY="$LIBGOMP_A"
 
       - name: Build
         run: cmake --build build -j$(nproc)
@@ -56,7 +53,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dsas-linux-musl-x86_64
+          name: dsas-linux-static-x86_64
           path: build/dsas
 
   release:
@@ -68,14 +65,14 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: dsas-linux-musl-x86_64
+          name: dsas-linux-static-x86_64
           path: dist
 
       - name: Rename with version tag
-        run: mv dist/dsas dist/dsas-${{ github.ref_name }}-linux-musl-x86_64
+        run: mv dist/dsas dist/dsas-${{ github.ref_name }}-linux-static-x86_64
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/dsas-${{ github.ref_name }}-linux-musl-x86_64
+          files: dist/dsas-${{ github.ref_name }}-linux-static-x86_64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
