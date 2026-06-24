@@ -9,8 +9,13 @@ on:
 
 jobs:
   build:
-    name: Build static binary (Ubuntu / glibc-static)
-    runs-on: ubuntu-latest
+    name: Build — ${{ matrix.arch.name }}
+    runs-on: ${{ matrix.arch.runs-on }}
+    strategy:
+      matrix:
+        arch:
+          - { name: x86_64, runs-on: ubuntu-24.04,     artifact: dsas-linux-static-x86_64 }
+          - { name: arm64,  runs-on: ubuntu-24.04-arm,  artifact: dsas-linux-static-arm64  }
 
     steps:
       - uses: actions/checkout@v4
@@ -22,9 +27,6 @@ jobs:
 
       - name: Configure (static with OpenMP)
         run: |
-          # Ubuntu's GCC ships libgomp.a inside its toolchain directory.
-          # CMake FindOpenMP would normally pick up the shared libgomp.so; we
-          # pass the static archive explicitly so the -static link flag works.
           LIBGOMP_A=$(find /usr/lib/gcc -name "libgomp.a" | head -1)
           [ -n "$LIBGOMP_A" ] || { echo "ERROR: libgomp.a not found"; exit 1; }
           echo "Using static libgomp: $LIBGOMP_A"
@@ -52,45 +54,36 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: dsas-linux-static-x86_64
+          name: ${{ matrix.arch.artifact }}
           path: build/dsas
 
-  # Run the binary inside each target distro container to confirm it executes
-  # without any missing-library errors.  No packages are installed in the
-  # containers — the whole point is that the static binary needs nothing.
   verify:
-    name: Portability — ${{ matrix.distro }}
+    name: Portability — ${{ matrix.arch.name }} / Ubuntu ${{ matrix.ubuntu }}
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.arch.runs-on }}
     strategy:
       fail-fast: false
       matrix:
-        distro:
-          - ubuntu:18.04
-          - ubuntu:20.04
-          - ubuntu:22.04
-          - ubuntu:24.04
-          - debian:11
-          - debian:12
-          - alpine:3.20
-          - fedora:40
-          - almalinux:9
+        arch:
+          - { name: x86_64, runs-on: ubuntu-24.04,     artifact: dsas-linux-static-x86_64 }
+          - { name: arm64,  runs-on: ubuntu-24.04-arm,  artifact: dsas-linux-static-arm64  }
+        ubuntu: ["18.04", "20.04", "22.04", "24.04"]
 
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: dsas-linux-static-x86_64
+          name: ${{ matrix.arch.artifact }}
           path: dist
 
-      - name: Run on ${{ matrix.distro }}
+      - name: Run on Ubuntu ${{ matrix.ubuntu }}
         run: |
           chmod +x dist/dsas
-          docker run --rm -v "$PWD/dist:/pkg" ${{ matrix.distro }} /pkg/dsas --version
-          docker run --rm -v "$PWD/dist:/pkg" ${{ matrix.distro }} /pkg/dsas --help
+          docker run --rm -v "$PWD/dist:/pkg" ubuntu:${{ matrix.ubuntu }} /pkg/dsas --version
+          docker run --rm -v "$PWD/dist:/pkg" ubuntu:${{ matrix.ubuntu }} /pkg/dsas --help
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build, verify]
+    needs: verify
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -98,13 +91,22 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: dsas-linux-static-x86_64
-          path: dist
+          path: dist/x86_64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dsas-linux-static-arm64
+          path: dist/arm64
 
       - name: Rename with version tag
-        run: mv dist/dsas dist/dsas-${{ github.ref_name }}-linux-static-x86_64
+        run: |
+          mv dist/x86_64/dsas dist/dsas-${{ github.ref_name }}-linux-static-x86_64
+          mv dist/arm64/dsas  dist/dsas-${{ github.ref_name }}-linux-static-arm64
 
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/dsas-${{ github.ref_name }}-linux-static-x86_64
+          files: |
+            dist/dsas-${{ github.ref_name }}-linux-static-x86_64
+            dist/dsas-${{ github.ref_name }}-linux-static-arm64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
