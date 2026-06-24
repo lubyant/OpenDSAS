@@ -1,95 +1,80 @@
-name: build-and-test-deb (noble only)
+name: Build .deb package
 
 on:
   push:
-    branches: [ main ]
-    tags: [ 'v*' ]
+    branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    container: ubuntu:24.04
+  deb:
+    name: Package .deb — ${{ matrix.arch.name }}
+    runs-on: ${{ matrix.arch.runs-on }}
+    strategy:
+      matrix:
+        arch:
+          - { name: amd64, runs-on: ubuntu-24.04,     artifact: opendsas-deb-amd64 }
+          - { name: arm64, runs-on: ubuntu-24.04-arm,  artifact: opendsas-deb-arm64 }
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install build deps
+      - name: Install build tools
         run: |
-          set -eux
-          export DEBIAN_FRONTEND=noninteractive
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            ca-certificates git curl pkg-config \
-            build-essential cmake \
-            libgdal-dev \
-            file dpkg-dev
-          update-ca-certificates
-          git config --system http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
-          # sanity checks
-          gdal-config --version
-          pkg-config --modversion gdal
+          sudo apt-get update
+          sudo apt-get install -y cmake git build-essential
 
-      - name: Configure (C++20; disable tests in CI)
+      - name: Configure (static)
         run: |
-          set -eux
-          cmake -B build \
+          LIBGOMP_A=$(find /usr/lib/gcc -name "libgomp.a" | head -1)
+          [ -n "$LIBGOMP_A" ] || { echo "ERROR: libgomp.a not found"; exit 1; }
+          cmake -B build -S . \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=OFF \
-            -DGDAL_USE_STATIC_LIBS=OFF
+            -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++" \
+            -DOpenMP_C_LIB_NAMES="gomp" \
+            -DOpenMP_CXX_LIB_NAMES="gomp" \
+            -DOpenMP_gomp_LIBRARY="$LIBGOMP_A"
 
       - name: Build
-        run: cmake --build build -j"$(nproc)"
+        run: cmake --build build -j$(nproc)
 
-      - name: Package (.deb via CPack)
+      - name: Package
+        run: cd build && cpack -G DEB
+
+      - name: Smoke test — install and run
         run: |
-          cpack -B build/dist -G DEB --config build/CPackConfig.cmake
-          ls -l build/dist
+          sudo dpkg -i build/*.deb
+          dsas --version
+          dsas --help > /dev/null
 
-      - name: Upload .deb artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: opendsas-noble
-          path: build/dist/*.deb
-
-  test-install:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download .deb
-        uses: actions/download-artifact@v4
-        with:
-          name: opendsas-noble
-          path: dist
-
-      - name: Show downloaded files
-        run: ls -lah dist
-
-      - name: Test install inside clean noble
-        run: |
-          docker run --rm -v "$PWD/dist:/pkg:ro" ubuntu:24.04 bash -lc '
-            set -euo pipefail
-            export DEBIAN_FRONTEND=noninteractive
-            apt-get update
-            apt-get install -y /pkg/*.deb
-            command -v dsas
-            dsas --version
-            dsas --help >/dev/null
-            ldd "$(command -v dsas)"
-          '
+          name: ${{ matrix.arch.artifact }}
+          path: build/*.deb
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
+    needs: deb
     permissions:
       contents: write
-    needs: [build, test-install]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: opendsas-noble
-          path: dist
+          name: opendsas-deb-amd64
+          path: dist/amd64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: opendsas-deb-arm64
+          path: dist/arm64
+
       - uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.deb
+          files: |
+            dist/amd64/*.deb
+            dist/arm64/*.deb
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
