@@ -1,13 +1,46 @@
 #include "cli.hpp"
 
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 #include <stdexcept>
+#include <string>
+#include <utility>
 
 #include "exception.hpp"
 #include "options.hpp"
 
 namespace {
+
+// Returns "Shapefile", "GeoJSON", or "" for unrecognised extensions.
+static std::string format_group(const std::string& path) {
+  auto ext = std::filesystem::path(path).extension().string();
+  if (ext == ".shp") return "Shapefile";
+  if (ext == ".geojson" || ext == ".json") return "GeoJSON";
+  return "";
+}
+
+// Throws if any two non-empty, recognised paths in `entries` belong to
+// different format groups.  `entries` is a list of {cli-flag, resolved-path}.
+static void check_format_consistency(
+    std::initializer_list<std::pair<std::string, std::string>> entries) {
+  std::string ref_fmt, ref_flag;
+  for (const auto& [flag, path] : entries) {
+    if (path.empty()) continue;
+    auto fmt = format_group(path);
+    if (fmt.empty()) continue;
+    if (ref_fmt.empty()) {
+      ref_fmt = fmt;
+      ref_flag = flag;
+    } else if (fmt != ref_fmt) {
+      OPENDSAS_THROW("Format mismatch: " + flag + " uses " + fmt +
+                     " but " + ref_flag + " uses " + ref_fmt +
+                     ". All input and output files must use the same format.");
+    }
+  }
+}
+
+
 dsas::Options::IntersectionMode parse_intersection_mode(const std::string& s) {
   if (s == "closest") return dsas::Options::IntersectionMode::Closest;
   if (s == "farthest") return dsas::Options::IntersectionMode::Farthest;
@@ -129,6 +162,9 @@ void init_cal_cmd(argparse::ArgumentParser& cal_cmd) {
   cal_cmd.add_argument("--transect-orientation")
       .default_value(std::string("mix"))
       .help("Transect orientation: left, right, or mix");
+  cal_cmd.add_argument("--output-intersect")
+      .default_value(dsas::options.intersect_path)
+      .help("Path to save the intersection output");
   cal_cmd.add_argument("-bi", "--build_index")
       .default_value(false)
       .implicit_value(true)
@@ -170,6 +206,10 @@ CliStatus parse_args(int argc, char* argv[]) {
           cast_cmd.get<std::string>("--intersection-mode"));
       dsas::options.transect_orient = parse_transect_orient(
           cast_cmd.get<std::string>("--transect-orientation"));
+      check_format_consistency({
+          {"--baseline", dsas::options.baseline_path},
+          {"--output-transect", dsas::options.transect_path},
+      });
       return CliStatus::Cast;
     }
 
@@ -182,7 +222,14 @@ CliStatus parse_args(int argc, char* argv[]) {
           cal_cmd.get<std::string>("--intersection-mode"));
       dsas::options.transect_orient = parse_transect_orient(
           cal_cmd.get<std::string>("--transect-orientation"));
+      dsas::options.intersect_path =
+          cal_cmd.get<std::string>("--output-intersect");
       dsas::options.build_index = cal_cmd.get<bool>("--build_index");
+      check_format_consistency({
+          {"--shoreline", dsas::options.shoreline_path},
+          {"--transect", dsas::options.transect_path},
+          {"--output-intersect", dsas::options.intersect_path},
+      });
       return CliStatus::Cal;
     }
 
@@ -206,6 +253,12 @@ CliStatus parse_args(int argc, char* argv[]) {
     dsas::options.transect_orient = parse_transect_orient(
         root_cmd.get<std::string>("--transect-orientation"));
     dsas::options.build_index = root_cmd.get<bool>("--build_index");
+    check_format_consistency({
+        {"--baseline", dsas::options.baseline_path},
+        {"--shoreline", dsas::options.shoreline_path},
+        {"--output-intersect", dsas::options.intersect_path},
+        {"--output-transect", dsas::options.transect_path},
+    });
     return CliStatus::Root;
   } catch (const std::runtime_error& err) {
     std::cerr << err.what() << "\n";
