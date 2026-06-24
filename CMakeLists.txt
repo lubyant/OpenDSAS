@@ -146,8 +146,9 @@ set(CPACK_PACKAGE_CONTACT "Boyuan Lu blu38@wisc.edu")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenDSAS — high-performance Digital Shoreline Analysis System (CLI)")
 set(CPACK_DEBIAN_PACKAGE_SECTION "science")
 
-# Let dpkg-shlibdeps compute runtime shared-library deps automatically
-set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+# The binary is fully statically linked — no runtime shared-library deps.
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
+set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 
 # Optional: ship docs
 # install(FILES LICENSE README.md DESTINATION ${CMAKE_INSTALL_DOCDIR})
