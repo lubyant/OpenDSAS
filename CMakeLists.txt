@@ -1,10 +1,31 @@
 cmake_minimum_required(VERSION 3.14)
 
 # -------------------------
+# Version from git tag
+# -------------------------
+find_package(Git QUIET)
+if(Git_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags --match "v*"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_DESCRIBE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+endif()
+if(NOT GIT_DESCRIBE OR GIT_DESCRIBE STREQUAL "")
+  set(GIT_DESCRIBE "v0.0.0-dev")
+endif()
+# "v1.5" → "1.5", "v1.5-3-gabcdef7" → "1.5-3-gabcdef7"
+string(REGEX REPLACE "^v" "" APP_VER "${GIT_DESCRIBE}")
+# Extract clean MAJOR.MINOR for CMake project(): "1.5-3-gabcdef7" → "1.5"
+string(REGEX REPLACE "^([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1" CMAKE_PROJECT_VER "${APP_VER}")
+
+# -------------------------
 # Project & global settings
 # -------------------------
-project(opendsas VERSION 1.4 LANGUAGES C CXX)
-add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}" APP_VERSION="${PROJECT_VERSION}")
+project(opendsas VERSION ${CMAKE_PROJECT_VER} LANGUAGES C CXX)
+add_compile_definitions(PROJECT_NAME_STR="${PROJECT_NAME}" APP_VERSION="${APP_VER}")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
