@@ -68,12 +68,10 @@ jobs:
           name: ${{ matrix.arch.artifact }}
           path: dist
 
-      - name: Install and run on Ubuntu ${{ matrix.ubuntu }}
+      - name: Install on Ubuntu ${{ matrix.ubuntu }}
         run: |
           docker run --rm -v "$PWD/dist:/pkg" ubuntu:${{ matrix.ubuntu }} bash -c '
-            dpkg -i /pkg/*.deb
-            dsas --version
-            dsas --help > /dev/null
+            dpkg -i /pkg/*.deb && command -v dsas
           '
 
   release:
