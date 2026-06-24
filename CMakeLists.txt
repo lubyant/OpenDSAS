@@ -52,7 +52,6 @@ if(NOT shapelib_POPULATED)
   FetchContent_Populate(shapelib)
 endif()
 
-# OpenMP
 # Apple Clang does not bundle OpenMP; hint CMake to find libomp from Homebrew.
 if(APPLE)
   execute_process(
