@@ -8,14 +8,9 @@ class Opendsas < Formula
   # and Homebrew's libomp prefix is on the rpath baked in at build time.
   depends_on "libomp"
 
-  on_macos do
-    if Hardware::CPU.arm?
-      url "https://github.com/lubyant/OpenDSAS/releases/download/v#{version}/dsas-v#{version}-macos-arm64.tar.gz"
-      sha256 "<ARM64_SHA256>"
-    else
-      url "https://github.com/lubyant/OpenDSAS/releases/download/v#{version}/dsas-v#{version}-macos-x86_64.tar.gz"
-      sha256 "<X86_64_SHA256>"
-    end
+  on_arm do
+    url "https://github.com/lubyant/OpenDSAS/releases/download/v#{version}/dsas-v#{version}-macos-arm64.tar.gz"
+    sha256 "<ARM64_SHA256>"
   end
 
   def install
