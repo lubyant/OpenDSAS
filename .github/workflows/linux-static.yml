@@ -45,20 +45,52 @@ jobs:
           file build/dsas | grep -q "statically linked" || \
             { echo "ERROR: binary is not statically linked"; exit 1; }
 
-      - name: Smoke test
+      - name: Smoke test (host)
         run: |
           build/dsas --version
           build/dsas --help > /dev/null
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: dsas-linux-static-x86_64
           path: build/dsas
 
+  # Run the binary inside each target distro container to confirm it executes
+  # without any missing-library errors.  No packages are installed in the
+  # containers — the whole point is that the static binary needs nothing.
+  verify:
+    name: Portability — ${{ matrix.distro }}
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - ubuntu:18.04
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - debian:11
+          - debian:12
+          - alpine:3.20
+          - fedora:40
+          - almalinux:9
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dsas-linux-static-x86_64
+          path: dist
+
+      - name: Run on ${{ matrix.distro }}
+        run: |
+          chmod +x dist/dsas
+          docker run --rm -v "$PWD/dist:/pkg" ${{ matrix.distro }} /pkg/dsas --version
+          docker run --rm -v "$PWD/dist:/pkg" ${{ matrix.distro }} /pkg/dsas --help
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [build, verify]
     permissions:
       contents: write
     runs-on: ubuntu-latest
