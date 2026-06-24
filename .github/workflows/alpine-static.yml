@@ -1,0 +1,70 @@
+name: Alpine static binary
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build static binary (Alpine / musl)
+    runs-on: ubuntu-latest
+    container: alpine:3.20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          apk add --no-cache \
+            build-base cmake git
+
+      - name: Configure (static, no tests)
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=OFF \
+            -DCMAKE_EXE_LINKER_FLAGS="-static"
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Verify static binary
+        run: |
+          file build/dsas
+          file build/dsas | grep -q "statically linked" || \
+            { echo "ERROR: binary is not statically linked"; exit 1; }
+
+      - name: Smoke test
+        run: |
+          build/dsas --version
+          build/dsas --help > /dev/null
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dsas-linux-musl-x86_64
+          path: build/dsas
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dsas-linux-musl-x86_64
+          path: dist
+
+      - name: Rename with version tag
+        run: mv dist/dsas dist/dsas-${{ github.ref_name }}-linux-musl-x86_64
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/dsas-${{ github.ref_name }}-linux-musl-x86_64
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
