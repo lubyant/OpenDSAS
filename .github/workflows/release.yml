@@ -125,14 +125,12 @@ jobs:
           install_name_tool -add_rpath "$(brew --prefix libomp)/lib" build/dsas
 
       - name: Package
-        run: |
-          tar -czf dsas-${{ github.ref_name }}-${{ matrix.arch.suffix }}.tar.gz \
-            -C build dsas
+        run: tar -czf dsas-${{ matrix.arch.suffix }}.tar.gz -C build dsas
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.arch.suffix }}
-          path: dsas-${{ github.ref_name }}-${{ matrix.arch.suffix }}.tar.gz
+          path: dsas-${{ matrix.arch.suffix }}.tar.gz
 
   # ── Windows ────────────────────────────────────────────────────────────────
   build-windows:
@@ -201,11 +199,13 @@ jobs:
           name: windows-x86_64
           path: dist/windows
 
-      - name: Rename Linux binaries
+      - name: Rename artifacts
         run: |
-          mv dist/linux/x86_64/dsas dist/dsas-${{ github.ref_name }}-linux-static-x86_64
-          mv dist/linux/arm64/dsas  dist/dsas-${{ github.ref_name }}-linux-static-arm64
-          mv dist/windows/dsas.exe  dist/dsas-${{ github.ref_name }}-windows-x86_64.exe
+          mv dist/linux/x86_64/dsas              dist/dsas-${{ github.ref_name }}-linux-static-x86_64
+          mv dist/linux/arm64/dsas               dist/dsas-${{ github.ref_name }}-linux-static-arm64
+          mv dist/macos/dsas-macos-arm64.tar.gz  dist/dsas-${{ github.ref_name }}-macos-arm64.tar.gz
+          mv dist/macos/dsas-macos-x86_64.tar.gz dist/dsas-${{ github.ref_name }}-macos-x86_64.tar.gz
+          mv dist/windows/dsas.exe               dist/dsas-${{ github.ref_name }}-windows-x86_64.exe
 
       - uses: softprops/action-gh-release@v2
         with:
@@ -214,8 +214,8 @@ jobs:
             dist/dsas-${{ github.ref_name }}-linux-static-arm64
             dist/deb/amd64/*.deb
             dist/deb/arm64/*.deb
-            dist/macos/dsas-${{ github.ref_name }}-macos-arm64.tar.gz
-            dist/macos/dsas-${{ github.ref_name }}-macos-x86_64.tar.gz
+            dist/dsas-${{ github.ref_name }}-macos-arm64.tar.gz
+            dist/dsas-${{ github.ref_name }}-macos-x86_64.tar.gz
             dist/dsas-${{ github.ref_name }}-windows-x86_64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
