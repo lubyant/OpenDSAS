@@ -52,8 +52,12 @@ if(NOT shapelib_POPULATED)
   FetchContent_Populate(shapelib)
 endif()
 
-# OpenMP
-find_package(OpenMP REQUIRED)
+# OpenMP (disable via -DWITH_OPENMP=OFF for static builds where libgomp.a is
+# unavailable, e.g. Alpine/musl — produces a portable single-threaded binary).
+option(WITH_OPENMP "Enable OpenMP parallelism" ON)
+if(WITH_OPENMP)
+  find_package(OpenMP REQUIRED)
+endif()
 
 # -------------------------
 # Sources & targets
@@ -80,8 +84,10 @@ target_include_directories(dsas_lib PUBLIC
 target_link_libraries(dsas_lib PUBLIC
   argparse
   nlohmann_json::nlohmann_json
-  OpenMP::OpenMP_CXX
 )
+if(WITH_OPENMP)
+  target_link_libraries(dsas_lib PUBLIC OpenMP::OpenMP_CXX)
+endif()
 
 # CLI executable (keeps name "dsas")
 add_executable(dsas src/main.cpp)

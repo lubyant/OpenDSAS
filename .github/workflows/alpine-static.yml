@@ -23,18 +23,14 @@ jobs:
 
       - name: Configure (static, no tests)
         run: |
-          # Alpine ships libgomp.a inside the GCC toolchain directory, but
-          # CMake's FindOpenMP picks up /usr/lib/libgomp.so first, which
-          # breaks -static.  Point it at the static archive explicitly.
-          LIBGOMP_A=$(find /usr/lib/gcc -name "libgomp.a" | head -1)
-          echo "Using static libgomp: $LIBGOMP_A"
+          # Alpine does not ship a static libgomp.a; disable OpenMP so the
+          # binary is fully portable (single-threaded).  Use -DWITH_OPENMP=ON
+          # and supply a static libgomp to restore parallelism if needed.
           cmake -B build -S . \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_TESTING=OFF \
-            -DCMAKE_EXE_LINKER_FLAGS="-static" \
-            -DOpenMP_C_LIB_NAMES="gomp" \
-            -DOpenMP_CXX_LIB_NAMES="gomp" \
-            -DOpenMP_gomp_LIBRARY="$LIBGOMP_A"
+            -DWITH_OPENMP=OFF \
+            -DCMAKE_EXE_LINKER_FLAGS="-static"
 
       - name: Build
         run: cmake --build build -j$(nproc)
