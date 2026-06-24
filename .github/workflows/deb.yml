@@ -43,20 +43,42 @@ jobs:
       - name: Package
         run: cd build && cpack -G DEB
 
-      - name: Smoke test — install and run
-        run: |
-          sudo dpkg -i build/*.deb
-          dsas --version
-          dsas --help > /dev/null
-
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.arch.artifact }}
           path: build/*.deb
 
+  # Install the .deb inside each target Ubuntu container and run the binary.
+  # dpkg -i needs no network because the package has no runtime dependencies.
+  verify:
+    name: Install on ${{ matrix.arch.name }} / Ubuntu ${{ matrix.ubuntu }}
+    needs: deb
+    runs-on: ${{ matrix.arch.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - { name: amd64, runs-on: ubuntu-24.04,     artifact: opendsas-deb-amd64 }
+          - { name: arm64, runs-on: ubuntu-24.04-arm,  artifact: opendsas-deb-arm64 }
+        ubuntu: ["18.04", "20.04", "22.04", "24.04"]
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.arch.artifact }}
+          path: dist
+
+      - name: Install and run on Ubuntu ${{ matrix.ubuntu }}
+        run: |
+          docker run --rm -v "$PWD/dist:/pkg" ubuntu:${{ matrix.ubuntu }} bash -c '
+            dpkg -i /pkg/*.deb
+            dsas --version
+            dsas --help > /dev/null
+          '
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: deb
+    needs: verify
     permissions:
       contents: write
     runs-on: ubuntu-latest
