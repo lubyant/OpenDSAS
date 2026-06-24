@@ -9,7 +9,7 @@ class Opendsas < Formula
   depends_on "libomp"
 
   on_arm do
-    url "https://github.com/lubyant/OpenDSAS/releases/download/v#{version}/dsas-v#{version}-macos-arm64.tar.gz"
+    url "https://github.com/lubyant/OpenDSAS/releases/download/v#{version}/opendsas-v#{version}-macos-arm64.tar.gz"
     sha256 "<ARM64_SHA256>"
   end
 

@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         arch:
-          - { name: x86_64, runs-on: ubuntu-24.04,    bin: dsas-linux-static-x86_64, deb: opendsas-deb-amd64 }
-          - { name: arm64,  runs-on: ubuntu-24.04-arm, bin: dsas-linux-static-arm64,  deb: opendsas-deb-arm64  }
+          - { name: x86_64, runs-on: ubuntu-24.04,     bin: dsas-linux-static-x86_64 }
+          - { name: arm64,  runs-on: ubuntu-24.04-arm,  bin: dsas-linux-static-arm64  }
 
     steps:
       - uses: actions/checkout@v4
@@ -44,18 +44,10 @@ jobs:
       - name: Verify static binary
         run: file build/dsas | grep -q "statically linked" || { echo "not static"; exit 1; }
 
-      - name: Package .deb
-        run: cd build && cpack -G DEB
-
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.arch.bin }}
           path: build/dsas
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.arch.deb }}
-          path: build/*.deb
 
   # Test on oldest (18.04) and latest (24.04) — a static binary passing both
   # is guaranteed to work on everything in between.
@@ -67,8 +59,8 @@ jobs:
       fail-fast: false
       matrix:
         arch:
-          - { name: x86_64, runs-on: ubuntu-24.04,    bin: dsas-linux-static-x86_64, deb: opendsas-deb-amd64 }
-          - { name: arm64,  runs-on: ubuntu-24.04-arm, bin: dsas-linux-static-arm64,  deb: opendsas-deb-arm64  }
+          - { name: x86_64, runs-on: ubuntu-24.04,     bin: dsas-linux-static-x86_64 }
+          - { name: arm64,  runs-on: ubuntu-24.04-arm,  bin: dsas-linux-static-arm64  }
         ubuntu: ["18.04", "24.04"]
 
     steps:
@@ -77,21 +69,13 @@ jobs:
           name: ${{ matrix.arch.bin }}
           path: dist/bin
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: ${{ matrix.arch.deb }}
-          path: dist/deb
-
       - name: Test on Ubuntu ${{ matrix.ubuntu }}
         run: |
           chmod +x dist/bin/dsas
           docker run --rm \
             -v "$PWD/dist/bin:/bin_pkg" \
-            -v "$PWD/dist/deb:/deb_pkg" \
-            ubuntu:${{ matrix.ubuntu }} bash -c '
-              /bin_pkg/dsas --version &&
-              dpkg -i /deb_pkg/*.deb && command -v dsas
-            '
+            ubuntu:${{ matrix.ubuntu }} \
+            /bin_pkg/dsas --version
 
   # ── macOS ──────────────────────────────────────────────────────────────────
   build-macos:
@@ -171,16 +155,6 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: opendsas-deb-amd64
-          path: dist/deb/amd64
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: opendsas-deb-arm64
-          path: dist/deb/arm64
-
-      - uses: actions/download-artifact@v4
-        with:
           name: macos-arm64
           path: dist/macos
 
@@ -191,19 +165,17 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          mv dist/linux/x86_64/dsas             dist/dsas-${{ github.ref_name }}-linux-static-x86_64
-          mv dist/linux/arm64/dsas              dist/dsas-${{ github.ref_name }}-linux-static-arm64
-          mv dist/macos/dsas-macos-arm64.tar.gz dist/dsas-${{ github.ref_name }}-macos-arm64.tar.gz
-          mv dist/windows/dsas.exe              dist/dsas-${{ github.ref_name }}-windows-x86_64.exe
+          mv dist/linux/x86_64/dsas             dist/opendsas-${{ github.ref_name }}-linux-x86_64
+          mv dist/linux/arm64/dsas              dist/opendsas-${{ github.ref_name }}-linux-arm64
+          mv dist/macos/dsas-macos-arm64.tar.gz dist/opendsas-${{ github.ref_name }}-macos-arm64.tar.gz
+          mv dist/windows/dsas.exe              dist/opendsas-${{ github.ref_name }}-windows-x86_64.exe
 
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/dsas-${{ github.ref_name }}-linux-static-x86_64
-            dist/dsas-${{ github.ref_name }}-linux-static-arm64
-            dist/deb/amd64/*.deb
-            dist/deb/arm64/*.deb
-            dist/dsas-${{ github.ref_name }}-macos-arm64.tar.gz
-            dist/dsas-${{ github.ref_name }}-windows-x86_64.exe
+            dist/opendsas-${{ github.ref_name }}-linux-x86_64
+            dist/opendsas-${{ github.ref_name }}-linux-arm64
+            dist/opendsas-${{ github.ref_name }}-macos-arm64.tar.gz
+            dist/opendsas-${{ github.ref_name }}-windows-x86_64.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
