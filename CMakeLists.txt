@@ -26,6 +26,8 @@ include(FetchContent)
 FetchContent_Declare(
   argparse
   GIT_REPOSITORY https://github.com/p-ranav/argparse.git
+  GIT_TAG        v3.1
+  GIT_SHALLOW    TRUE
 )
 FetchContent_MakeAvailable(argparse)
 
@@ -134,23 +136,3 @@ if(BUILD_TESTING)
     add_test(NAME dsas_test COMMAND dsas_test)
   endif()
 endif()
-
-# -------------------------
-# Packaging (.deb via CPack)
-# -------------------------
-set(CPACK_GENERATOR "DEB")
-set(CPACK_PACKAGE_NAME "opendsas")  # package name shown to apt/dpkg
-set(CPACK_PACKAGE_VENDOR "OpenDSAS Project")
-set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
-set(CPACK_PACKAGE_CONTACT "Boyuan Lu blu38@wisc.edu")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenDSAS — high-performance Digital Shoreline Analysis System (CLI)")
-set(CPACK_DEBIAN_PACKAGE_SECTION "science")
-
-# The binary is fully statically linked — no runtime shared-library deps.
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
-set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
-
-# Optional: ship docs
-# install(FILES LICENSE README.md DESTINATION ${CMAKE_INSTALL_DOCDIR})
-
-include(CPack)

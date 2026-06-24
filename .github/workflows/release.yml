@@ -1,0 +1,181 @@
+name: Release artifacts
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # ── Linux ──────────────────────────────────────────────────────────────────
+  build-linux:
+    name: Build Linux — ${{ matrix.arch.name }}
+    runs-on: ${{ matrix.arch.runs-on }}
+    strategy:
+      matrix:
+        arch:
+          - { name: x86_64, runs-on: ubuntu-24.04,     bin: dsas-linux-static-x86_64 }
+          - { name: arm64,  runs-on: ubuntu-24.04-arm,  bin: dsas-linux-static-arm64  }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake git build-essential
+
+      - name: Configure (static)
+        run: |
+          LIBGOMP_A=$(find /usr/lib/gcc -name "libgomp.a" | head -1)
+          [ -n "$LIBGOMP_A" ] || { echo "ERROR: libgomp.a not found"; exit 1; }
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=OFF \
+            -DCMAKE_EXE_LINKER_FLAGS="-static -static-libgcc -static-libstdc++" \
+            -DOpenMP_C_LIB_NAMES="gomp" \
+            -DOpenMP_CXX_LIB_NAMES="gomp" \
+            -DOpenMP_gomp_LIBRARY="$LIBGOMP_A"
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Verify static binary
+        run: file build/dsas | grep -q "statically linked" || { echo "not static"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.arch.bin }}
+          path: build/dsas
+
+  # Test on oldest (18.04) and latest (24.04) — a static binary passing both
+  # is guaranteed to work on everything in between.
+  verify-linux:
+    name: Verify Linux — ${{ matrix.arch.name }} / Ubuntu ${{ matrix.ubuntu }}
+    needs: build-linux
+    runs-on: ${{ matrix.arch.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - { name: x86_64, runs-on: ubuntu-24.04,     bin: dsas-linux-static-x86_64 }
+          - { name: arm64,  runs-on: ubuntu-24.04-arm,  bin: dsas-linux-static-arm64  }
+        ubuntu: ["18.04", "24.04"]
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.arch.bin }}
+          path: dist/bin
+
+      - name: Test on Ubuntu ${{ matrix.ubuntu }}
+        run: |
+          chmod +x dist/bin/dsas
+          docker run --rm \
+            -v "$PWD/dist/bin:/bin_pkg" \
+            ubuntu:${{ matrix.ubuntu }} \
+            /bin_pkg/dsas --version
+
+  # ── macOS ──────────────────────────────────────────────────────────────────
+  build-macos:
+    name: Build macOS — arm64
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install libomp
+        run: brew install libomp
+
+      - name: Configure
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=OFF
+
+      - name: Build
+        run: cmake --build build --parallel $(sysctl -n hw.logicalcpu)
+
+      - name: Fix libomp rpath
+        run: |
+          LIBOMP=$(otool -L build/dsas | awk '/libomp/{print $1}')
+          install_name_tool -change "$LIBOMP" "@rpath/libomp.dylib" build/dsas
+          install_name_tool -add_rpath "$(brew --prefix libomp)/lib" build/dsas
+
+      - name: Package
+        run: tar -czf dsas-macos-arm64.tar.gz -C build dsas
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: dsas-macos-arm64.tar.gz
+
+  # ── Windows ────────────────────────────────────────────────────────────────
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        shell: bash
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=OFF
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x86_64
+          path: build/Release/dsas.exe
+
+  # ── Release ────────────────────────────────────────────────────────────────
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-linux, verify-linux, build-macos, build-windows]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dsas-linux-static-x86_64
+          path: dist/linux/x86_64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dsas-linux-static-arm64
+          path: dist/linux/arm64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-arm64
+          path: dist/macos
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-x86_64
+          path: dist/windows
+
+      - name: Rename artifacts
+        run: |
+          mv dist/linux/x86_64/dsas             dist/opendsas-${{ github.ref_name }}-linux-x86_64
+          mv dist/linux/arm64/dsas              dist/opendsas-${{ github.ref_name }}-linux-arm64
+          mv dist/macos/dsas-macos-arm64.tar.gz dist/opendsas-${{ github.ref_name }}-macos-arm64.tar.gz
+          mv dist/windows/dsas.exe              dist/opendsas-${{ github.ref_name }}-windows-x86_64.exe
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/opendsas-${{ github.ref_name }}-linux-x86_64
+            dist/opendsas-${{ github.ref_name }}-linux-arm64
+            dist/opendsas-${{ github.ref_name }}-macos-arm64.tar.gz
+            dist/opendsas-${{ github.ref_name }}-windows-x86_64.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
