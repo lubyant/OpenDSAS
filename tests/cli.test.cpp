@@ -111,3 +111,41 @@ TEST_F(CLITest, test_parser_cal) {
   EXPECT_EQ(options.transect_orient, Options::TransectOrientation::Mix);
   EXPECT_EQ(options.build_index, true);
 }
+
+TEST_F(CLITest, test_format_consistency) {
+  // cast: GeoJSON input, Shapefile output → error
+  {
+    char *args[] = {(char *)"dsas",         (char *)"cast",
+                    (char *)"--baseline",   (char *)"base.geojson",
+                    (char *)"--output-transect", (char *)"trans.shp"};
+    EXPECT_EXIT(parse_args(sizeof(args) / sizeof(args[0]), args),
+                ::testing::ExitedWithCode(1), "Format mismatch");
+  }
+  // root: Shapefile inputs, GeoJSON transect output → error
+  {
+    char *args[] = {(char *)"dsas",
+                    (char *)"--baseline",        (char *)"base.shp",
+                    (char *)"--shoreline",        (char *)"shore.shp",
+                    (char *)"--output-transect",  (char *)"trans.geojson"};
+    EXPECT_EXIT(parse_args(sizeof(args) / sizeof(args[0]), args),
+                ::testing::ExitedWithCode(1), "Format mismatch");
+  }
+  // cal: GeoJSON inputs, Shapefile intersect output → error
+  {
+    char *args[] = {(char *)"dsas",
+                    (char *)"cal",
+                    (char *)"--transect",         (char *)"trans.geojson",
+                    (char *)"--shoreline",         (char *)"shore.geojson",
+                    (char *)"--output-intersect",  (char *)"out.shp"};
+    EXPECT_EXIT(parse_args(sizeof(args) / sizeof(args[0]), args),
+                ::testing::ExitedWithCode(1), "Format mismatch");
+  }
+  // Consistent formats pass without error
+  {
+    char *args[] = {(char *)"dsas",         (char *)"cast",
+                    (char *)"--baseline",   (char *)"base.geojson",
+                    (char *)"--output-transect", (char *)"trans.geojson"};
+    auto status = parse_args(sizeof(args) / sizeof(args[0]), args);
+    EXPECT_EQ(status, CliStatus::Cast);
+  }
+}
