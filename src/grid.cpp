@@ -136,7 +136,7 @@ Grids build_shoreline_index(
       // overlapped cells
       for (int ix = ix0; ix <= ix1; ++ix) {
         for (int iy = iy0; iy <= iy1; ++iy) {
-          size_t grids_id = ix * nx + iy;
+          size_t grids_id = ix * ny + iy;
           if (grids.find(grids_id) == grids.end()) {
             grids[grids_id] = std::make_unique<Grid>(
                 xmin + ix * grids_id, ymin + iy * grid_size, ix, iy);
