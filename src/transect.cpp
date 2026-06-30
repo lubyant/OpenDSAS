@@ -105,7 +105,7 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
 
   // find out all the available intersection
   for (auto [grid_i, grid_j] : grid_index) {
-    const size_t grid_index = grid_i * Grid::grid_nx + grid_j;
+    const size_t grid_index = grid_i * Grid::grid_ny + grid_j;
     if (grids.find(grid_index) == grids.end()) {
       continue;
     }

@@ -129,3 +129,43 @@ TEST(GridTest, test_build_shoreline_index) {
   ASSERT_EQ(grids.count(0), 1);
   ASSERT_EQ(grids.count(1), 0);
 }
+
+TEST(GridTest, test_build_shoreline_index_taller_than_wide) {
+  // Grid is 2 cells wide (nx=2) and 6 cells tall (ny=6).
+  // The buggy formula  ix*nx+iy  maps cells (0,2) and (1,0) both to key 2.
+  // The correct formula ix*ny+iy  maps them to keys 2 and 6 — distinct.
+  Grid::grids_bound_left_bottom_x = 0;
+  Grid::grids_bound_left_bottom_y = 0;
+  Grid::grids_bound_right_top_x   = 2;
+  Grid::grids_bound_right_top_y   = 6;
+  Grid::grid_size = 1;
+
+  dsas::Date date{2000, 1, 1};
+
+  // Segment A lands in cell (ix=0, iy=2): correct key = 0*ny+2 = 2
+  auto shore_a = std::make_unique<Shoreline>(
+      std::vector<Point>{{0.0, 2.1}, {0.5, 2.5}}, 0, date);
+
+  // Segment B lands in cell (ix=1, iy=0): correct key = 1*ny+0 = 6
+  // Under the buggy formula: A -> 0*2+2=2, B -> 1*2+0=2 (collision)
+  auto shore_b = std::make_unique<Shoreline>(
+      std::vector<Point>{{1.1, 0.0}, {1.5, 0.5}}, 1, date);
+
+  std::vector<std::unique_ptr<Shoreline>> shorelines;
+  shorelines.push_back(std::move(shore_a));
+  shorelines.push_back(std::move(shore_b));
+
+  auto grids = build_shoreline_index(shorelines);
+
+  // Two segments in two distinct cells must produce two map entries.
+  // With the bug grids.size() == 1 (both collapsed into key 2).
+  ASSERT_EQ(grids.size(), 2);
+
+  // Cell (0,2) -> key 2: holds only segment A
+  ASSERT_EQ(grids.count(2), 1);
+  ASSERT_EQ(grids.at(2)->shoreline_segs.size(), 1);
+
+  // Cell (1,0) -> key 6: holds only segment B
+  ASSERT_EQ(grids.count(6), 1);
+  ASSERT_EQ(grids.at(6)->shoreline_segs.size(), 1);
+}
