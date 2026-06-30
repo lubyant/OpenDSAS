@@ -192,7 +192,6 @@ void build_transect_index(
     return y_index;
   };
   const auto total = static_cast<std::int64_t>(transects.size());
-#pragma omp parallel for schedule(static)
   for (std::int64_t i = 0; i < total; i++) {
     auto &transect = transects[i];
     const double min_x =
