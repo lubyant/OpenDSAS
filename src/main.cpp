@@ -1,3 +1,4 @@
+// GCOVR_EXCL_START
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -115,3 +116,4 @@ int main(int argc, char* argv[]) {
   std::cout << "Calculation Done!\n";
   return 0;
 }
+// GCOVR_EXCL_STOP

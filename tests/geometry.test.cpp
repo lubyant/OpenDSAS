@@ -5,6 +5,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sstream>
+
 #include "options.hpp"
 
 #define TOL 1e-4
@@ -41,4 +43,32 @@ TEST(LineTest, test_move) {
   ASSERT_NEAR(lineSegment.leftEdge_.y, (double)sqrt(2) / 2, TOL);
   ASSERT_NEAR(lineSegment.rightEdge_.x, (double)(1 - sqrt(2) / 2), TOL);
   ASSERT_NEAR(lineSegment.rightEdge_.y, (double)(1 + sqrt(2) / 2), TOL);
+}
+
+TEST(PointTest, test_stream_output) {
+  Point p{3.0, 4.0};
+  std::ostringstream oss;
+  oss << p;
+  ASSERT_EQ(oss.str(), "x: 3, y: 4");
+}
+
+TEST(PointTest, test_inequality) {
+  ASSERT_TRUE(Point(1.0, 2.0) != Point(3.0, 4.0));
+  ASSERT_FALSE(Point(1.0, 2.0) != Point(1.0, 2.0));
+}
+
+TEST(PointTest, test_create_point_zero_orient) {
+  Point p{1.0, 2.0};
+  auto q = p.create_point({0.0, 0.0}, 5.0);
+  ASSERT_NEAR(q.x, 1.0, TOL);
+  ASSERT_NEAR(q.y, 2.0, TOL);
+}
+
+TEST(LineTest, test_find_intersection_nullopt) {
+  // Parallel horizontal lines — computeIntersectPoint returns false → nullopt
+  Point p1{0.0, 0.0}, p2{1.0, 0.0};
+  LineSegment line{p1, p2};
+  Point p3{0.0, 1.0}, p4{1.0, 1.0};
+  auto result = line.find_intersection(p3, p4);
+  ASSERT_FALSE(result.has_value());
 }
