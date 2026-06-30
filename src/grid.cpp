@@ -141,8 +141,8 @@ Grids build_shoreline_index(
             grids[grids_id] = std::make_unique<Grid>(
                 xmin + ix * grids_id, ymin + iy * grid_size, ix, iy);
           }
-          grids[grids_id]->shoreline_segs.emplace_back(a, b,
-                                                       shoreline.get());
+          grids[grids_id]->shoreline_segs.emplace_back(
+              ShoreSeg{a, b, shoreline.get(), j});
         }
       }
     }
