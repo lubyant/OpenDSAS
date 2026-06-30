@@ -35,7 +35,7 @@ std::vector<std::unique_ptr<IntersectPoint>> generate_intersects(
   {
     std::vector<Pending> local;
 
-#pragma omp for collapse(2) schedule(dynamic)
+#pragma omp for schedule(static)
     for (std::int64_t i = 0; i < transects.size(); i++) {
       for (std::int64_t j = 0; j < shorelines.size(); j++) {
         auto ret = transects[i]->intersection(*shorelines[j]);
