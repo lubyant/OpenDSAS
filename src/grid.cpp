@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <memory>
 #include <queue>
+#include <vector>
 
 namespace dsas {
 
@@ -108,41 +109,62 @@ Grids build_shoreline_index(
     return y_index;
   };
 
+  // Each thread builds a local Grids map over its slice of shorelines.
+  // The critical section merges them once per thread at the end, so the
+  // only serialised work is O(cells per thread), not O(segments).
   Grids grids;
-  for (const auto & shoreline : shorelines) {
-    const auto &pts = shoreline->shoreline_vertices_;
-    if (pts.size() < 2) continue;
+  const auto n_shores = static_cast<std::int64_t>(shorelines.size());
+#pragma omp parallel
+  {
+    Grids local;
+#pragma omp for schedule(static)
+    for (std::int64_t si = 0; si < n_shores; ++si) {
+      const auto &shoreline = shorelines[si];
+      const auto &pts = shoreline->shoreline_vertices_;
+      if (pts.size() < 2) continue;
 
-    for (size_t j = 0; j + 1 < pts.size(); ++j) {
-      const auto &a = pts[j];
-      const auto &b = pts[j + 1];
+      for (size_t j = 0; j + 1 < pts.size(); ++j) {
+        const auto &a = pts[j];
+        const auto &b = pts[j + 1];
 
-      // segment bbox
-      const double xmin = std::min(a.x, b.x);
-      const double xmax = std::max(a.x, b.x);
-      const double ymin = std::min(a.y, b.y);
-      const double ymax = std::max(a.y, b.y);
+        const double xmin = std::min(a.x, b.x);
+        const double xmax = std::max(a.x, b.x);
+        const double ymin = std::min(a.y, b.y);
+        const double ymax = std::max(a.y, b.y);
 
-      // map to inclusive cell range (half-open convention)
-      int ix0 = compute_index_x(xmin);
-      int ix1 = compute_index_x(xmax);
-      int iy0 = compute_index_y(ymin);
-      int iy1 = compute_index_y(ymax);
+        int ix0 = compute_index_x(xmin);
+        int ix1 = compute_index_x(xmax);
+        int iy0 = compute_index_y(ymin);
+        int iy1 = compute_index_y(ymax);
 
-      // if clamped min > max, the bbox doesn't overlap the grid
-      if (ix0 > ix1 || iy0 > iy1) continue;
+        if (ix0 > ix1 || iy0 > iy1) continue;
 
-      // insert this segment ID (shoreline si, local segment j) into all
-      // overlapped cells
-      for (int ix = ix0; ix <= ix1; ++ix) {
-        for (int iy = iy0; iy <= iy1; ++iy) {
-          size_t grids_id = ix * ny + iy;
-          if (grids.find(grids_id) == grids.end()) {
-            grids[grids_id] = std::make_unique<Grid>(
-                xmin + ix * grids_id, ymin + iy * grid_size, ix, iy);
+        for (int ix = ix0; ix <= ix1; ++ix) {
+          for (int iy = iy0; iy <= iy1; ++iy) {
+            size_t grids_id = ix * ny + iy;
+            auto it = local.find(grids_id);
+            if (it == local.end()) {
+              it = local.emplace(grids_id, std::make_unique<Grid>(
+                                               left_bottom_x + ix * grid_size,
+                                               left_bottom_y + iy * grid_size,
+                                               ix, iy)).first;
+            }
+            it->second->shoreline_segs.emplace_back(ShoreSeg{a, b, shoreline.get()});
           }
-          grids[grids_id]->shoreline_segs.emplace_back(a, b,
-                                                       shoreline.get());
+        }
+      }
+    }
+#pragma omp critical
+    {
+      for (auto &[key, cell] : local) {
+        auto it = grids.find(key);
+        if (it == grids.end()) {
+          grids.emplace(key, std::move(cell));
+        } else {
+          auto &dst = it->second->shoreline_segs;
+          auto &src = cell->shoreline_segs;
+          dst.insert(dst.end(), std::make_move_iterator(src.begin()),
+                     std::make_move_iterator(src.end()));
         }
       }
     }
