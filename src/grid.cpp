@@ -1,9 +1,11 @@
 #include "grid.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <limits>
 #include <memory>
-#include <queue>
+#include <vector>
 
 namespace dsas {
 
@@ -17,36 +19,61 @@ size_t Grid::grid_ny = 0;
 
 void compute_grid_bound(
     const std::vector<std::unique_ptr<Shoreline>> &shorelines, bool padding) {
-  // two pq to find the median length of shorelines
-  std::priority_queue<double> max_pq;
-  std::priority_queue<double, std::vector<double>, std::greater<double>> min_pq;
   double min_x = std::numeric_limits<double>::max();
   double min_y = std::numeric_limits<double>::max();
   double max_x = std::numeric_limits<double>::lowest();
   double max_y = std::numeric_limits<double>::lowest();
+  std::vector<double> seg_lengths;
 
-  for (const auto &shoreline : shorelines) {
-    for (size_t i = 0; i < shoreline->size(); i++) {
-      min_x = std::min(min_x, (*shoreline)[i].x);
-      max_x = std::max(max_x, (*shoreline)[i].x);
-      min_y = std::min(min_y, (*shoreline)[i].y);
-      max_y = std::max(max_y, (*shoreline)[i].y);
-      if (i < shoreline->size() - 1) {
-        double seg_len = (*shoreline)[i].distance_to_point((*shoreline)[i + 1]);
-        max_pq.push(seg_len);
-        min_pq.push(max_pq.top());
-        max_pq.pop();
+  // Parallel pass: each thread accumulates its own min/max and segment
+  // lengths, then merges into the shared result under a critical section.
+  const auto n = static_cast<std::int64_t>(shorelines.size());
+#pragma omp parallel
+  {
+    double lmin_x = std::numeric_limits<double>::max();
+    double lmin_y = std::numeric_limits<double>::max();
+    double lmax_x = std::numeric_limits<double>::lowest();
+    double lmax_y = std::numeric_limits<double>::lowest();
+    std::vector<double> local_lengths;
 
-        if (max_pq.size() < min_pq.size()) {
-          max_pq.push(min_pq.top());
-          min_pq.pop();
+#pragma omp for schedule(static) nowait
+    for (std::int64_t si = 0; si < n; ++si) {
+      const auto &shore = shorelines[si];
+      for (size_t i = 0; i < shore->size(); ++i) {
+        const auto &pt = (*shore)[i];
+        lmin_x = std::min(lmin_x, pt.x);
+        lmax_x = std::max(lmax_x, pt.x);
+        lmin_y = std::min(lmin_y, pt.y);
+        lmax_y = std::max(lmax_y, pt.y);
+        if (i + 1 < shore->size()) {
+          local_lengths.push_back(pt.distance_to_point((*shore)[i + 1]));
         }
       }
     }
+
+#pragma omp critical
+    {
+      min_x = std::min(min_x, lmin_x);
+      max_x = std::max(max_x, lmax_x);
+      min_y = std::min(min_y, lmin_y);
+      max_y = std::max(max_y, lmax_y);
+      seg_lengths.insert(seg_lengths.end(),
+                         std::make_move_iterator(local_lengths.begin()),
+                         std::make_move_iterator(local_lengths.end()));
+    }
   }
-  double median_seg_len = max_pq.size() > min_pq.size()
-                              ? max_pq.top()
-                              : (min_pq.top() + max_pq.top()) / 2;
+
+  // Find median with nth_element (O(N) average).
+  const size_t mid = seg_lengths.size() / 2;
+  std::nth_element(seg_lengths.begin(), seg_lengths.begin() + mid,
+                   seg_lengths.end());
+  double median_seg_len = seg_lengths[mid];
+  if (seg_lengths.size() % 2 == 0 && mid > 0) {
+    // Even count: average the two central elements.
+    std::nth_element(seg_lengths.begin(), seg_lengths.begin() + mid - 1,
+                     seg_lengths.begin() + mid);
+    median_seg_len = (seg_lengths[mid - 1] + seg_lengths[mid]) / 2.0;
+  }
 
   Grid::grid_size = median_seg_len;
 
