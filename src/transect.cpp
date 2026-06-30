@@ -4,9 +4,11 @@
 #include <shapefil.h>
 
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <unordered_set>
 #include <utility>
 
 #include "exception.hpp"
@@ -101,29 +103,38 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
     const Grids &grids) const {
   if (grid_index.empty()) return {};
 
-  std::vector<std::unique_ptr<IntersectPoint>> intersections;
+  // Collect unique candidate segments across all cells the transect touches.
+  // A segment that spans K cells would otherwise be tested K times; the set
+  // ensures each (shoreline_id, seg_idx) pair is tested at most once.
+  std::unordered_set<uint64_t> seen;
+  std::vector<const ShoreSeg *> candidates;
 
-  // find out all the available intersection
   for (auto [grid_i, grid_j] : grid_index) {
-    const size_t grid_index = grid_i * Grid::grid_ny + grid_j;
-    if (grids.find(grid_index) == grids.end()) {
-      continue;
-    }
-    const auto &grid = grids.at(grid_index);
-    for (const auto &shore_seg : grid->shoreline_segs) {
-      if (is_intersect(shore_seg.start, shore_seg.end)) {
-        auto ret = find_intersection(shore_seg.start, shore_seg.end);
-        auto point = ret.value();
-        auto distance = distance2ref(point);
-        auto intersect_point = std::make_unique<IntersectPoint>(
-            point, transect_id_, shore_seg.shoreline->shoreline_id_,
-            baseline_id_, shore_seg.shoreline->date_, distance);
-        intersections.push_back(std::move(intersect_point));
+    auto it = grids.find(grid_i * Grid::grid_ny + grid_j);
+    if (it == grids.end()) continue;
+    for (const auto &seg : it->second->shoreline_segs) {
+      uint64_t key = (static_cast<uint64_t>(
+                          static_cast<uint32_t>(seg.shoreline->shoreline_id_))
+                      << 32) |
+                     static_cast<uint64_t>(seg.seg_idx);
+      if (seen.insert(key).second) {
+        candidates.push_back(&seg);
       }
     }
   }
 
-  // if more than two intersections, pick one base on the intersection mode
+  std::vector<std::unique_ptr<IntersectPoint>> intersections;
+  for (const auto *seg : candidates) {
+    if (is_intersect(seg->start, seg->end)) {
+      auto point = find_intersection(seg->start, seg->end).value();
+      auto distance = distance2ref(point);
+      intersections.push_back(std::make_unique<IntersectPoint>(
+          point, transect_id_, seg->shoreline->shoreline_id_,
+          baseline_id_, seg->shoreline->date_, distance));
+    }
+  }
+
+  // Pick one intersection per shoreline (closest or farthest).
   std::sort(intersections.begin(), intersections.end(),
             [&](const auto &a, const auto &b) {
               if (a->shoreline_id_ == b->shoreline_id_) {
@@ -135,12 +146,10 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
             });
 
   intersections.erase(
-      std::unique(
-          intersections.begin(), intersections.end(),
-          [](auto &a, auto &b) {
-            return a->shoreline_id_ ==
-                   b->shoreline_id_;  // consider "same" if first is equal
-          }),
+      std::unique(intersections.begin(), intersections.end(),
+                  [](auto &a, auto &b) {
+                    return a->shoreline_id_ == b->shoreline_id_;
+                  }),
       intersections.end());
   return intersections;
 }

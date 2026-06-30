@@ -31,6 +31,7 @@ struct ShoreSeg {
   Point start;
   Point end;
   Shoreline *shoreline = nullptr;  // shoreline object that this seg belong to
+  size_t seg_idx = 0;              // index within shoreline->shoreline_vertices_
 };
 Date generate_date_from_str(const char *date_str);
 std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
