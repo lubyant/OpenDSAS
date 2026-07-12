@@ -1,0 +1,106 @@
+name: Benchmark Compare
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch_a:
+        description: "Baseline branch/ref"
+        required: true
+        default: "main"
+      branch_b:
+        description: "Candidate branch/ref to compare against the baseline"
+        required: true
+      benchmark_filter:
+        description: "Regex passed to --benchmark_filter"
+        required: false
+        default: ".*"
+      repetitions:
+        description: "Repetitions per benchmark (--benchmark_repetitions)"
+        required: false
+        default: "5"
+
+jobs:
+  compare:
+    name: Benchmark ${{ inputs.branch_a }} vs ${{ inputs.branch_b }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch A (baseline)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch_a }}
+          path: branch-a
+          submodules: recursive
+
+      - name: Checkout branch B (candidate)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch_b }}
+          path: branch-b
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libomp-dev
+          pip install --quiet numpy scipy
+
+      - name: Report runner CPU info
+        run: |
+          nproc
+          lscpu
+
+      # Both branches share a FetchContent download cache (source only - each
+      # still builds its own object files) so we don't reclone argparse,
+      # nlohmann_json, shapelib and benchmark twice on the same runner.
+      - name: Build & run benchmark - branch A (${{ inputs.branch_a }})
+        working-directory: branch-a
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_BENCHMARK=ON \
+            -DBUILD_TESTING=OFF \
+            -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/_deps_shared
+          cmake --build build --target dsas_benchmark -j
+          ./build/dsas_benchmark \
+            --benchmark_filter="${{ inputs.benchmark_filter }}" \
+            --benchmark_repetitions="${{ inputs.repetitions }}" \
+            --benchmark_report_aggregates_only=true \
+            --benchmark_out=result.json \
+            --benchmark_out_format=json
+
+      - name: Build & run benchmark - branch B (${{ inputs.branch_b }})
+        working-directory: branch-b
+        run: |
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_BENCHMARK=ON \
+            -DBUILD_TESTING=OFF \
+            -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/_deps_shared
+          cmake --build build --target dsas_benchmark -j
+          ./build/dsas_benchmark \
+            --benchmark_filter="${{ inputs.benchmark_filter }}" \
+            --benchmark_repetitions="${{ inputs.repetitions }}" \
+            --benchmark_report_aggregates_only=true \
+            --benchmark_out=result.json \
+            --benchmark_out_format=json
+
+      - name: Compare results
+        run: |
+          {
+            echo "## Benchmark comparison: \`${{ inputs.branch_a }}\` (A) vs \`${{ inputs.branch_b }}\` (B)"
+            echo
+            echo '```text'
+            python3 branch-a/build/_deps/benchmark-src/tools/compare.py \
+              --no-color -a benchmarks \
+              branch-a/result.json branch-b/result.json
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload raw results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-compare-${{ github.run_id }}
+          path: |
+            branch-a/result.json
+            branch-b/result.json
+          retention-days: 90
