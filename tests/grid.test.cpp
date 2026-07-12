@@ -169,3 +169,45 @@ TEST(GridTest, test_build_shoreline_index_taller_than_wide) {
   ASSERT_EQ(grids.count(6), 1);
   ASSERT_EQ(grids.at(6)->shoreline_segs.size(), 1);
 }
+
+TEST(GridTest, test_compute_grid_bound_even_segments) {
+  // 5 points → 4 segments → even count → median uses two-heap average branch
+  std::vector<Point> pts{{0, 0}, {1, 1}, {2, 2}, {3, 3}, {4, 4}};
+  dsas::Date d{2000, 1, 1};
+  auto shore = std::make_unique<Shoreline>(pts, 0, d);
+  std::vector<std::unique_ptr<Shoreline>> shores;
+  shores.push_back(std::move(shore));
+  compute_grid_bound(shores);
+  ASSERT_NEAR(Grid::grid_size, sqrt(2.0), TOL);
+}
+
+TEST(GridTest, test_build_shoreline_index_clamping) {
+  // Segment extends beyond grid bounds → ix/iy clamped to grid limits
+  Grid::grids_bound_left_bottom_x = 0;
+  Grid::grids_bound_left_bottom_y = 0;
+  Grid::grids_bound_right_top_x = 3;
+  Grid::grids_bound_right_top_y = 3;
+  Grid::grid_size = 1;
+  dsas::Date d{2000, 1, 1};
+  auto shore = std::make_unique<Shoreline>(
+      std::vector<Point>{{2.0, 2.0}, {4.0, 4.0}}, 0, d);
+  std::vector<std::unique_ptr<Shoreline>> shores;
+  shores.push_back(std::move(shore));
+  auto grids = build_shoreline_index(shores);
+  ASSERT_FALSE(grids.empty());
+}
+
+TEST(GridTest, test_build_transect_index_clamping) {
+  // Transect extends beyond grid bounds → ix/iy clamped to grid limits
+  Grid::grids_bound_left_bottom_x = 0;
+  Grid::grids_bound_left_bottom_y = 0;
+  Grid::grids_bound_right_top_x = 3;
+  Grid::grids_bound_right_top_y = 3;
+  Grid::grid_size = 1;
+  Point start{2.0, 1.0}, end{4.0, 1.0};
+  auto t = std::make_unique<TransectLine>(start, end, 0, 0);
+  std::vector<std::unique_ptr<TransectLine>> transects;
+  transects.push_back(std::move(t));
+  build_transect_index(transects);
+  ASSERT_FALSE(transects[0]->grid_index.empty());
+}
