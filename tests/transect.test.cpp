@@ -277,7 +277,7 @@ TEST_F(TransectTest, test_transect_operator_index_oob) {
   (void)t[0];
   (void)t[1];
   (void)t[2];
-  ASSERT_THROW(t[3], DSASError);
+  ASSERT_THROW((void)t[3], DSASError);
 }
 
 TEST_F(TransectTest, test_transect_nan_reference_point) {
