@@ -86,11 +86,12 @@ jobs:
 
       - name: Compare results
         run: |
+          set -euo pipefail
           {
             echo "## Benchmark comparison: \`${{ inputs.branch_a }}\` (A) vs \`${{ inputs.branch_b }}\` (B)"
             echo
             echo '```text'
-            python3 branch-a/build/_deps/benchmark-src/tools/compare.py \
+            python3 _deps_shared/benchmark-src/tools/compare.py \
               --no-color -a benchmarks \
               branch-a/result.json branch-b/result.json
             echo '```'
