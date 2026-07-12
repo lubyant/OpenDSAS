@@ -21,8 +21,22 @@ on:
 
 jobs:
   compare:
-    name: Benchmark ${{ inputs.branch_a }} vs ${{ inputs.branch_b }}
-    runs-on: ubuntu-latest
+    name: Benchmark ${{ inputs.branch_a }} vs ${{ inputs.branch_b }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # ubuntu-latest/windows-latest are x86_64; macos-latest is arm64
+        # (Apple Silicon); ubuntu-24.04-arm is arm64 Linux - included
+        # specifically to isolate x86_64 vs arm64 on the same OS, since
+        # macOS vs Linux/Windows alone confounds OS with architecture.
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+    # Windows runners ship Git Bash, so forcing bash everywhere lets branch A/B
+    # build scripts stay identical (OS-specific bits handled via $RUNNER_OS)
+    # instead of duplicating each step per platform.
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout branch A (baseline)
         uses: actions/checkout@v4
@@ -38,16 +52,28 @@ jobs:
           path: branch-b
           submodules: recursive
 
-      - name: Install dependencies
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libomp-dev
-          pip install --quiet numpy scipy
 
-      - name: Report runner CPU info
-        run: |
-          nproc
-          lscpu
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libomp
+
+      # Windows needs no extra OpenMP install - MSVC bundles it.
+
+      - name: Install Python packages
+        run: python -m pip install --quiet numpy scipy
+
+      - name: Report runner info
+        run: python -c "import platform, os; print(platform.platform()); print('logical CPUs:', os.cpu_count())"
 
       # Both branches share a FetchContent download cache (source only - each
       # still builds its own object files) so we don't reclone argparse,
@@ -55,13 +81,24 @@ jobs:
       - name: Build & run benchmark - branch A (${{ inputs.branch_a }})
         working-directory: branch-a
         run: |
-          cmake -B build -S . \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_BENCHMARK=ON \
-            -DBUILD_TESTING=OFF \
-            -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/_deps_shared
-          cmake --build build --target dsas_benchmark -j
-          ./build/dsas_benchmark \
+          set -euo pipefail
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            cmake -B build -S . \
+              -DBUILD_BENCHMARK=ON \
+              -DBUILD_TESTING=OFF \
+              -DFETCHCONTENT_BASE_DIR="${{ github.workspace }}/_deps_shared"
+            cmake --build build --target dsas_benchmark --config Release -j
+            EXE=./build/Release/dsas_benchmark.exe
+          else
+            cmake -B build -S . \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DBUILD_BENCHMARK=ON \
+              -DBUILD_TESTING=OFF \
+              -DFETCHCONTENT_BASE_DIR="${{ github.workspace }}/_deps_shared"
+            cmake --build build --target dsas_benchmark -j
+            EXE=./build/dsas_benchmark
+          fi
+          "$EXE" \
             --benchmark_filter="${{ inputs.benchmark_filter }}" \
             --benchmark_repetitions="${{ inputs.repetitions }}" \
             --benchmark_report_aggregates_only=true \
@@ -71,13 +108,24 @@ jobs:
       - name: Build & run benchmark - branch B (${{ inputs.branch_b }})
         working-directory: branch-b
         run: |
-          cmake -B build -S . \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_BENCHMARK=ON \
-            -DBUILD_TESTING=OFF \
-            -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/_deps_shared
-          cmake --build build --target dsas_benchmark -j
-          ./build/dsas_benchmark \
+          set -euo pipefail
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            cmake -B build -S . \
+              -DBUILD_BENCHMARK=ON \
+              -DBUILD_TESTING=OFF \
+              -DFETCHCONTENT_BASE_DIR="${{ github.workspace }}/_deps_shared"
+            cmake --build build --target dsas_benchmark --config Release -j
+            EXE=./build/Release/dsas_benchmark.exe
+          else
+            cmake -B build -S . \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DBUILD_BENCHMARK=ON \
+              -DBUILD_TESTING=OFF \
+              -DFETCHCONTENT_BASE_DIR="${{ github.workspace }}/_deps_shared"
+            cmake --build build --target dsas_benchmark -j
+            EXE=./build/dsas_benchmark
+          fi
+          "$EXE" \
             --benchmark_filter="${{ inputs.benchmark_filter }}" \
             --benchmark_repetitions="${{ inputs.repetitions }}" \
             --benchmark_report_aggregates_only=true \
@@ -88,10 +136,10 @@ jobs:
         run: |
           set -euo pipefail
           {
-            echo "## Benchmark comparison: \`${{ inputs.branch_a }}\` (A) vs \`${{ inputs.branch_b }}\` (B)"
+            echo "## Benchmark comparison (${{ matrix.os }}): \`${{ inputs.branch_a }}\` (A) vs \`${{ inputs.branch_b }}\` (B)"
             echo
             echo '```text'
-            python3 _deps_shared/benchmark-src/tools/compare.py \
+            python _deps_shared/benchmark-src/tools/compare.py \
               --no-color -a benchmarks \
               branch-a/result.json branch-b/result.json
             echo '```'
@@ -100,7 +148,7 @@ jobs:
       - name: Upload raw results
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-compare-${{ github.run_id }}
+          name: benchmark-compare-${{ github.run_id }}-${{ matrix.os }}
           path: |
             branch-a/result.json
             branch-b/result.json
