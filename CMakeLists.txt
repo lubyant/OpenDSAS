@@ -157,3 +157,25 @@ if(BUILD_TESTING)
     add_test(NAME dsas_test COMMAND dsas_test)
   endif()
 endif()
+
+
+# -------------------------
+# Benchmark (optional)
+# -------------------------
+option(BUILD_BENCHMARK "Build benchmark (default off)" OFF)
+if(BUILD_BENCHMARK)
+  include(FetchContent)
+  FetchContent_Declare(
+    benchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG        v1.9.1
+    GIT_SHALLOW    TRUE
+  )
+  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+  set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(benchmark)
+
+  file(GLOB BENCHMARK_SOURCES "${PROJECT_SOURCE_DIR}/benchmark/*.cpp")
+  add_executable(dsas_benchmark ${BENCHMARK_SOURCES})
+  target_link_libraries(dsas_benchmark PRIVATE dsas_lib benchmark::benchmark_main)
+endif()
