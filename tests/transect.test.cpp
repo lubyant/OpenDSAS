@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <filesystem>
+#include <limits>
 #include <stdexcept>
 
 #include "grid.hpp"
@@ -248,4 +249,78 @@ TEST_F(TransectTest, test_load_transects_from_shp) {
     f.close();
     ASSERT_THROW(load_transects_from_shp(tmp), std::runtime_error);
   }
+}
+
+TEST_F(TransectTest, test_transect_second_constructor_orientations) {
+  {
+    Point start{0.0, 0.0}, end{1.0, 1.0};
+    TransectLine t(start, end, 0, 0,
+                   Options::IntersectionMode::Closest,
+                   Options::TransectOrientation::Left);
+    ASSERT_NEAR(t.transect_ref_point_.x, start.x, TOL);
+    ASSERT_NEAR(t.transect_ref_point_.y, start.y, TOL);
+  }
+  {
+    Point start{0.0, 0.0}, end{1.0, 1.0};
+    TransectLine t(start, end, 0, 0,
+                   Options::IntersectionMode::Closest,
+                   Options::TransectOrientation::Right);
+    ASSERT_NEAR(t.transect_ref_point_.x, end.x, TOL);
+    ASSERT_NEAR(t.transect_ref_point_.y, end.y, TOL);
+  }
+}
+
+TEST_F(TransectTest, test_transect_operator_index_oob) {
+  Point start{0.0, 0.0}, end{1.0, 1.0};
+  TransectLine t(start, end, 0, 0);
+  // Valid indices
+  (void)t[0];
+  (void)t[1];
+  (void)t[2];
+  ASSERT_THROW(t[3], DSASError);
+}
+
+TEST_F(TransectTest, test_transect_nan_reference_point) {
+  Point base{1.0, 2.0};
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  ASSERT_THROW((TransectLine{base, 10.0, {nan, 0.0}, 0, 0}), DSASError);
+}
+
+TEST_F(TransectTest, test_transect_no_intersection) {
+  Point start{0.0, 0.0}, end{0.0, 1.0};
+  TransectLine t(start, end, 0, 0);
+  std::vector<Point> shore_pts{{10.0, 10.0}, {11.0, 10.0}};
+  Date d{2000, 1, 1};
+  Shoreline shore(shore_pts, 0, d);
+  auto result = t.intersection(shore);
+  ASSERT_FALSE(result.has_value());
+}
+
+TEST_F(TransectTest, test_transect_farthest_mode_multiple_intersections) {
+  // Transect from (0,0) to (0,10); ref point = midpoint (0,5)
+  // Segment (-1,1)→(1,1) intersects at (0,1): dist to ref = 4
+  // Segment (-1,3)→(1,3) intersects at (0,3): dist to ref = 2
+  // Farthest mode picks (0,1)
+  Point start{0.0, 0.0}, end{0.0, 10.0};
+  TransectLine t(start, end, 0, 0,
+                 Options::IntersectionMode::Farthest,
+                 Options::TransectOrientation::Mix);
+  std::vector<Point> shore_pts{{-1.0, 1.0}, {1.0, 1.0}, {-1.0, 3.0}, {1.0, 3.0}};
+  Date d{2000, 1, 1};
+  Shoreline shore(shore_pts, 0, d);
+  auto result = t.intersection(shore);
+  ASSERT_TRUE(result.has_value());
+  ASSERT_NEAR(result->x, 0.0, TOL);
+  ASSERT_NEAR(result->y, 1.0, TOL);
+}
+
+TEST_F(TransectTest, test_transect_grid_intersection_missing_cell) {
+  // grid_index references a cell not in the Grids map — should be skipped
+  Point start{0.0, 0.0}, end{0.0, 1.0};
+  TransectLine t(start, end, 0, 0);
+  t.grid_index.push_back({0, 0});
+  Grid::grid_ny = 10;
+  Grids empty_grids;
+  auto results = t.intersection(empty_grids);
+  ASSERT_TRUE(results.empty());
 }
