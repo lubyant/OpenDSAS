@@ -26,7 +26,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # ubuntu-latest/windows-latest are x86_64; macos-latest is arm64
+        # (Apple Silicon); ubuntu-24.04-arm is arm64 Linux - included
+        # specifically to isolate x86_64 vs arm64 on the same OS, since
+        # macOS vs Linux/Windows alone confounds OS with architecture.
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
     # Windows runners ship Git Bash, so forcing bash everywhere lets branch A/B
     # build scripts stay identical (OS-specific bits handled via $RUNNER_OS)
     # instead of duplicating each step per platform.
