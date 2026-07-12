@@ -174,3 +174,31 @@ TEST_F(CLITest, test_format_consistency) {
     EXPECT_EQ(status, CliStatus::Root);
   }
 }
+
+TEST_F(CLITest, test_intersection_mode_farthest) {
+  char *args[] = {(char *)"dsas",        (char *)"cal",
+                  (char *)"--transect",  (char *)"trans.shp",
+                  (char *)"--shoreline", (char *)"shores.shp",
+                  (char *)"--intersection-mode", (char *)"farthest"};
+  parse_args(sizeof(args) / sizeof(args[0]), args);
+  EXPECT_EQ(options.intersection_mode, Options::IntersectionMode::Farthest);
+}
+
+TEST_F(CLITest, test_invalid_intersection_mode) {
+  char *args[] = {(char *)"dsas",        (char *)"cal",
+                  (char *)"--transect",  (char *)"trans.shp",
+                  (char *)"--shoreline", (char *)"shores.shp",
+                  (char *)"--intersection-mode", (char *)"bogus"};
+  EXPECT_EXIT(parse_args(sizeof(args) / sizeof(args[0]), args),
+              ::testing::ExitedWithCode(1), "Invalid --intersection-mode");
+}
+
+TEST_F(CLITest, test_invalid_transect_orientation) {
+  char *args[] = {(char *)"dsas",
+                  (char *)"cast",
+                  (char *)"--baseline",       (char *)"base.shp",
+                  (char *)"--output-transect", (char *)"trans.shp",
+                  (char *)"--transect-orientation", (char *)"bogus"};
+  EXPECT_EXIT(parse_args(sizeof(args) / sizeof(args[0]), args),
+              ::testing::ExitedWithCode(1), "Invalid --transect-orientation");
+}
