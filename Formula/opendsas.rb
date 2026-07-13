@@ -6,6 +6,13 @@ class Opendsas < Formula
   sha256 "4ddb43516fd3e29928897f0d5671c9f89ca24a95edbd7df791636f1e21f63893"
   license "MIT"
 
+  # Track the newest GitHub release so `brew livecheck` / `bump-formula-pr`
+  # can flag when url+sha256 need updating for a new version.
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   # Only an Apple Silicon build is published.
   depends_on arch: :arm64
   # libomp is required at runtime — the binary uses @rpath/libomp.dylib
