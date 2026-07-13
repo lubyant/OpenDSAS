@@ -44,7 +44,7 @@ An `arm64` build (`opendsas-vX.Y-linux-arm64`) is also available for ARM servers
 Install via [Homebrew](https://brew.sh) using the OpenDSAS tap:
 
 ```bash
-brew tap lubyant/opendsas
+brew tap lubyant/opendsas https://github.com/lubyant/OpenDSAS
 brew install lubyant/opendsas/opendsas
 ```
 
