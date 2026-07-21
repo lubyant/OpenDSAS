@@ -1,12 +1,12 @@
 #include "transect.hpp"
 
-#include <nlohmann/json.hpp>
 #include <shapefil.h>
 
 #include <cstddef>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <utility>
 
 #include "exception.hpp"
@@ -209,12 +209,13 @@ static std::vector<std::unique_ptr<TransectLine>> load_transects_geojson(
     int baseline_id = props["BaselineId"].get<int>();
 
     auto &coords = feature["geometry"]["coordinates"];
-    Point left(coords.front()[0].get<double>(), coords.front()[1].get<double>());
+    Point left(coords.front()[0].get<double>(),
+               coords.front()[1].get<double>());
     Point right(coords.back()[0].get<double>(), coords.back()[1].get<double>());
 
     transects.push_back(std::make_unique<TransectLine>(
-        left, right, transect_id, baseline_id,
-        options.intersection_mode, options.transect_orient));
+        left, right, transect_id, baseline_id, options.intersection_mode,
+        options.transect_orient));
   }
 
   // Derive length and spacing from the loaded transects
@@ -235,8 +236,7 @@ static std::vector<std::unique_ptr<TransectLine>> load_transects_geojson(
 // GCOVR_EXCL_START
 static std::vector<std::unique_ptr<TransectLine>> load_transects_shapelib(
     const std::filesystem::path &path) {
-  const std::string base_path =
-      (path.parent_path() / path.stem()).string();
+  const std::string base_path = (path.parent_path() / path.stem()).string();
 
   SHPHandle hSHP = SHPOpen(base_path.c_str(), "rb");
   if (!hSHP) OPENDSAS_THROW("Cannot open shapefile: " + path.string());
@@ -248,12 +248,14 @@ static std::vector<std::unique_ptr<TransectLine>> load_transects_shapelib(
 
   int tid_idx = DBFGetFieldIndex(hDBF, "TransectId");
   if (tid_idx < 0) {
-    SHPClose(hSHP); DBFClose(hDBF);
+    SHPClose(hSHP);
+    DBFClose(hDBF);
     OPENDSAS_THROW("Need to specify TransectId!");
   }
   int bid_idx = DBFGetFieldIndex(hDBF, "BaselineId");
   if (bid_idx < 0) {
-    SHPClose(hSHP); DBFClose(hDBF);
+    SHPClose(hSHP);
+    DBFClose(hDBF);
     OPENDSAS_THROW("Need to specify BaselineId!");
   }
 
@@ -275,8 +277,8 @@ static std::vector<std::unique_ptr<TransectLine>> load_transects_shapelib(
     SHPDestroyObject(obj);
 
     transects.push_back(std::make_unique<TransectLine>(
-        left, right, transect_id, baseline_id,
-        options.intersection_mode, options.transect_orient));
+        left, right, transect_id, baseline_id, options.intersection_mode,
+        options.transect_orient));
   }
 
   SHPClose(hSHP);

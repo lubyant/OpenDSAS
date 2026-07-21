@@ -2,10 +2,8 @@
 
 #include <gtest/gtest.h>
 
-
 using namespace dsas;
 #define TOL 1e-4
-
 
 TEST(GridTest, test_compute_grid_bound) {
   std::vector<Point> shore_vertices{{0, 0}, {1, 1}, {2, 2}, {3, 3}};
@@ -136,8 +134,8 @@ TEST(GridTest, test_build_shoreline_index_taller_than_wide) {
   // The correct formula ix*ny+iy  maps them to keys 2 and 6 — distinct.
   Grid::grids_bound_left_bottom_x = 0;
   Grid::grids_bound_left_bottom_y = 0;
-  Grid::grids_bound_right_top_x   = 2;
-  Grid::grids_bound_right_top_y   = 6;
+  Grid::grids_bound_right_top_x = 2;
+  Grid::grids_bound_right_top_y = 6;
   Grid::grid_size = 1;
 
   dsas::Date date{2000, 1, 1};

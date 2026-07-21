@@ -16,8 +16,8 @@ struct IntersectPoint : public Point, ShpSavable<IntersectField> {
   Date date_;
   std::string date_string_;
   double distance_to_ref_{-1};
-  IntersectPoint(Point point, int transect_id, int shoreline_id, int baseline_id,
-                 Date date, double distance_to_ref)
+  IntersectPoint(Point point, int transect_id, int shoreline_id,
+                 int baseline_id, Date date, double distance_to_ref)
       : Point(point),
         transect_id_(transect_id),
         shoreline_id_(shoreline_id),

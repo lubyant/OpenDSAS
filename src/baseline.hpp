@@ -12,8 +12,7 @@ struct BaselineSeg : public LineSegment {
   std::vector<TransectBasePoint> transects_base_points_;
 
   // constructor
-  BaselineSeg(double spacing, const Point &leftEdge,
-              const Point &rightEdge);
+  BaselineSeg(double spacing, const Point &leftEdge, const Point &rightEdge);
 
   // element accessing
   const TransectBasePoint &operator[](const size_t n) const {
@@ -21,7 +20,7 @@ struct BaselineSeg : public LineSegment {
   }
 };
 
-struct Baseline  {
+struct Baseline {
   using BaselinesVertex = Point;
 
   int baseline_id_;
@@ -33,7 +32,6 @@ struct Baseline  {
   std::vector<std::pair<double, double>> normal_vectors_;
 
   Baseline(const std::vector<BaselinesVertex> &points, int baseline_id);
-
 };
 
 std::vector<Baseline> load_baselines_shp(

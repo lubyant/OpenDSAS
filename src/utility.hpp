@@ -113,8 +113,7 @@ inline void write_dbf_field(DBFHandle h, int rec, int fld, const char *v) {
 }
 
 template <typename... Args>
-void write_dbf_record(DBFHandle h, int rec,
-                      const std::tuple<Args...> &values) {
+void write_dbf_record(DBFHandle h, int rec, const std::tuple<Args...> &values) {
   int fld = 0;
   std::apply(
       [&](auto &&...vs) {
@@ -124,8 +123,7 @@ void write_dbf_record(DBFHandle h, int rec,
 }
 
 // Map our FieldType enum to shapelib's DBFFieldType + width/decimal defaults.
-inline void dbf_add_field(DBFHandle h, const std::string &name,
-                          FieldType ft) {
+inline void dbf_add_field(DBFHandle h, const std::string &name, FieldType ft) {
   switch (ft) {
     case FieldType::Integer:
       DBFAddField(h, name.c_str(), FTInteger, 10, 0);
@@ -191,9 +189,8 @@ void save_lines(const std::vector<T *> &lines, const std::string &prj,
       xs.push_back(pt.get_x());
       ys.push_back(pt.get_y());
     }
-    SHPObject *obj = SHPCreateSimpleObject(SHPT_ARC,
-                                           static_cast<int>(xs.size()),
-                                           xs.data(), ys.data(), nullptr);
+    SHPObject *obj = SHPCreateSimpleObject(
+        SHPT_ARC, static_cast<int>(xs.size()), xs.data(), ys.data(), nullptr);
     SHPWriteObject(hSHP, -1, obj);
     SHPDestroyObject(obj);
     write_dbf_record(hDBF, rec++, shape->get_values());
@@ -241,8 +238,7 @@ void save_points(const std::vector<T *> &shapes, const std::string &prj,
   int rec = 0;
   for (auto *shape : shapes) {
     double x = shape->get_x(), y = shape->get_y();
-    SHPObject *obj =
-        SHPCreateSimpleObject(SHPT_POINT, 1, &x, &y, nullptr);
+    SHPObject *obj = SHPCreateSimpleObject(SHPT_POINT, 1, &x, &y, nullptr);
     SHPWriteObject(hSHP, -1, obj);
     SHPDestroyObject(obj);
     write_dbf_record(hDBF, rec++, shape->get_values());
@@ -259,7 +255,8 @@ double least_square(const std::vector<long long> &x,
 
 // Extracts the projection string from a vector file.
 // For .shp: reads the adjacent .prj sidecar (returns WKT).
-// For .geojson/.json: extracts the "crs"."properties"."name" value (e.g. "EPSG:32617").
+// For .geojson/.json: extracts the "crs"."properties"."name" value (e.g.
+// "EPSG:32617").
 std::string get_shp_proj(const char *path);
 }  // namespace dsas
 #endif

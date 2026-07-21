@@ -1,13 +1,14 @@
 #include "baseline.hpp"
-#include "exception.hpp"
 
-#include <nlohmann/json.hpp>
 #include <shapefil.h>
 
 #include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <nlohmann/json.hpp>
+
+#include "exception.hpp"
 
 namespace dsas {
 
@@ -46,7 +47,8 @@ BaselineSeg::BaselineSeg(double spacing, const Point &leftEdge,
   Point p0{x_start, y_start};
 
   // number of step
-  int num = static_cast<int>(floor((p0.distance_to_point(rightEdge) + spacing_) / spacing_));
+  int num = static_cast<int>(
+      floor((p0.distance_to_point(rightEdge) + spacing_) / spacing_));
 
   // step size
   double dist = sqrt(slope_vector_.second * slope_vector_.second +
@@ -97,10 +99,14 @@ static std::vector<Baseline> load_baselines_geojson(
     const auto &props = j["features"][0]["properties"];
     bool found = false;
     for (auto &[k, v] : props.items()) {
-      if (k == id_field) { found = true; break; }
+      if (k == id_field) {
+        found = true;
+        break;
+      }
     }
     if (!found) {
-      OPENDSAS_THROW("Field '" + id_field + "' not found in baseline shapefile.");
+      OPENDSAS_THROW("Field '" + id_field +
+                     "' not found in baseline shapefile.");
     }
   }
 
@@ -147,8 +153,8 @@ static std::vector<Baseline> load_baselines_geojson(
 static std::vector<Baseline> load_baselines_shapelib(
     const std::filesystem::path &path, const std::string &id_field) {
   const std::string base = path.stem().string();
-  const std::string dir  = path.parent_path().string();
-  std::string base_path  = dir.empty() ? base : dir + "/" + base;
+  const std::string dir = path.parent_path().string();
+  std::string base_path = dir.empty() ? base : dir + "/" + base;
 
   SHPHandle hSHP = SHPOpen(base_path.c_str(), "rb");
   if (!hSHP) OPENDSAS_THROW("Cannot open shapefile: " + path.string());
@@ -164,7 +170,8 @@ static std::vector<Baseline> load_baselines_shapelib(
     if (id_field_idx < 0) {
       SHPClose(hSHP);
       DBFClose(hDBF);
-      OPENDSAS_THROW("Field '" + id_field + "' not found in baseline shapefile.");
+      OPENDSAS_THROW("Field '" + id_field +
+                     "' not found in baseline shapefile.");
     }
   }
 
@@ -183,7 +190,8 @@ static std::vector<Baseline> load_baselines_shapelib(
     if (obj->nSHPType == SHPT_ARC || obj->nSHPType == SHPT_ARCZ) {
       for (int p = 0; p < obj->nParts; ++p) {
         int start = obj->panPartStart[p];
-        int end   = (p + 1 < obj->nParts) ? obj->panPartStart[p + 1] : obj->nVertices;
+        int end =
+            (p + 1 < obj->nParts) ? obj->panPartStart[p + 1] : obj->nVertices;
         std::vector<Point> pts;
         pts.reserve(static_cast<size_t>(end - start));
         for (int k = start; k < end; ++k) {
@@ -210,7 +218,8 @@ std::vector<Baseline> load_baselines_shp(
   if (ext == ".geojson" || ext == ".json") {
     return load_baselines_geojson(baseline_shp_path, baseline_id_field);
   }
-  return load_baselines_shapelib(baseline_shp_path, baseline_id_field);  // GCOVR_EXCL_LINE
+  return load_baselines_shapelib(baseline_shp_path,
+                                 baseline_id_field);  // GCOVR_EXCL_LINE
 }
 
 }  // namespace dsas

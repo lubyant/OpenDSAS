@@ -132,7 +132,10 @@ static void BM_BuildShorelineIndex(benchmark::State &state) {
   }
   state.SetComplexityN(n);
 }
-BENCHMARK(BM_BuildShorelineIndex)->RangeMultiplier(4)->Range(1, 256)->Complexity();
+BENCHMARK(BM_BuildShorelineIndex)
+    ->RangeMultiplier(4)
+    ->Range(1, 256)
+    ->Complexity();
 
 static void BM_BuildTransectIndex(benchmark::State &state) {
   const auto n = static_cast<int>(state.range(0));
@@ -147,7 +150,10 @@ static void BM_BuildTransectIndex(benchmark::State &state) {
   }
   state.SetComplexityN(n);
 }
-BENCHMARK(BM_BuildTransectIndex)->RangeMultiplier(4)->Range(8, 8 << 10)->Complexity();
+BENCHMARK(BM_BuildTransectIndex)
+    ->RangeMultiplier(4)
+    ->Range(8, 8 << 10)
+    ->Complexity();
 
 // ---------------------------------------------------------------------------
 // End-to-end intersection pipeline: grid-accelerated vs. brute force.

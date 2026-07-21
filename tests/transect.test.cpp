@@ -227,7 +227,8 @@ TEST_F(TransectTest, test_load_transects_from_shp) {
 
   // Empty features array — should throw
   {
-    auto tmp = std::filesystem::temp_directory_path() / "empty_transects.geojson";
+    auto tmp =
+        std::filesystem::temp_directory_path() / "empty_transects.geojson";
     std::ofstream f(tmp);
     f << R"({"type":"FeatureCollection","features":[]})";
     f.close();
@@ -254,16 +255,14 @@ TEST_F(TransectTest, test_load_transects_from_shp) {
 TEST_F(TransectTest, test_transect_second_constructor_orientations) {
   {
     Point start{0.0, 0.0}, end{1.0, 1.0};
-    TransectLine t(start, end, 0, 0,
-                   Options::IntersectionMode::Closest,
+    TransectLine t(start, end, 0, 0, Options::IntersectionMode::Closest,
                    Options::TransectOrientation::Left);
     ASSERT_NEAR(t.transect_ref_point_.x, start.x, TOL);
     ASSERT_NEAR(t.transect_ref_point_.y, start.y, TOL);
   }
   {
     Point start{0.0, 0.0}, end{1.0, 1.0};
-    TransectLine t(start, end, 0, 0,
-                   Options::IntersectionMode::Closest,
+    TransectLine t(start, end, 0, 0, Options::IntersectionMode::Closest,
                    Options::TransectOrientation::Right);
     ASSERT_NEAR(t.transect_ref_point_.x, end.x, TOL);
     ASSERT_NEAR(t.transect_ref_point_.y, end.y, TOL);
@@ -302,10 +301,10 @@ TEST_F(TransectTest, test_transect_farthest_mode_multiple_intersections) {
   // Segment (-1,3)→(1,3) intersects at (0,3): dist to ref = 2
   // Farthest mode picks (0,1)
   Point start{0.0, 0.0}, end{0.0, 10.0};
-  TransectLine t(start, end, 0, 0,
-                 Options::IntersectionMode::Farthest,
+  TransectLine t(start, end, 0, 0, Options::IntersectionMode::Farthest,
                  Options::TransectOrientation::Mix);
-  std::vector<Point> shore_pts{{-1.0, 1.0}, {1.0, 1.0}, {-1.0, 3.0}, {1.0, 3.0}};
+  std::vector<Point> shore_pts{
+      {-1.0, 1.0}, {1.0, 1.0}, {-1.0, 3.0}, {1.0, 3.0}};
   Date d{2000, 1, 1};
   Shoreline shore(shore_pts, 0, d);
   auto result = t.intersection(shore);

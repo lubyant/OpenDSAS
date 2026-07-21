@@ -38,14 +38,14 @@ struct Date {
     int a = (14 - month_) / 12;
     int y = year_ + 4800 - a;
     int m = month_ + 12 * a - 3;
-    return day_ + (153 * m + 2) / 5 + 365LL * y + y / 4 - y / 100 +
-           y / 400 - 32045;
+    return day_ + (153 * m + 2) / 5 + 365LL * y + y / 4 - y / 100 + y / 400 -
+           32045;
   }
 
-  auto operator<=>(const Date&) const = default;
+  auto operator<=>(const Date &) const = default;
 };
 
-inline long long days_between(const Date& a, const Date& b) {
+inline long long days_between(const Date &a, const Date &b) {
   return a.julian_day() - b.julian_day();
 }
 
