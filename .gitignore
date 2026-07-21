@@ -42,3 +42,9 @@
 
 # Build directory
 build/
+
+# Python packaging staging/output
+python/dist-bin/
+python/dist/
+python/src/opendsas.egg-info/
+python/src/opendsas/bin/
