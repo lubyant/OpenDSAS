@@ -134,10 +134,84 @@ jobs:
           name: windows-x86_64
           path: build/Release/dsas.exe
 
+  # ── pip packaging ────────────────────────────────────────────────────────────
+  # Wraps each static binary in a platform-specific wheel (binary embedded,
+  # tiny launcher that execs it) so `pip install opendsas` works everywhere the
+  # raw binary download works. Tag-only: version comes from the git tag.
+  package-pip:
+    name: Package pip wheel — ${{ matrix.target.plat_tag }}
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - { plat_tag: manylinux2014_x86_64,  artifact: dsas-linux-static-x86_64, binname: dsas,     archive: none }
+          - { plat_tag: manylinux2014_aarch64, artifact: dsas-linux-static-arm64,  binname: dsas,     archive: none }
+          - { plat_tag: macosx_11_0_arm64,     artifact: macos-arm64,              binname: dsas,     archive: tar.gz }
+          - { plat_tag: win_amd64,             artifact: windows-x86_64,           binname: dsas.exe, archive: none }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.target.artifact }}
+          path: artifact
+
+      - name: Stage binary
+        run: |
+          mkdir -p python/dist-bin
+          if [ "${{ matrix.target.archive }}" = "tar.gz" ]; then
+            tar -xzf artifact/*.tar.gz -C artifact
+          fi
+          cp "artifact/${{ matrix.target.binname }}" "python/dist-bin/${{ matrix.target.binname }}"
+          chmod +x "python/dist-bin/${{ matrix.target.binname }}" || true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set package version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/^__version__ = .*/__version__ = \"${VERSION}\"/" python/src/opendsas/__init__.py
+
+      - name: Build and retag wheel
+        run: |
+          pip install --upgrade build wheel
+          python -m build --wheel -o dist python
+          python -m wheel tags --python-tag py3 --abi-tag none \
+            --platform-tag ${{ matrix.target.plat_tag }} --remove dist/*.whl
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pip-wheel-${{ matrix.target.plat_tag }}
+          path: dist/*.whl
+
+  publish-pypi:
+    name: Publish to PyPI
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: package-pip
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pip-wheel-*
+          path: dist
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist
+
   # ── Release ────────────────────────────────────────────────────────────────
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-linux, verify-linux, build-macos, build-windows]
+    needs: [build-linux, verify-linux, build-macos, build-windows, package-pip]
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -162,6 +236,12 @@ jobs:
         with:
           name: windows-x86_64
           path: dist/windows
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pip-wheel-*
+          path: dist/wheels
+          merge-multiple: true
 
       - name: Rename artifacts
         run: |
@@ -188,5 +268,6 @@ jobs:
             dist/opendsas-linux-arm64
             dist/opendsas-macos-arm64.tar.gz
             dist/opendsas-windows-x86_64.exe
+            dist/wheels/*.whl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
