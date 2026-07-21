@@ -130,7 +130,7 @@ double linearRegressRate(std::vector<IntersectPoint *> &intersections) {
     double d_distance =
         intersections[1]->distance_to_ref_ - intersections[0]->distance_to_ref_;
     double d_year =
-        days_between(intersections[1]->date_, intersections[0]->date_) / 365;
+        days_between(intersections[1]->date_, intersections[0]->date_) / 365.0;
     return d_distance / d_year;
   }
 

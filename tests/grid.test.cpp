@@ -168,6 +168,35 @@ TEST(GridTest, test_build_shoreline_index_taller_than_wide) {
   ASSERT_EQ(grids.at(6)->shoreline_segs.size(), 1);
 }
 
+TEST(GridTest, test_build_shoreline_index_cell_origin) {
+  // Regression test: Grid::min_x/min_y must be the cell's world-space
+  // origin (left_bottom + index * grid_size), not derived from the
+  // segment's own bbox or the flat cell index.
+  Grid::grids_bound_left_bottom_x = 0;
+  Grid::grids_bound_left_bottom_y = 0;
+  Grid::grids_bound_right_top_x = 10;
+  Grid::grids_bound_right_top_y = 10;
+  Grid::grid_size = 1;
+
+  dsas::Date d{2000, 1, 1};
+  // Segment sits inside cell (ix=2, iy=2), offset from that cell's origin,
+  // so a formula that leaks the segment's own coordinates (instead of the
+  // cell origin) would produce a visibly wrong result.
+  auto shore = std::make_unique<Shoreline>(
+      std::vector<Point>{{2.5, 2.5}, {2.6, 2.6}}, 0, d);
+  std::vector<std::unique_ptr<Shoreline>> shores;
+  shores.push_back(std::move(shore));
+
+  auto grids = build_shoreline_index(shores);
+
+  ASSERT_EQ(grids.size(), 1);
+  auto &grid = grids.begin()->second;
+  ASSERT_EQ(grid->i, 2u);
+  ASSERT_EQ(grid->j, 2u);
+  ASSERT_NEAR(grid->min_x, 2.0, TOL);
+  ASSERT_NEAR(grid->min_y, 2.0, TOL);
+}
+
 TEST(GridTest, test_compute_grid_bound_even_segments) {
   // 5 points → 4 segments → even count → median uses two-heap average branch
   std::vector<Point> pts{{0, 0}, {1, 1}, {2, 2}, {3, 3}, {4, 4}};

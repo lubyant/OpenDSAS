@@ -113,7 +113,11 @@ std::vector<std::unique_ptr<IntersectPoint>> TransectLine::intersection(
     for (const auto &shore_seg : grid->shoreline_segs) {
       if (is_intersect(shore_seg.start, shore_seg.end)) {
         auto ret = find_intersection(shore_seg.start, shore_seg.end);
-        auto point = ret.value();
+        auto point = Point((shore_seg.start.x + shore_seg.end.x) / 2,
+                           (shore_seg.start.y + shore_seg.end.y) / 2);
+        if (ret) {
+          point = ret.value();
+        }
         auto distance = distance2ref(point);
         auto intersect_point = std::make_unique<IntersectPoint>(
             point, transect_id_, shore_seg.shoreline->shoreline_id_,
