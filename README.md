@@ -26,18 +26,17 @@ OpenDSAS is ideal if:
 
 ### Linux
 
-Download the pre-built static binary from [Releases](https://github.com/lubyant/OpenDSAS/releases):
+Download the pre-built static binary — this URL always points to the latest release:
 
 ```bash
-# Replace vX.Y with the latest version, e.g. v1.4
-curl -LO https://github.com/lubyant/OpenDSAS/releases/download/vX.Y/opendsas-vX.Y-linux-x86_64
-chmod +x opendsas-vX.Y-linux-x86_64
-sudo mv opendsas-vX.Y-linux-x86_64 /usr/local/bin/dsas
+curl -LO https://github.com/lubyant/OpenDSAS/releases/latest/download/opendsas-linux-x86_64
+chmod +x opendsas-linux-x86_64
+sudo mv opendsas-linux-x86_64 /usr/local/bin/dsas
 ```
 
-The binary is fully statically linked — it runs on any Linux distribution (Ubuntu, Debian, RHEL, Alpine, etc.) with no dependencies.
+For ARM (servers, Raspberry Pi), use `opendsas-linux-arm64` instead of `opendsas-linux-x86_64`.
 
-An `arm64` build (`opendsas-vX.Y-linux-arm64`) is also available for ARM servers and Raspberry Pi.
+The binary is fully statically linked — it runs on any Linux distribution (Ubuntu, Debian, RHEL, Alpine, etc.) with no dependencies.
 
 ### macOS
 
