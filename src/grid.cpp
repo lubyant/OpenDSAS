@@ -138,8 +138,9 @@ Grids build_shoreline_index(
         for (int iy = iy0; iy <= iy1; ++iy) {
           size_t grids_id = ix * ny + iy;
           if (grids.find(grids_id) == grids.end()) {
-            grids[grids_id] = std::make_unique<Grid>(
-                xmin + ix * grids_id, ymin + iy * grid_size, ix, iy);
+            grids[grids_id] =
+                std::make_unique<Grid>(left_bottom_x + ix * grid_size,
+                                       left_bottom_y + iy * grid_size, ix, iy);
           }
           grids[grids_id]->shoreline_segs.emplace_back(a, b, shoreline.get());
         }

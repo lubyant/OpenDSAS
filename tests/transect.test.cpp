@@ -323,3 +323,33 @@ TEST_F(TransectTest, test_transect_grid_intersection_missing_cell) {
   auto results = t.intersection(empty_grids);
   ASSERT_TRUE(results.empty());
 }
+
+TEST_F(TransectTest, test_transect_grid_intersection_collinear_no_crash) {
+  // Regression test: transect (0,0)-(0,10) and shoreline segment (0,3)-(0,7)
+  // are collinear and overlapping. is_intersect() (cross-product straddle
+  // test) reports true for this case, but find_intersection() (line-line
+  // solve) returns nullopt because the two lines' determinant is ~0. Calling
+  // .value() on that empty optional used to throw std::bad_optional_access;
+  // it must now fall back to the segment midpoint instead of crashing.
+  Point start{0.0, 0.0}, end{0.0, 10.0};
+  TransectLine t(start, end, 0, 0);
+  t.grid_index.push_back({0, 0});
+  Grid::grid_ny = 1;
+
+  Date d{2000, 1, 1};
+  auto shoreline = std::make_unique<Shoreline>(
+      std::vector<Point>{{0.0, 3.0}, {0.0, 7.0}}, 0, d);
+
+  auto grid = std::make_unique<Grid>(0.0, 0.0, 0, 0);
+  grid->shoreline_segs.push_back(
+      ShoreSeg{Point{0.0, 3.0}, Point{0.0, 7.0}, shoreline.get()});
+
+  Grids grids;
+  grids[0] = std::move(grid);
+
+  std::vector<std::unique_ptr<IntersectPoint>> results;
+  ASSERT_NO_THROW(results = t.intersection(grids));
+  ASSERT_EQ(results.size(), 1);
+  EXPECT_NEAR(results[0]->x, 0.0, TOL);
+  EXPECT_NEAR(results[0]->y, 5.0, TOL);
+}
