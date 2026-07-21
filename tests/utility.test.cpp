@@ -4,9 +4,9 @@
 
 #include "utility.hpp"
 
-#include "gtest/gtest.h"
-
 #include <fstream>
+
+#include "gtest/gtest.h"
 
 #define TOL 1e-4
 using namespace dsas;

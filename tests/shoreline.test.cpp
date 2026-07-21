@@ -113,7 +113,6 @@ TEST(TestShoreline, test_generate_date_from_str) {
   {
     const char* date_str = "201-5";
     options.date_format = "%y-%m-%d";
-    ASSERT_THROW(generate_date_from_str(date_str),
-                 std::runtime_error);
+    ASSERT_THROW(generate_date_from_str(date_str), std::runtime_error);
   }
 }

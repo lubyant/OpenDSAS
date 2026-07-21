@@ -4,11 +4,7 @@
 
 namespace dsas {
 
-enum class CliStatus{
-    Root,
-    Cast,
-    Cal
-};
+enum class CliStatus { Root, Cast, Cal };
 
 CliStatus parse_args(int argc, char *argv[]);
 

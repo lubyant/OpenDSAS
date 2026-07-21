@@ -3,11 +3,10 @@
 //
 #include "utility.hpp"
 
-#include <nlohmann/json.hpp>
-
 #include <cassert>
 #include <fstream>
 #include <limits>
+#include <nlohmann/json.hpp>
 #include <unordered_set>
 
 #define MAX_DOUBLE (999999.9)
@@ -51,8 +50,9 @@ std::string get_shp_proj(const char *path) {
     prj_path.replace_extension(".prj");
     std::ifstream f(prj_path);
     if (!f) {
-      OPENDSAS_THROW("Shapefile has no projection information (missing .prj): " +
-                     prj_path.string());
+      OPENDSAS_THROW(
+          "Shapefile has no projection information (missing .prj): " +
+          prj_path.string());
     }
     return std::string(std::istreambuf_iterator<char>(f),
                        std::istreambuf_iterator<char>());
@@ -60,7 +60,8 @@ std::string get_shp_proj(const char *path) {
 
   // GeoJSON / JSON: extract the CRS authority string.
   // RFC 7946 removed the "crs" member; files without it are implicitly WGS84.
-  // The pre-RFC (2008) format uses: {"type":"name","properties":{"name":"EPSG:…"}}
+  // The pre-RFC (2008) format uses:
+  // {"type":"name","properties":{"name":"EPSG:…"}}
   std::ifstream f(fp);
   if (!f) {
     OPENDSAS_THROW("Cannot open file: " + fp.string());

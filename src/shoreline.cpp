@@ -1,12 +1,12 @@
 #include "shoreline.hpp"
 
-#include <nlohmann/json.hpp>
 #include <shapefil.h>
 
 #include <algorithm>
 #include <ctime>
 #include <fstream>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 #ifndef _WIN32
 #include <cstring>  // memset — ensure tm is clean before strptime
@@ -109,8 +109,7 @@ static std::vector<std::unique_ptr<Shoreline>> load_shorelines_geojson(
 // GCOVR_EXCL_START
 static std::vector<std::unique_ptr<Shoreline>> load_shorelines_shapelib(
     const std::filesystem::path &path, const char *date_field_name) {
-  const std::string base_path =
-      (path.parent_path() / path.stem()).string();
+  const std::string base_path = (path.parent_path() / path.stem()).string();
 
   SHPHandle hSHP = SHPOpen(base_path.c_str(), "rb");
   if (!hSHP) OPENDSAS_THROW("Cannot open shapefile: " + path.string());
@@ -142,8 +141,8 @@ static std::vector<std::unique_ptr<Shoreline>> load_shorelines_shapelib(
     if (obj->nSHPType == SHPT_ARC || obj->nSHPType == SHPT_ARCZ) {
       for (int p = 0; p < obj->nParts; ++p) {
         int start = obj->panPartStart[p];
-        int end = (p + 1 < obj->nParts) ? obj->panPartStart[p + 1]
-                                         : obj->nVertices;
+        int end =
+            (p + 1 < obj->nParts) ? obj->panPartStart[p + 1] : obj->nVertices;
         auto sl = std::make_unique<Shoreline>();
         sl->shoreline_vertices_.reserve(static_cast<size_t>(end - start));
         for (int k = start; k < end; ++k) {
@@ -172,7 +171,8 @@ std::vector<std::unique_ptr<Shoreline>> load_shorelines_shp(
   if (ext == ".geojson" || ext == ".json") {
     return load_shorelines_geojson(shoreline_shp_path, date_field_name);
   }
-  return load_shorelines_shapelib(shoreline_shp_path, date_field_name);  // GCOVR_EXCL_LINE
+  return load_shorelines_shapelib(shoreline_shp_path,
+                                  date_field_name);  // GCOVR_EXCL_LINE
 }
 
 }  // namespace dsas

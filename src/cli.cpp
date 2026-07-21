@@ -33,13 +33,12 @@ static void check_format_consistency(
       ref_fmt = fmt;
       ref_flag = flag;
     } else if (fmt != ref_fmt) {
-      OPENDSAS_THROW("Format mismatch: " + flag + " uses " + fmt +
-                     " but " + ref_flag + " uses " + ref_fmt +
+      OPENDSAS_THROW("Format mismatch: " + flag + " uses " + fmt + " but " +
+                     ref_flag + " uses " + ref_fmt +
                      ". All input and output files must use the same format.");
     }
   }
 }
-
 
 dsas::Options::IntersectionMode parse_intersection_mode(const std::string& s) {
   if (s == "closest") return dsas::Options::IntersectionMode::Closest;
