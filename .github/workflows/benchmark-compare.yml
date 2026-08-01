@@ -117,7 +117,10 @@ jobs:
             cmake --build build --target dsas_benchmark --config Release -j
             EXE=./build/Release/dsas_benchmark.exe
           else
-            cmake -B build -S . \
+            # Force Clang for branch B (branch A keeps the runner's default
+            # compiler, gcc on Linux) so this workflow can also be used to
+            # profile compiler choice, not just source changes.
+            CC=clang CXX=clang++ cmake -B build -S . \
               -DCMAKE_BUILD_TYPE=Release \
               -DBUILD_BENCHMARK=ON \
               -DBUILD_TESTING=OFF \
