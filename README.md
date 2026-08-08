@@ -24,6 +24,14 @@ OpenDSAS is ideal if:
 
 ## 📦 Installation
 
+### pip (Linux, macOS arm64, Windows)
+
+```bash
+pip install opendsas
+```
+
+This installs the same static `dsas` binary published in [Releases](https://github.com/lubyant/OpenDSAS/releases), wrapped in a platform wheel — no compiler or build step required.
+
 ### Linux
 
 Download the pre-built static binary — this URL always points to the latest release:
