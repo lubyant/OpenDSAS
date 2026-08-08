@@ -4,9 +4,9 @@ class Opendsas < Formula
   # `version` is declared before `url` so the url can interpolate it — a
   # single source of truth for the release. (This trips Homebrew's
   # ComponentsOrder audit hint, which wants url first; harmless for a tap.)
-  version "1.6"
+  version "1.7"
   url "https://github.com/lubyant/OpenDSAS/releases/download/v#{version}/opendsas-v#{version}-macos-arm64.tar.gz"
-  sha256 "64a285fc8615c9a6d8997126ceaf94f72c68891e3dc5cdbb09fa1dcaf2063a23"
+  sha256 "b2d5b255c60d4738df7799a9cff53fb6082f00399bd49097a5230b3fc3d3f008"
   license "MIT"
 
   # Track the newest GitHub release so `brew livecheck` / `bump-formula-pr`
